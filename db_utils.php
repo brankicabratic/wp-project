@@ -9,9 +9,7 @@
   }
 
   function getTags(){
-      return array(
-        "tag"=>"neki tag"
-      );
+      return array("tag", "macka","novitag");
   }
 
   function getReply(){
