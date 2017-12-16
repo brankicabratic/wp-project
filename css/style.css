@@ -39,10 +39,11 @@ header .user a {
 	text-decoration: none;
 	text-transform: uppercase;
 	color: #A22300;
+	transition: opacity .2s ease-out;
 }
 
 header .user a:hover {
-	opacity: 0.5;
+	opacity: 0.6;
 }
 
 /* MAIN CONTENT */
