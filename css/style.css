@@ -1,7 +1,18 @@
 body {
 	background-color: #eeeeee;
+	position: relative;
+	top: 70px;
 }
 
 header {
 	position: fixed;
+	background-color: #eeeeee;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 70px;
+}
+
+header h1 {
+
 }
