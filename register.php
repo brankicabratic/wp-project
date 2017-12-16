@@ -20,20 +20,43 @@ if(isset($_POST['register']))
 	$date=htmlspecialchars($_POST['birthday']);
 	$gender=htmlspecialchars($_POST['gender']);
 }
-
+//proverava email
 if(!(filter_var($email, FILTER_VALIDATE_EMAIL)))
 {
 	$errors[]="Niste uneli pravilan email";
 }
-
+//proverava passworde
 if($password1!=$password2)
 {
 	$errors[]="Niste uneli istu sifru";
 }
+
+// da li korisnicko ime ima vise od 20 karaktera
 if(strlen($username)>20)
 {
 	$errors[]="Korisnicko ime mora sadrzati manje od 20 karaktera";
 }
+
+//U imenu ne smeju da stoje brojevi
+if(strpbrk($name, '1234567890')!= FALSE)
+{
+	$errors[]="Ime ne sme da sadrzi brojeve";
+}
+
+//Prezime ne sme da sadrzi brojeve
+if(strpbrk($lastname, '1234567890')!= FALSE)
+{
+	$errors[]="Prezime ne sme da sadrzi brojeve";
+}
+
+
+
+//Registracija uspesna
+if(count($errors)==0)
+{
+	$success;
+}
+
 
 ?>
 
@@ -76,6 +99,9 @@ if(strlen($username)>20)
 
 					<input type="submit" value="Registruj se" name="register">
 				</form>
+				<br>
+				<br>
+				<br>
 
 				<?php
 
