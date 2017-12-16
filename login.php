@@ -1,4 +1,5 @@
 <?php
+include "parts.php"; 
 $errors = array();
 $messages = array();
 
@@ -27,14 +28,22 @@ $messages = array();
 	}
 ?>
 <html>
-<header></header>
+<head>
+	<meta charset="utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="css/profile.css"> 
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"> 
+</head>
 <body>
-    <h1>Dobrodosli na login stranicu</h1>
-	<h2>Uloguj se</h2>
-	<form action="login.php" method="post">
-	Korisničko ime: <br><input type="text" name="username"><br>
-	Lozinka: <br><input type="password" name="password"><br>
-	<input type="submit" value="Uloguj se" name="login">
-	</form>
+    <?php printHeader(); ?>
+    <main> 
+      <h1>Dobrodosli na login stranicu</h1>
+	  <h2>Uloguj se</h2>
+	      <form action="login.php" method="post">
+	          Korisničko ime: <br><input type="text" name="username"><br>
+	          Lozinka: <br><input type="password" name="password"><br>
+	      <input type="submit" value="Uloguj se" name="login">
+	      </form>
+	</main>
 </body>
 </html>
