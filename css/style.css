@@ -1,8 +1,17 @@
+/* GENERAL */
+* {
+	box-sizing: border-box;
+	font-family: 'Roboto', sans-serif;
+}
+
 body {
 	background-color: #879168;
 	position: relative;
 	top: 70px;
+	margin: 0;
 }
+
+/* HEADER */
 
 header {
 	position: fixed;
@@ -11,8 +20,91 @@ header {
 	left: 0;
 	right: 0;
 	height: 70px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 20px;
+}
+
+header #logo {
+	text-decoration: none;
+	color: #33004B;
 }
 
 header h1 {
 
+}
+
+header .user a {
+	text-decoration: none;
+	text-transform: uppercase;
+	color: #A22300;
+}
+
+header .user a:hover {
+	opacity: 0.5;
+}
+
+/* MAIN CONTENT */
+
+main {
+	padding: 20px;
+	background: white;
+	width: 1200px;
+	margin: 0 auto;
+	box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+.center {
+	margin: 0 auto;
+	text-align: center;
+}
+
+/* INPUTS AND BUTTONS */
+
+input:not([type="submit"]):not([type="checkbox"]), textarea {
+	border: 1px solid gray;
+	padding: 9px;
+	width: 250px;
+}
+
+.form-group:not(:first-child) {
+	margin-top: 20px;
+}
+
+.form-group label {
+	width: 150px;
+	display: inline-block;
+	text-align: right;
+}
+
+.form-group.check label {
+	text-align: left;
+	width: 250px
+}
+
+.form-group.check input {
+	height: 20px;
+	width: 20px;
+	margin-left: 130px;
+}
+
+input[type="submit"], button {
+	border: 0;
+	width: 200px;
+	padding: 10px 0;
+	color: white;
+	background: #D38000;
+	transition: background .2s ease-out;
+	cursor: pointer;
+}
+
+input[type="submit"]:hover, button:hover {
+	background: #D46900;
+}
+
+fieldset {
+	border: 0;
+	margin-top: 50px;
+	margin-bottom: 10px;
 }
