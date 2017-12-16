@@ -76,46 +76,59 @@ if(count($errors)==0)
 		<form method="post">
 			<fieldset>
 				<div class="form-group">
-					<label>Ime:</label> <input type="text" name="firstName">
+					<label for="firstName">Ime:</label>
+					<input type="text" name="firstName" id="firstName">
 				</div>
 				<div class="form-group">
-				<label>Prezime:</label> <input type="text" name="lastName">
+					<label for="lastName">Prezime:</label>
+					<input type="text" name="lastName" id="lastName">
 				</div>
 				<div class="form-group">
-				<label>Korisničko ime:</label> <input type="text" name="username">
+					<label for="username">Korisničko ime:</label>
+					<input type="text" name="username" id="username">
 				</div>
 				<div class="form-group">
-				<label>Email:</label> <input type="text" name="email">
+					<label for="email">Email:</label>
+					<input type="text" name="email" id="email">
 				</div>
 				<div class="form-group">
-				<label>Lozinka:</label> <input type="password" name="password1">
+					<label for="password1">Lozinka:</label>
+					<input type="password" name="password1" id="password1">
 				</div>
 				<div class="form-group">
-				<label>Ponovi lozinku:</label> <input type="password" name="password2">
+					<label for="password2">Ponovi lozinku:</label>
+					<input type="password" name="password2" id="password2">
 				</div>
 				<div class="form-group">
-				<label>Smer:</label><select name="major">
+					<label for="major">Smer:</label>
+					<select name="major" id="major">
 						<option value="it">Informacione tehnologije</option>
 						<option value="matematika">Matematika</option>
 					</select>
 				</div>
 				<div class="form-group">						
-				<label>Godina upisa:</label><input type="date" name="startyear">
+					<label for="startyear">Godina upisa:</label>
+					<input type="date" name="startyear" id="startyear">
 				</div>
 				<div class="form-group">						
-				<label>Grad:</label> <input type="text" name="city">
+					<label for="city">Grad:</label>
+					<input type="text" name="city" id="city">
 				</div>
 				<div class="form-group">						
-				<label>Adresa:</label> <input type="text" name="address">
+					<label for="address">Adresa:</label>
+					<input type="text" name="address" id="address">
 				</div>
 				<div class="form-group">						
-				<label>Datum rođenja:</label> <input type="date" name="birthday">
+					<label for="birthday">Datum rođenja:</label>
+					<input type="date" name="birthday" id="birthday">
 				</div>
 				<div class="form-group">						
 					<label>Pol:</label> 
 					<div class="radios">
-						<input type="radio" name="gender" value="m" checked> M
-						<input type="radio" name="gender" value="z"> Ž 
+						<input type="radio" name="gender" value="m" id="genderM" checked>
+						<label for="genderM">M</label>
+						<input type="radio" name="gender" value="z" id="genderZ">
+						<label for="genderZ">Ž</label> 
 					</div> 
 				</div>
 			</fieldset>

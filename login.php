@@ -20,16 +20,16 @@
 			<form action="login.php" method="post">
 				<fieldset>
 					<div class="form-group">
-						<label>Korisničko ime:</label> 
-						<input type="text" name="username">
+						<label for="username">Korisničko ime:</label> 
+						<input type="text" name="username" id="username">
 					</div>
 					<div class="form-group">
-						<label>Lozinka:</label>
-						<input type="password" name="password">
+						<label for="password">Lozinka:</label>
+						<input type="password" name="password" id="password">
 					</div>
 					<div class="form-group check">
-						<input type="checkbox" name="remember-me" checked> 
-						<label>Zapamti Moj Username<label> 
+						<input type="checkbox" name="remember-me" checked id="remember-me"> 
+						<label for="remember-me">Zapamti Moj Username<label> 
 					</div>
 				</fieldset>
 				<input type="submit" value="Uloguj se" name="login" />
