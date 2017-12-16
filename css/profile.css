@@ -2,6 +2,7 @@ main {
     width: 1200px;
     margin: 0 auto;
     background: white;
+    display: flex;
 }
 
 .profile-sidebar {
@@ -9,7 +10,6 @@ main {
     -webkit-box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
     -moz-box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
     box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
-    float: left;
 }
 
 .profile-sidebar .profile-picture {
@@ -42,5 +42,25 @@ main {
 }
 
 .tabs {
-    height:
+    height: 50px;
+    background: #D38000;
+    display: flex;
+    flex-wrap: wrap;
 }
+
+.tabs .tab {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs .tab > * {
+    margin-left: 10px;
+}
+
+.tabs .tab:hover {
+    background: #D46900;
+    cursor: pointer;
+}
+
