@@ -1,4 +1,18 @@
 <?php
+include "parts.php"; 
+$errors = array();
+$messages = array();
+
+//if (isset($_POST["login"])) {
+//	$username = $_POST ["username"];
+//	$password = $_POST ["password"];
+//	$result = checkLogin($username, $password);
+//	if ($result) {
+//		header("Location: login_success.php?user=$username");
+//	}
+//	else {
+//		$errors[] = "Neispravno korisničko ime ili lozinka.";
+//	}
 	$main_user = false;
 	if (isset($_POST["loginButton"])) {
 		$main_user = getUser($_POST["username"], $_POST["password"]);
@@ -14,20 +28,22 @@
 	}
 ?>
 <html>
-<header>Login</header>
+<head>
+	<meta charset="utf-8" /> 
+    <link rel="stylesheet" type="text/css" href="css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="css/profile.css"> 
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"> 
+</head>
 <body>
-	<h2>Uloguj se</h2>
-	  <form method="post" action="profile.php">
-		<label for="username">Korisničko ime:</label> 
-		<input type="text" name="username" value="<?php echo isset($_COOKIE["username"]) ? $_COOKIE["username"] : "";?>"><br>
-
-		<label for="password">Lozinka:</label>
-		<input	type="password" name="password"><br>
-					
-		<input type="checkbox" name="remember-me" checked> Zapamti moj username<br> 
-		<a href="?forget-me">Forget me</a>
-
-		<input type="submit" name="loginButton" value="Uloguj se">
-	  </form>
+    <?php printHeader(); ?>
+    <main> 
+      <h1>Dobrodosli na login stranicu</h1>
+	  <h2>Uloguj se</h2>
+	      <form action="login.php" method="post">
+	          Korisničko ime: <br><input type="text" name="username"><br>
+	          Lozinka: <br><input type="password" name="password"><br>
+	      <input type="submit" value="Uloguj se" name="login">
+	      </form>
+	</main>
 </body>
 </html>

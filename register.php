@@ -1,76 +1,92 @@
+<?php 
+session_start();
+
+include "parts.php";
+
+$errors=array();
+
+if(isset($_POST['register']))
+{
+	$name=htmlspecialchars($_POST['firstName']);
+	$lastname=htmlspecialchars($_POST['lastName']);
+	$username=htmlspecialchars($_POST['username']);
+	$email=htmlspecialchars($_POST['email']);
+	$password1=htmlspecialchars($_POST['password1']);
+	$password2=htmlspecialchars($_POST['password2']);
+	$city=htmlspecialchars($_POST['city']);
+	$major=htmlspecialchars($_POST['major']);
+	$startyear=htmlspecialchars($_POST['startyear']);
+	$address=htmlspecialchars($_POST['address']);
+	$date=htmlspecialchars($_POST['birthday']);
+	$gender=htmlspecialchars($_POST['gender']);
+}
+
+if(!(filter_var($email, FILTER_VALIDATE_EMAIL)))
+{
+	$errors[]="Niste uneli pravilan email";
+}
+
+if($password1!=$password2)
+{
+	$errors[]="Niste uneli istu sifru";
+}
+if(strlen($username)>20)
+{
+	$errors[]="Korisnicko ime mora sadrzati manje od 20 karaktera";
+}
+
+?>
+
+
+
 <!DOCTYPE html>
 <html>
 <head>
-		<title>Register</title>
+	
+	<title>Register</title>
+
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/profile.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+
 </head>
 	<body>
-		<h1>Registracija</h1>
-		<div id="sadrzaj">
-			<div id="poruke">
-				<?php				
-					foreach($messages as $msg){
-						echo "<div>$msg</div>";
-					}
-				?>
-			</div>
-			<div id="greske">
-				<?php				
-					foreach($errors as $err){
-						echo "<div>$err</div>";
-					}
-				?>
-			</div>		
-			<div class="kontejner">
-				<h2>Registracija</h2>
-				<form action="register.php" method="post">
+	<?php printHeader(); ?>
+    <main>
+		<h1>Dobrodosli!</h1>		
+			<h2>Registracija</h2>
+				<form method="post">
 					Ime: <br><input type="text" name="firstName"><br>
 					Prezime: <br><input type="text" name="lastName"><br>
 					Korisničko ime: <br><input type="text" name="username"><br>
+					Email: <br><input type="text" name="email"><br>
 					Lozinka: <br><input type="password" name="password1"><br>
 					Ponovi lozinku: <br><input type="password" name="password2"><br>
+					Smer:<br><select name="major"><br>
+						<option value="it">Informacione tehnologije</option>
+						<option value="matematika">Matematika</option>
+					</select><br><br>
+					Godina upisa:<br><input type="date" name="startyear"><br>
 					Grad: <br><input type="text" name="city"><br>
-					Država: <br><input type="text" name="country"><br>
 					Adresa: <br><input type="text" name="address"><br>
-					Email: <br><input type="text" name="email"><br>
-					Datum rođenja (DD-MM-YYYY): <br><input type="date" name="birthday"><br>
+					Datum rođenja: <br><input type="date" name="birthday"><br>
 					Pol: <br><input type="radio" name="gender" value="m" checked> M
 					<input type="radio" name="gender" value="z"> Ž <br> 
 
 					<input type="submit" value="Registruj se" name="register">
 				</form>
-			</div>
-		</div>
-		<table>
-			<tr>
-				<th colspan="8" style="text-align:center;font-size:28px;">
-					Registrovani korisnici
-				</th>
-			</tr>
-			<tr>
-				<th>Ime</th>
-				<th>Prezime</th>	
-				<th>Datum rođenja</th>	
-				<th>Adresa</th>	
-				<th>Grad</th>
-				<th>Država</th>	
-				<th>Poštanski broj</th>
-				<th>Pol</th>	
-			</tr>	
-			<?php
-				$korisnici = getUsers();
-				foreach ($korisnici as $k) {
-					echo "<tr>";
-					echo "<td>".$k[COL_FIRST_NAME]."</td>";
-					echo "<td>".$k[COL_LAST_NAME]."</td>";
-					echo "<td>".$k[COL_BIRTHDAY]."</td>";
-					echo "<td>".$k[COL_ADDRESS]."</td>";
-					echo "<td>".$k[COL_CITY]."</td>";
-					echo "<td>".$k[COL_COUNTRY]."</td>";
-					echo "<td>".$k[COL_POSTCODE]."</td>";
-					echo "<td>".$k[COL_GENDER]."</td>";					
-					echo "</tr>";
+
+				<?php
+
+				if(count($errors)!=0)
+				{
+					foreach ($errors as $error)
+					 {
+						echo "$error<br>";
+					}
 				}
-			?>
-		</table>
+				  ?>
+	</main>
 	</body>
 </html>

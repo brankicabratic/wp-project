@@ -1,0 +1,66 @@
+main {
+    width: 1200px;
+    margin: 0 auto;
+    background: white;
+    display: flex;
+}
+
+.profile-sidebar {
+    width: 400px;
+    -webkit-box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
+    -moz-box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
+    box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
+}
+
+.profile-sidebar .profile-picture {
+    max-width: 60px;
+    max-height: 60px;
+    border-radius: 50%;
+}
+
+.inline-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.inline-container > * {
+    margin: 10px;
+}
+
+.profile-info {
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.content {
+    width: 800px;
+}
+
+.clear {
+    clear: both;
+}
+
+.tabs {
+    height: 50px;
+    background: #D38000;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.tabs .tab {
+    width: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tabs .tab > * {
+    margin-left: 10px;
+}
+
+.tabs .tab:hover {
+    background: #D46900;
+    cursor: pointer;
+}
+
