@@ -3,7 +3,7 @@
     return array(
       "Naslov"=>"Neki naslov",
       "Text"=> "Neki tekst",
-      "Autor"=>"ime autora"
+      "Autor"=>"ime autora",
       "Datum"=> "12.12.2017"
     );
   }
@@ -16,9 +16,9 @@
 
   function getReply(){
     return  array(
-      "TextOdg" => "neki odgovor"
+      "TextOdg" => "neki odgovor",
       "AutorOdg" => "Ime autora"
      );
   }
-  
+
  ?>
