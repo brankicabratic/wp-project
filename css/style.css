@@ -62,7 +62,7 @@ main {
 
 /* INPUTS AND BUTTONS */
 
-input:not([type="submit"]):not([type="checkbox"]), textarea {
+input:not([type="submit"]):not([type="checkbox"]), textarea, select {
 	border: 1px solid gray;
 	padding: 9px;
 	width: 250px;
@@ -76,6 +76,7 @@ input:not([type="submit"]):not([type="checkbox"]), textarea {
 	width: 150px;
 	display: inline-block;
 	text-align: right;
+	padding-right: 10px;
 }
 
 .form-group.check label {
@@ -107,4 +108,15 @@ fieldset {
 	border: 0;
 	margin-top: 50px;
 	margin-bottom: 10px;
+}
+
+.radios {
+	display: inline-block;
+	width: 250px;
+	text-align: left;
+}
+
+.radios input[type="radio"] {
+	width: 20px;
+	height: 20px;
 }

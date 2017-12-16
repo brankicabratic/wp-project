@@ -11,8 +11,10 @@
 <?php
 	}
 
-	function printIncludes() {
+	function printIncludes($title) {
 ?>
+		<title><?php echo $title; ?> - PMFOverflow</title>
+		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"></link>
     	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">

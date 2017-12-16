@@ -4,11 +4,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>User profile</title>
-    <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <?php printIncludes("Profil"); ?>
     <link rel="stylesheet" type="text/css" href="css/profile.css">
-    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
 </head>
 <body>
     <?php printHeader(); ?>

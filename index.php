@@ -4,8 +4,7 @@
  ?>
 <html>
   <head>
-    <title>PMF overflow</title>
-    <?php printIncludes(); ?>
+    <?php printIncludes("Početna"); ?>
   </head>
   <body>
     <?php printHeader(); ?>

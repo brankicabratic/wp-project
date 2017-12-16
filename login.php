@@ -10,8 +10,7 @@
 ?>
 <html>
     <head>
-		<meta charset="utf-8" /> 
-		<?php printIncludes(); ?>
+		<?php printIncludes("Logovanje"); ?>
 		<link rel="stylesheet" type="text/css" href="css/login.css"></link>
     </head>
     <body>
