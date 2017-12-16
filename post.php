@@ -1,14 +1,21 @@
 <?php require_once("parts.php"); require_once("db_utils.php");?>
 <html> 
 <head> 
-  <title>getHeding</title> 
+  <title>getHeding</title> <link rel="stylesheet" type="text/css" href="css/style.css">
 </head> 
 <body> 
-	<?php printHeader();?>
+	<?php printHeader();  
+		if (isset($_GET["id"])) {
+			$post=getPost($_GET["id"]);
+		}
+		else
+    		header("Location:not_id.php");
+
+	?>
   <h1> <?php echo "getHeading"; ?> </h1> 
   <div align="right">   
     <a href="putpost.php"><button>Postavi pitanje</button></a><br> 
-    asked: Datum php<br> 
+    asked: <?php echo $post["Datum"];?><br> 
     viewed: Koliko je vidjeno php<br> 
     active: Kad je zadnji put odgovarano<br> 
   </div> 
@@ -38,8 +45,7 @@
     	}
     
     }
-    else
-    	header("Location:not_id.php");
+   
 
     ?>
    
