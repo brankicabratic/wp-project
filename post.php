@@ -22,10 +22,16 @@
  
   </div> 
   <div align="center"> 
-    <p> ukratko odgovor <br> 
+  	Svi odgovori preko niza
+    <p> ukratko odgovori <br> 
     Kod odgovor<br> 
     Jos odgovor</p> 
     Korisnik koji je objavio<br></p> 
   </div> 
- 
+  Vas odgovor
+ <form method="post">
+ 	<textarea rows="4" cols="50" name="comment" form="usrform" placeholder="Upisite vas odgovor"></textarea><br>
+ 	<input type="submit" value="Postavite vas odgovor" name="">
+ 	
+ </form>
 </body> 
