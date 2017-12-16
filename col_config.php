@@ -9,7 +9,16 @@
   define('COL_USER_ENROLLED', "enrollmentyear");
 
   define('COL_POST_ID', "postid");
+  define('COL_POST_HEADER', "header");
+  define('COL_POST_TEXT', "content");
+  define('COL_POST_DATETIME', "postingtime");
+  define('COL_POST_AUTHOR', "author");
 
   define('COL_TAG_NAME', "name");
   define('COL_TAG_ID', "tagid");
+
+  define('COL_SCORE_TYPE', "type");
+  define('COL_SCORE_POST', "postid");
+
+  define('COL_ANSWER_POST', "parent");
 ?>

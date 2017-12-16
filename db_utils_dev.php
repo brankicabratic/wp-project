@@ -42,14 +42,14 @@
     }
 
     /**
-     * Store user with given parameters in database
-     * @return true if everything went fine, otherwise return false(usually if username already exist in database if types are checked)
+     * @param postID primary key of post
+     * @return array of actions associated with given post
      */
-    public function insertUser($username, $password, $fullName, $avatar, $email, $major, $enrollmentYear) {
-      $stmt = $this->connection->prepare("INSERT INTO User(".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_NAME.", ".COL_USER_AVATAR.
-                                         ", ".COL_USER_EMAIL.", ".COL_USER_MAJOR.", ".COL_USER_ENROLLED.") VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("ssssssi", $username, password_hash($password, PASSWORD_DEFAULT), $fullName, $avatar, $email, $major, $enrollmentYear);
-      return $stmt->execute();
+    public function getReactionsOnPost($postID) {
+      $stmt = $this->connection->prepare("SELECT ".COL_SCORE_TYPE." FROM Score WHERE ".COL_SCORE_POST." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      return get_first($stmt->get_result()->fetch_all());
     }
 
     /**
@@ -61,6 +61,28 @@
       $stmt->bind_param("i", $postID);
       $stmt->execute();
       return get_first($stmt->get_result()->fetch_all());
+    }
+
+    /**
+     * @param postID primary key of post
+     * @return array of answers associated with given post
+     */
+    public function getAnswersOfPost($postID) {
+      $stmt = $this->connection->prepare("SELECT * FROM Answer WHERE ".COL_ANSWER_POST." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all();
+    }
+
+    /**
+     * Store user with given parameters in database
+     * @return true if everything went fine, otherwise return false(usually whether username already exists in database if types are checked)
+     */
+    public function insertUser($username, $password, $fullName, $avatar, $email, $major, $enrollmentYear) {
+      $stmt = $this->connection->prepare("INSERT INTO User(".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_NAME.", ".COL_USER_AVATAR.
+                                         ", ".COL_USER_EMAIL.", ".COL_USER_MAJOR.", ".COL_USER_ENROLLED.") VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $stmt->bind_param("ssssssi", $username, password_hash($password, PASSWORD_DEFAULT), $fullName, $avatar, $email, $major, $enrollmentYear);
+      return $stmt->execute();
     }
   }
 ?>

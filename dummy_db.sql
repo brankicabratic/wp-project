@@ -18,3 +18,9 @@ INSERT INTO PostTags VALUES (1, 1);
 INSERT INTO PostTags VALUES (1, 6);
 INSERT INTO PostTags VALUES (2, 3);
 INSERT INTO PostTags VALUES (2, 4);
+
+INSERT INTO Score VALUES (1, "perica", 1);
+INSERT INTO Score VALUES (1, "staraR", 0);
+
+INSERT INTO Answer(Parent, Content, PostingTime, Author) VALUES (2, "Lorem ipsum dolor sit amet, duo ne velit ludus explicari. At usu meliore reprimique intellegebat, facete volutpat sententiae ne sit. Error ludus no cum. Vivendo ocurreret ei mei. Te vim fabulas conceptam, reprimique eloquentiam id sit. Porro prompta sanctus cum an, veri feugait eu pro.", DATE("2017-06-15 09:34:21"), "perica");
+INSERT INTO Answer(Parent, Content, PostingTime, Author) VALUES (2, "Why?", DATE("2017-06-15 09:34:21"), "staraR");
