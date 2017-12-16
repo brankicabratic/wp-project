@@ -1,6 +1,8 @@
 <?php 
 session_start();
 
+include "parts.php";
+
 $errors=array();
 
 if(isset($_POST['register']))
@@ -40,9 +42,18 @@ if(strlen($username)>20)
 <!DOCTYPE html>
 <html>
 <head>
-		<title>Register</title>
+	
+	<title>Register</title>
+
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" type="text/css" href="css/profile.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
+
 </head>
 	<body>
+	<?php printHeader(); ?>
+    <main>
 		<h1>Dobrodosli!</h1>		
 			<h2>Registracija</h2>
 				<form method="post">
@@ -56,10 +67,10 @@ if(strlen($username)>20)
 						<option value="it">Informacione tehnologije</option>
 						<option value="matematika">Matematika</option>
 					</select><br><br>
-					Godina upisa (DD-MM-YYYY) <br><input type="date" name="startyear"><br>
+					Godina upisa:<br><input type="date" name="startyear"><br>
 					Grad: <br><input type="text" name="city"><br>
 					Adresa: <br><input type="text" name="address"><br>
-					Datum rođenja (DD-MM-YYYY) <br><input type="date" name="birthday"><br>
+					Datum rođenja: <br><input type="date" name="birthday"><br>
 					Pol: <br><input type="radio" name="gender" value="m" checked> M
 					<input type="radio" name="gender" value="z"> Ž <br> 
 
@@ -76,6 +87,6 @@ if(strlen($username)>20)
 					}
 				}
 				  ?>
-				
+	</main>
 	</body>
 </html>
