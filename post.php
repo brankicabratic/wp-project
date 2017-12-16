@@ -14,27 +14,38 @@
   </div> 
   <div align="center"> 
     <?php 
-    $post=getPost();
-    foreach ($post as $key => $value) {
+    if (isset($_GET["id"])) {
+    	echo "<div>";
+    	$post=getPost($_GET["id"]);
+    	foreach ($post as $key => $value) {
+    		echo $value."<br>";
+    	}
     	
+    	echo "<div><br>";
+    	$tags=getTags();
+    	foreach ($tags as $key => $value) {
+    		echo $value. "\t";
+    	}
+    	echo "</div>";
+    	echo "</div>";
+    	$Answers=getAnswers($_GET["id"]);
+    	foreach ($Answers as $key => $value) {
+    		echo "<div><br>";
+    		foreach ($value as $id => $val){
+    			echo $val."<br>";
+    		}
+    		echo "</div>";
+    	}
+    
     }
+    else
+    	header("Location:not_id.php");
 
     ?>
-    <p> ukratko pitanje <br> 
-    Kod pitanja<br> 
-    Jos pitanja<br> 
-    Tagovi<br> 
-    Korisnik koji je objavio<br> 
-    </p> 
+   
  
   </div> 
-  <div align="center"> 
-  	Svi odgovori preko niza
-    <p> ukratko odgovori <br> 
-    Kod odgovor<br> 
-    Jos odgovor</p> 
-    Korisnik koji je objavio<br></p> 
-  </div> 
+  
   Vas odgovor
  <form method="post">
  	<textarea rows="4" cols="50" name="comment" form="usrform" placeholder="Upisite vas odgovor"></textarea><br>
