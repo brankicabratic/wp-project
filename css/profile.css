@@ -45,11 +45,10 @@ main {
     height: 50px;
     background: #D38000;
     display: flex;
-    flex-wrap: wrap;
 }
 
 .tabs .tab {
-    width: 200px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -64,3 +63,15 @@ main {
     cursor: pointer;
 }
 
+a {
+    cursor: pointer;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+#questions {
+    display: block;
+}

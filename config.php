@@ -1,8 +1,10 @@
 <?php
-  define(DB_SERVERNAME, "localhost");
-  define(DB_USERNAME, "testuser");
-  define(DB_PASSWORD, "");
+  define(DB_SERVERNAME, "35.177.89.160");
+  define(DB_USERNAME, "pmf");
+  define(DB_PASSWORD, "rr^6qoSU&4C9");
   define(DB_NAME, "pmfoverflow");
+
+  //adminer: adminer.knezevicnikola.com
 
   define(COL_USER_ID, "userid");
   define(COL_USER_USERNAME, "username");
