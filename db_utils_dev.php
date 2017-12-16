@@ -31,6 +31,22 @@
     }
 
     /**
+     * @param page
+     * @param step Number of posts per page
+     * @return array with posts ordered descending by date/time of posting
+     */
+    public function getNthPagePosts($page, $step) {
+      if(strtolower(gettype($page)) != "integer" || strtolower(gettype($step)) != "integer" || $page < 1 || $step < 1)
+        return false;
+
+      $start = ($page - 1) * $step;
+      $stmt = $this->connection->prepare("SELECT * FROM Post ORDER BY ".COL_POST_DATETIME." DESC LIMIT ?, ?");
+      $stmt->bind_param("ii", $start, $step);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all();
+    }
+
+    /**
      * @param postID as integer
      * @return post as associative array or null if post is not found
      */
