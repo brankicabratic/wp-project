@@ -1,4 +1,4 @@
-<?php require_once("parts.php"); ?>
+<?php require_once("parts.php"); require_once("db_utils.php");?>
 <html> 
 <head> 
   <title>getHeding</title> 
@@ -13,6 +13,13 @@
     active: Kad je zadnji put odgovarano<br> 
   </div> 
   <div align="center"> 
+    <?php 
+    $post=getPost();
+    foreach ($post as $key => $value) {
+    	
+    }
+
+    ?>
     <p> ukratko pitanje <br> 
     Kod pitanja<br> 
     Jos pitanja<br> 
