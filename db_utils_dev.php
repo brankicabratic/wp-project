@@ -1,70 +1,66 @@
 <?php
-  require_once("config.php");
+  require_once("col_config.php");
+  require_once("functions.php");
 
-  function dbConnect() {
-    return new mysqli(DB_SERVERNAME, DB_USERNAME, DB_PASSWORD, DB_NAME);
-  }
-
-  function getUser($id) {
-    $db = dbConnect();
-    $sql = $db->prepare("SELECT * FROM User WHERE ".COL_USER_ID." = ?");
-    $sql->bind_param("d", $id);
-    if(!$sql->execute()) {
-      $db->close();
-      return false;
+  class Database {
+    private $connection;
+    public function __construct() {
+      if($config = parse_ini_file("db.ini")) {
+        $server = $config["server"];
+        $user = $config["user"];
+        $password = $config["password"];
+        $database = $config["database"];
+        $this->connection = new mysqli($server, $user, $password, $database);
+      }
+      else
+        exit("Missing configuration file.");
     }
-    $result = $sql->get_result()->fetch_array(MYSQLI_ASSOC);
-    $db->close();
-    return $result;
-  }
-
-  function getPost($id) {
-    $db = dbConnect();
-    $sql = $db->prepare("SELECT * FROM Post WHERE ".COL_POST_ID." = ?");
-    $sql->bind_param("d", $id);
-    if(!$sql->execute()) {
-      $db->close();
-      return false;
+    public function __destruct() {
+      $this->connection->close();
     }
-    $result = $sql->get_result()->fetch_array(MYSQLI_ASSOC);
-    $db->close();
-    return $result;
-  }
 
-  function doesPostExist($pid) {
-    $db = dbConnect();
-    $sql = $db->prepare("SELECT COUNT(*) FROM Post WHERE ".COL_POST_ID." = ?");
-    $sql->bind_param("d", $pid);
-    $sql->execute();
-    $result = $sql->get_result()->fetch_array(MYSQLI_NUM)[0];
-    $db->close();
-    return $result != 0;
-  }
-
-  function getPostTags($pid) {
-    if(!doesPostExist($pid))
-      return false;
-    $ret_result = array();
-    $db = dbConnect();
-    $sql = $db->prepare("SELECT * FROM PostTags WHERE ".COL_POST_ID." = ?");
-    $sql->bind_param("d", $pid);
-    if(!$sql->execute()) {
-      $db->close();
-      return false;
+    /**
+     * @param username as string
+     * @return user as associative array or null if user is not found
+     */
+    public function getUser($username) {
+      $stmt = $this->connection->prepare("SELECT * FROM User WHERE ".COL_USER_USERNAME." = ?");
+      $stmt->bind_param("s", $username);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     }
-    $results = $sql->get_result()->fetch_all(MYSQLI_ASSOC);
-    return array_map(create_function('$el', 'return $el["TagID"];'), $results);
-  }
 
-  function insertUser($username, $password, $fullname, $avatar, $email, $major, $enrollmentyear) {
-    $db = dbConnect();
-    $query = "INSERT INTO User(".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_NAME.", "
-                  .COL_USER_AVATAR.", ".COL_USER_EMAIL.", ".COL_USER_MAJOR.", ".COL_USER_ENROLLED.") VALUES (?, ?, ?, ?, ?, ?, ?)";
-    echo $query;
-    $sql = $db->prepare($query);
-    $sql->bind_param("ssssssd", $username, password_hash($password, PASSWORD_DEFAULT), $fullname, $avatar, $email, $major, $enrollmentyear);
-    $result = $sql->execute();
-    $db->close();
-    return $result;
+    /**
+     * @param postID as integer
+     * @return post as associative array or null if post is not found
+     */
+    public function getPost($postID) {
+      $stmt = $this->connection->prepare("SELECT * FROM Post WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Store user with given parameters in database
+     * @return true if everything went fine, otherwise return false(usually if username already exist in database if types are checked)
+     */
+    public function insertUser($username, $password, $fullName, $avatar, $email, $major, $enrollmentYear) {
+      $stmt = $this->connection->prepare("INSERT INTO User(".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_NAME.", ".COL_USER_AVATAR.
+                                         ", ".COL_USER_EMAIL.", ".COL_USER_MAJOR.", ".COL_USER_ENROLLED.") VALUES (?, ?, ?, ?, ?, ?, ?)");
+      $stmt->bind_param("ssssssi", $username, password_hash($password, PASSWORD_DEFAULT), $fullName, $avatar, $email, $major, $enrollmentYear);
+      return $stmt->execute();
+    }
+
+    /**
+     * @param postID primary key of post
+     * @return array of tags associated with given post
+     */
+    public function getTagsOfPost($postID) {
+      $stmt = $this->connection->prepare("SELECT T.".COL_TAG_NAME." FROM Tag T, PostTags PT WHERE PT.".COL_POST_ID." = ? AND PT.".COL_TAG_ID." = T.".COL_TAG_ID);
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      return get_first($stmt->get_result()->fetch_all());
+    }
   }
 ?>
