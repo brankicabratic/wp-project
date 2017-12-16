@@ -12,7 +12,7 @@
     		header("Location:not_id.php");
 
 	?>
-  <h1> <?php echo "getHeading"; ?> </h1> 
+  <h1> <?php echo $post["Naslov"]."<br>"; ?> </h1> 
   <div align="right">   
     <a href="putpost.php"><button>Postavi pitanje</button></a><br> 
     asked: <?php echo $post["Datum"];?><br> 
@@ -24,9 +24,10 @@
     if (isset($_GET["id"])) {
     	echo "<div>";
     	$post=getPost($_GET["id"]);
-    	foreach ($post as $key => $value) {
-    		echo $value."<br>";
-    	}
+    	
+    	echo $post["Text"]."<br>";
+    	echo $post["Autor"]."<br>";
+    	echo $post["Datum"]."<br>";
     	
     	echo "<div><br>";
     	$tags=getTags();
