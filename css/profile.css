@@ -1,0 +1,154 @@
+.navigacija {	
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 1;
+}
+
+.navigacija a {
+	display: inline-block;
+	text-decoration: none;
+	padding: 10px 15px;
+}
+
+.navigacija a:hover {
+	background-color: rgb(159,179,189);
+}
+
+.navigacija a, .navigacija a:visited {
+	color: white;
+}
+
+.navigacija a img {
+	width: auto;
+	height: 20px;
+	vertical-align: middle;
+}
+
+#logout-button {
+	float: right;
+	margin: 3px 10px;
+	padding: 0px;
+	width: 35px;
+}
+
+#logout-button:hover {
+	background-color: inherit;
+}
+
+#logout-button img {
+	width: 100%;
+	height: auto;
+	border-radius: 50%;
+}
+
+#sadrzaj {
+	margin-top: 60px;
+	min-width: 1000px;
+}
+
+#sadrzaj div {
+	vertical-align: top;
+}
+
+#leva-kolona, #desna-kolona, #srednja-kolona {
+	display: inline-block;
+}
+
+#leva-kolona {
+	width: 20%;
+}
+
+#desna-kolona {
+	width: 20%;
+}
+
+#srednja-kolona {
+	width: 58%;
+}
+
+.profilna-slika {
+	border-radius: 50%;
+	max-width: 200px;
+}
+
+.profilna-slika-zid {
+	width: 80px;
+	height: auto;
+	float: left;
+	margin-right: 20px;
+	border-radius: 50%;
+}
+
+
+.post-zaglavlje h4 {
+	font-weight: 400;
+	font-size: 20px;
+	margin: 0px 0px 10px 0px;
+}
+
+.post-sadrzaj {
+	margin-top: 30px;
+}
+
+.post-sadrzaj img {
+	max-width: 500px;
+}
+
+.zahtev-za-prijateljstvo img {
+	max-width: 200px;
+}
+
+.zahtev-za-prijateljstvo h4 {
+	font-weight: 400;
+	font-size: 20px;
+	margin: 0px 0px 10px 0px;
+}
+
+
+.profilna-slika-komentar {
+	width: 40px;
+	height: auto;
+	float:left;
+	margin-right: 10px;
+	border-radius: 50%;
+}
+
+.komentar-vreme {
+	font-size: 10px;	
+	font-style: italic;
+}
+
+details summary::-webkit-details-marker {
+  color: #f5f7f8;
+}
+
+summary {
+	color:#4d636f;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.error-msg {
+	background-color: rgb(255,123,123);
+	color: white;
+}
+
+.link-sort {
+	color:#4d636f;
+	text-decoration: underline;	
+}
+
+.pagination a {
+    color:#4d636f;
+    padding: 4px 4px;
+    text-decoration: none;
+    transition: background-color .3s;
+}
+
+.pagination a.active {
+    background-color: #4d636f;;
+    color: black;
+}
+
+.pagination a:hover:not(.active) {background-color: #ddd;}
