@@ -6,13 +6,13 @@ $messages = array();
 if (isset($_POST["login"])) {
 	$username = $_POST ["username"];
 	$password = $_POST ["password"];
-	$result = checkLogin($username, $password);
+	//$result = checkLogin($username, $password); //Provera unesenih podataka.
 	if ($result) {
 		header("Location: profile.php?user=$username");
 		$_SESSION["user"] = $result;
 	}
 	else {
-		$errors[] = "Neispravno korisničko ime ili lozinka.";
+		$errors[] = "Neispravno korisničko ime ili lozinka."; //U suprotnom, ne valja(logicno).
 	}
 	$main_user = false;
 	if (isset($_POST["loginButton"])) {
@@ -40,11 +40,12 @@ if (isset($_POST["login"])) {
     <?php printHeader(); ?>
       <main>
         <?php echo date('Y-m-d');?>
-        <h1>Dobrodosli na login stranicu</h1>
+        <h1>Dobrodosli na login stranicu</h1> <!--Formica za login-->
 	    <h2>Uloguj se</h2>
 	      <form action="login.php" method="post">
 	        Korisničko ime: <br><input type="text" name="username"><br>
 	        Lozinka: <br><input type="password" name="password"><br>
+	        Zapamti me: <br><input type="checkbox" name="remember-me" checked> Zapamti Moj Username<br>
 	        <input type="submit" value="Uloguj se" name="login">
 	      </form>
 	  </main>
