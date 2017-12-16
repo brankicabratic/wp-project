@@ -12,10 +12,10 @@
     		header("Location:not_id.php");
 
 	?>
-  <h1> <?php echo $post["Naslov"]."<br>"; ?> </h1> 
+  <h1> <?php echo $post[$_GET["id"]]["Naslov"]."<br>"; ?> </h1> 
   <div align="right">   
     <a href="putpost.php"><button>Postavi pitanje</button></a><br> 
-    asked: <?php echo $post["Datum"];?><br> 
+    asked: <?php echo $post[$_GET["id"]]["Datum"];?><br> 
     viewed: Koliko je vidjeno php<br> 
     active: Kad je zadnji put odgovarano<br> 
   </div> 
@@ -25,9 +25,9 @@
     	echo "<div>";
     	$post=getPost($_GET["id"]);
     	
-    	echo $post["Text"]."<br>";
-    	echo $post["Autor"]."<br>";
-    	echo $post["Datum"]."<br>";
+    	echo $post[$_GET["id"]]["Text"]."<br>";
+    	echo $post[$_GET["id"]]["Autor"]."<br>";
+    	echo $post[$_GET["id"]]["Datum"]."<br>";
     	
     	echo "<div><br>";
     	$tags=getTags();
