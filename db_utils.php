@@ -12,11 +12,28 @@
       return array("tag", "macka","novitag");
   }
 
-  function getReply(){
-    return  array(
-      "TextOdg" => "neki odgovor",
-      "AutorOdg" => "Ime autora"
-     );
+  function getAnswers(){
+
+    return array( array(
+
+      "TextOdg" => "neki odgovor1",
+      "AutorOdg" => "Ime autora1"
+    )
+    array(
+
+      "TextOdg" => "neki odgovor2",
+      "AutorOdg" => "Ime autora2"
+    )
+    array(
+
+      "TextOdg" => "neki odgovor3",
+      "AutorOdg" => "Ime autora3"
+    )
+    array(
+
+      "TextOdg" => "neki odgovor4",
+      "AutorOdg" => "Ime autora4"
+    ));
   }
 
  ?>
