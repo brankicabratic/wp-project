@@ -2,10 +2,6 @@
   require_once("col_config.php");
   require_once("functions.php");
 
-  /**
-   * System uses bcrypt for crypting password
-   */
-
   class Database {
     private $connection;
     public function __construct($configFile = "db.ini") {
@@ -41,14 +37,14 @@
     public function insertUser($username, $password, $fullName, $avatar, $email, $major, $enrollmentYear) {
       $stmt = $this->connection->prepare("INSERT INTO User(".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_NAME.", ".COL_USER_AVATAR.
                                          ", ".COL_USER_EMAIL.", ".COL_USER_MAJOR.", ".COL_USER_ENROLLED.") VALUES (?, ?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("ssssssi", $username, password_hash($password, PASSWORD_DEFAULT), $fullName, $avatar, $email, $major, $enrollmentYear);
+      $stmt->bind_param("ssssssi", $username, $password, $fullName, $avatar, $email, $major, $enrollmentYear);
       return $stmt->execute();
     }
 
     /**
-     * returns UserID of User with given username or NULL if user doesnt exist
+     * returns UserID of User with given username or null if user doesnt exist
      */
-    public function getUserID($username) {
+    private function getUserID($username) {
       $stmt = $this->connection->prepare("SELECT ".COL_USER_ID." FROM ".DB_USER_TABLE." WHERE ".COL_USER_USERNAME." = ?");
       $stmt->bind_param("s", $username);
       $stmt->execute();
@@ -56,22 +52,8 @@
     }
 
     /**
-     * @param username has to be string
-     * @param password has to be string
-     * @return User object as associative array or null if authentication failed
-     */
-    public function authenticateUser($username, $password) {
-      $stmt = $this->connection->prepare("SELECT * FROM ".DB_USER_TABLE." WHERE ".COL_USER_USERNAME." = ?");
-      $stmt->bind_param("s", $username);
-      $stmt->execute();
-      if(($result = $stmt->get_result()->fetch_array(MYSQLI_ASSOC)) === NULL)
-        return false;
-      return password_verify($password, $result[COL_USER_PASSWORD]) ? $result : false;
-    }
-
-    /**
      * @param questionID has to be integer
-     * @return question object as associative array or NULL if such doesn't exist
+     * @return question object as associative array or null if such doesn't exist
      */
     public function getQuestion($questionID) {
       $stmt = $this->connection->prepare("SELECT * FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P WHERE Q.".COL_QUESTION_ID." = ? AND Q.".COL_QUESTION_ID." = P.".COL_POST_ID);
@@ -81,13 +63,26 @@
     }
 
     /**
+     * @return question suited for page $page and step $step ordered by time descending
+     */
+    public function getNthPageQuestions($page, $step) {
+      if($step < 1 || $page < 1)
+        return null;
+      $start = ($page - 1) * $step;
+      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_TIME.", A.".COL_USER_USERNAME." FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." ORDER BY P.".COL_POST_TIME." DESC LIMIT ?, ?");
+      $stmt->bind_param("ii", $start, $step);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
      * @param author user's username as string
      * @param content string
      * @param time (optional) time as string, recommended format "Y-m-d H:i:s"
      * @return ID of inserted post or false if query failed
      */
     public function insertPost($author, $content, $time = null) {
-      if(($userID = $this->getUserID($author)) === NULL)
+      if(($userID = $this->getUserID($author)) === null)
         return false;
       if($time === null)
         $time = date("Y-m-d H:i:s");
@@ -100,8 +95,44 @@
      * @param postID of post you want to delete
      * @return bool as success of query
      */
-    public function deletePost($postID) {
+    private function deletePost($postID) {
       $stmt = $this->connection->prepare("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      return $stmt->execute();
+    }
+
+    /**
+     * @param answerID of answer you want to delete
+     * @return bool as success of query
+     */
+    public function deleteAnswer($postID) {
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      if(!$stmt->execute())
+        return false;
+      if($stmt->affected_rows)
+        return $this->deletePost($postID);
+    }
+
+    /**
+     * @param questionID of question you want to delete
+     * @return bool as success of query
+     */
+    public function deleteQuestion($postID) {
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_ANSWER_TABLE." WHERE ".COL_QUESTION_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      if(!$stmt->execute())
+        return false;
+      if($stmt->affected_rows)
+        return $this->deletePost($postID);
+    }
+
+    /**
+     * @param questionID of question whose tags you want to delete
+     * @return bool as success of query
+     */
+    public function clearTags($postID) {
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_POSTTAG_TABLE." WHERE ".COL_POSTTAG_POSTID." = ?");
       $stmt->bind_param("i", $postID);
       return $stmt->execute();
     }
@@ -154,6 +185,18 @@
       $stmt->bind_param("i", $questionID);
       $stmt->execute();
       return get_first($stmt->get_result()->fetch_all());
+    }
+
+    /**
+     * @param $user User object as associative array
+     * @return bool which represents success of query
+     */
+    public function updateUser($user) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET ".COL_USER_USERNAME." = ?, ".COL_USER_PASSWORD." = ?, ".COL_USER_NAME." = ?, ".COL_USER_AVATAR." = ?, ".COL_USER_EMAIL." = ?, ".COL_USER_MAJOR." = ?, ".COL_USER_ENROLLED." = ?
+                                          WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("ssssssii", $user[COL_USER_USERNAME], $user[COL_USER_PASSWORD], $user[COL_USER_NAME], $user[COL_USER_AVATAR], $user[COL_USER_EMAIL], $user[COL_USER_MAJOR], $user[COL_USER_ENROLLED], $user[COL_USER_ID]);
+      return $stmt->execute();
     }
   }
 ?>

@@ -29,4 +29,6 @@
   define('COL_ANSWER_ID', 'PostID');
   define('COL_ANSWER_PARENT', 'RelatedTo');
   define('COL_ANSWER_ACCEPTED', 'Accepted');
+
+  define('COL_POSTTAG_POSTID', 'PostID');
 ?>
