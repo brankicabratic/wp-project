@@ -15,9 +15,7 @@
      * insertQuestion($author, $header, $content) DONE
      * insertAnswer($author, $content, $questionID) DONE
      * insertTag($name) DONE
-     * deletePost($postID)
-     * deleteAnswer($postID)
-     * deleteQuestion($postID)
+     * deletePost($postID) DONE (used for deleting questions and answers too)
      * clearTags($postID)
      * getAnswersRelatedToQuestion($questionID)
      * getTagsRelatedToQuestion($questionID)
@@ -58,19 +56,6 @@
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     }
-
-    /*public function getUsersPosts($username, $table = DB_QUESTION_TABLE) {
-      if($table != DB_ANSWER_TABLE && $table != DB_QUESTION_TABLE)
-        return false;
-      if(!($userID = $this->getUserID($username)))
-        return false;
-      $stmt = $this->connection->prepare("SELECT *
-                                          FROM $table T, ".DB_POST_TABLE." P
-                                          WHERE P.".COL_POST_AUTHOR." = ? AND P.".COL_POST_ID." = T.".COL_POST_ID);
-      $stmt->bind_param("i", $userID);
-      $stmt->execute();
-      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-    }*/
 
     /**
      * Store user with given parameters in database
@@ -119,16 +104,26 @@
     }*/
 
     /**
-     * @return question suited for page $page and step $step ordered by time descending
+     * @return question suited for page $page and step $step ordered by ID, every newer record has ID bigger than older one
      */
     public function getNthPageQuestions($page, $step) {
       if($step < 1 || $page < 1)
         return null;
       $start = ($page - 1) * $step;
-      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME." FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." ORDER BY P.".COL_POST_POSTED." DESC LIMIT ?, ?");
+      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME." FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." ORDER BY P.".COL_POST_ID." DESC LIMIT ?, ?");
       $stmt->bind_param("ii", $start, $step);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     *
+     */
+    private function getSmallestAvaliablePostID() {
+      $stmt = $this->connection->prepare("SELECT ".COL_POST_ID." FROM ".DB_POST_TABLE." ORDER BY ".COL_POST_ID." DESC LIMIT 1");
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_all(MYSQLI_NUM)[0];
+      return ($result === null) ? -214748364 : ($result[0] + 1); // minimum value of mysqls int
     }
 
     /**
@@ -149,8 +144,7 @@
      * Tries to insert question into database and returns if query succeeded
      */
     public function insertQuestion($author, $header, $content) {
-      $ID;
-      while($this->doesExist(DB_POST_TABLE, ($ID = rand(-2147483648, 2147483647))));
+      $ID = $this->getSmallestAvaliablePostID();
       if($this->insertPost($ID, $author, $content) === false)
         return false;
       $stmt = $this->connection->prepare("INSERT INTO ".DB_QUESTION_TABLE."(".COL_QUESTION_ID.", ".COL_QUESTION_HEADER.") VALUES (?, ?)");
@@ -165,8 +159,7 @@
      * Tries to insert answer into database and returns if query succeeded
      */
     public function insertAnswer($author, $content, $questionID) {
-      $ID;
-      while($this->doesExist(DB_POST_TABLE, ($ID = rand(-2147483648, 2147483647))));
+      $ID = $this->getSmallestAvaliablePostID();
       if($this->insertPost($ID, $author, $content) === false)
         return false;
       $stmt = $this->connection->prepare("INSERT INTO ".DB_ANSWER_TABLE."(".COL_ANSWER_ID.", ".COL_ANSWER_PARENT.") VALUES (?, ?)");
@@ -190,36 +183,9 @@
      * @return bool as success of query
      */
     public function deletePost($postID) {
-      echo "DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = ?";
       $stmt = $this->connection->prepare("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = ?");
       $stmt->bind_param("i", $postID);
       return $stmt->execute();
-    }
-
-    /**
-     * @param answerID of answer you want to delete
-     * @return bool as success of query
-     */
-    public function deleteAnswer($postID) {
-      $stmt = $this->connection->prepare("DELETE FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_ID." = ?");
-      $stmt->bind_param("i", $postID);
-      if(!$stmt->execute())
-        return false;
-      if($stmt->affected_rows)
-        return $this->deletePost($postID);
-    }
-
-    /**
-     * @param questionID of question you want to delete
-     * @return bool as success of query
-     */
-    public function deleteQuestion($postID) {
-      $stmt = $this->connection->prepare("DELETE FROM ".DB_ANSWER_TABLE." WHERE ".COL_QUESTION_ID." = ?");
-      $stmt->bind_param("i", $postID);
-      if(!$stmt->execute())
-        return false;
-      if($stmt->affected_rows)
-        return $this->deletePost($postID);
     }
 
     /**
