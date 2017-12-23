@@ -183,6 +183,14 @@
      * @return bool as success of query
      */
     public function deletePost($postID) {
+      // Whole function relies mostly on cascade delete
+      $stmt = $this->connection->prepare("SELECT ".COL_ANSWER_ID." FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_PARENT." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      $answers = get_first($stmt->get_result()->fetch_all(MYSQLI_NUM));
+      foreach($answers as $ans)
+        $this->connection->query("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = $ans");
+
       $stmt = $this->connection->prepare("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = ?");
       $stmt->bind_param("i", $postID);
       return $stmt->execute();
