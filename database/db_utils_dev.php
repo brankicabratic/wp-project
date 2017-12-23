@@ -7,19 +7,25 @@
      * List of methods:
      *
      * getUser($username) DONE
-     * createUser($username, $firstName, $lastName, $password, $email)    DONE
+     * createUser($username, $firstName, $lastName, $password, $email) DONE
      * getUserID($username) DONE
-     * getNthPageQuestions($page, $step)
+     * getNthPageQuestions($page, $step) DONE
      * doesExist($table, $ID) DONE
      * insertPost($ID, $author, $content) DONE
      * insertQuestion($author, $header, $content) DONE
      * insertAnswer($author, $content, $questionID) DONE
      * insertTag($name) DONE
      * deletePost($postID) DONE (used for deleting questions and answers too)
-     * clearTags($postID)
-     * getAnswersRelatedToQuestion($questionID)
-     * getTagsRelatedToQuestion($questionID)
+     * getQuestion($questionID) DONE
+     * getAnswersRelatedToQuestion($questionID, $page = 1, $step = 100) DONE
+     * getPostsScore($postID) DONE
+     * getAvaliableTags() DONE
+     * givePostATag($postID, $tagID) DONE
+     * getTagsRelatedToQuestion($questionID) DONE
      * updateUser(&$user) DONE
+     * updatePost($postID, $content) DONE
+     * updateQuestion($postID, $header, $content) DONE
+     * updateAnswer($postID, $content) DONE
      * doesReactionExist($userID, $postID) DONE
      * saveReaction($userID, $postID, $type) DONE
      */
@@ -71,6 +77,9 @@
       return $stmt->execute();
     }
 
+    /**
+     * @return whether record with id $ID exist in $table
+     */
     public function doesExist($table, $ID) {
       if(!isset($this->idTable[$table]))
         return null;
@@ -96,12 +105,14 @@
      * @param questionID has to be integer
      * @return question object as associative array or null if such doesn't exist
      */
-    /*public function getQuestion($questionID) {
-      $stmt = $this->connection->prepare("SELECT * FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P WHERE Q.".COL_QUESTION_ID." = ? AND Q.".COL_QUESTION_ID." = P.".COL_POST_ID);
+    public function getQuestion($questionID) {
+      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_CONTENT.", P.".COL_POST_POSTED.", U.".COL_USER_USERNAME.", U.".COL_USER_FIRSTNAME.", U.".COL_USER_LASTNAME.", U.".COL_USER_MAJOR.", U.".COL_USER_ENROLLED."
+                                          FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." U
+                                          WHERE Q.".COL_QUESTION_ID." = ? AND Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND U.".COL_USER_ID." = P.".COL_POST_AUTHOR);
       $stmt->bind_param("i", $questionID);
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
-    }*/
+    }
 
     /**
      * @return question suited for page $page and step $step ordered by ID, every newer record has ID bigger than older one
@@ -110,14 +121,18 @@
       if($step < 1 || $page < 1)
         return null;
       $start = ($page - 1) * $step;
-      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME." FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." ORDER BY P.".COL_POST_ID." DESC LIMIT ?, ?");
+      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
+                                          FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                                          WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
+                                          ORDER BY P.".COL_POST_ID." DESC
+                                          LIMIT ?, ?");
       $stmt->bind_param("ii", $start, $step);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     /**
-     *
+     * Helper function for inserting post, so ids are in same order as posting time
      */
     private function getSmallestAvaliablePostID() {
       $stmt = $this->connection->prepare("SELECT ".COL_POST_ID." FROM ".DB_POST_TABLE." ORDER BY ".COL_POST_ID." DESC LIMIT 1");
@@ -141,7 +156,7 @@
     }
 
     /**
-     * Tries to insert question into database and returns if query succeeded
+     * @return ID of inserted question if insertion was successful, otherwise return false
      */
     public function insertQuestion($author, $header, $content) {
       $ID = $this->getSmallestAvaliablePostID();
@@ -152,7 +167,7 @@
       $result = $stmt->execute();
       if(!$result)
         $this->deletePost($ID);
-      return $result;
+      return $result ? $ID : false;
     }
 
     /**
@@ -170,6 +185,10 @@
       return $result;
     }
 
+    /**
+     * @param $name name of taag you want to insert(unique)
+     * @return whether insertion was successful or not
+     */
     public function insertTag($name) {
       $ID;
       while($this->doesExist(DB_TAG_TABLE, ($ID = rand(-2147483648, 2147483647))));
@@ -197,24 +216,48 @@
     }
 
     /**
-     * @param questionID of question whose tags you want to delete
-     * @return bool as success of query
-     */
-    public function clearTags($postID) {
-      $stmt = $this->connection->prepare("DELETE FROM ".DB_POSTTAG_TABLE." WHERE ".COL_POSTTAG_POST." = ?");
-      $stmt->bind_param("i", $postID);
-      return $stmt->execute();
-    }
-
-    /**
      * @param questionID primary key of question
      * @return array of answers associated with given question
      */
-    public function getAnswersRelatedToQuestion($questionID) {
-      $stmt = $this->connection->prepare("SELECT A.".COL_ANSWER_ID.", A.".COL_ANSWER_ACCEPTED.", P.".COL_POST_AUTHOR.", P.".COL_POST_POSTED.", P.".COL_POST_CONTENT." FROM ".DB_ANSWER_TABLE." A, ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P WHERE Q.".COL_QUESTION_ID." = ? AND A.".COL_ANSWER_PARENT." = Q.".COL_QUESTION_ID." AND A.".COL_ANSWER_ID." = P.".COL_ANSWER_ID);
-      $stmt->bind_param("i", $questionID);
+    public function getAnswersRelatedToQuestion($questionID, $page = 1, $step = 100) {
+      $stmt = $this->connection->prepare("SELECT A.".COL_ANSWER_ID.", A.".COL_ANSWER_ACCEPTED.", P.".COL_POST_POSTED.", P.".COL_POST_CONTENT.", U.".COL_USER_USERNAME.", U.".COL_USER_FIRSTNAME.", U.".COL_USER_LASTNAME.", U.".COL_USER_MAJOR.", U.".COL_USER_ENROLLED."
+                                          FROM ".DB_ANSWER_TABLE." A, ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." U
+                                          WHERE Q.".COL_QUESTION_ID." = ? AND A.".COL_ANSWER_PARENT." = Q.".COL_QUESTION_ID." AND A.".COL_ANSWER_ID." = P.".COL_ANSWER_ID." AND P.".COL_POST_AUTHOR." = U.".COL_USER_ID."
+                                          ORDER BY A.".COL_ANSWER_ID." DESC
+                                          LIMIT ?, ?");
+      $stmt->bind_param("iii", $questionID, $page, $step);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * @param $postID ID of post whose score you want to get
+     */
+    public function getPostsScore($postID) {
+      $stmt = $this->connection->prepare("SELECT SUM(".COL_REACTION_TYPE.")
+                                          FROM ".DB_REACTION_TABLE."
+                                          WHERE ".COL_REACTION_POST." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+      return $res !== null ? (int)$res : 0;
+    }
+
+    /**
+     * @return all avaliable tags as associative array
+     */
+    public function getAvaliableTags() {
+      return $this->connection->query("SELECT * FROM ".DB_TAG_TABLE)->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Attach tag to post
+     */
+    public function givePostATag($postID, $tagID) {
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_POSTTAG_TABLE."(".COL_POSTTAG_POST.", ".COL_POSTTAG_TAG.")
+                                          VALUES (?, ?)");
+      $stmt->bind_param("ii", $postID, $tagID);
+      return $stmt->execute();
     }
 
     /**
@@ -222,10 +265,12 @@
      * @return array of tags associated with given question
      */
     public function getTagsRelatedToQuestion($questionID) {
-      $stmt = $this->connection->prepare("SELECT T.".COL_TAG_NAME." FROM ".DB_TAG_TABLE." T, ".DB_POSTTAG_TABLE." QT WHERE QT.".COL_POST_ID." = ? AND QT.".COL_TAG_ID." = T.".COL_TAG_ID);
+      $stmt = $this->connection->prepare("SELECT T.".COL_TAG_ID.", T.".COL_TAG_NAME."
+                                          FROM ".DB_TAG_TABLE." T, ".DB_POSTTAG_TABLE." QT
+                                          WHERE QT.".COL_POST_ID." = ? AND QT.".COL_TAG_ID." = T.".COL_TAG_ID);
       $stmt->bind_param("i", $questionID);
       $stmt->execute();
-      return get_first($stmt->get_result()->fetch_all());
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     /**
@@ -263,6 +308,41 @@
                         $user[COL_USER_ENROLLED],
                         $user[COL_USER_ID]);
       return $stmt->execute();
+    }
+
+
+    /**
+     * Change content of post with given ID
+     */
+    private function updatePost($postID, $content) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_POST_TABLE."
+                                          SET
+                                          ".COL_POST_CONTENT." = ?
+                                          WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("si", $content, $postID);
+      return $stmt->execute();
+    }
+
+    /**
+     * Change header and content of question with given ID
+     */
+    public function updateQuestion($postID, $header, $content) {
+      if($this->updatePost($postID, $content) === false)
+        return false;
+      $stmt = $this->connection->prepare("UPDATE ".DB_QUESTION_TABLE."
+                                          SET
+                                          ".COL_QUESTION_HEADER." = ?
+                                          WHERE ".COL_QUESTION_ID." = ?");
+      $stmt->bind_param("si", $header, $postID);
+      return $stmt->execute();
+    }
+
+
+    /**
+     * Change content of answer with given ID
+     */
+    public function updateAnswer($postID, $content) {
+      return $this->updatePost($postID, $content);
     }
 
     /**
