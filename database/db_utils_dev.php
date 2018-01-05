@@ -37,6 +37,7 @@
         $password = $config["password"];
         $database = $config["database"];
         $this->connection = new mysqli($server, $user, $password, $database);
+        $this->connection->set_charset($config["db_charset"]);
       }
       else
         exit("Missing configuration file.");

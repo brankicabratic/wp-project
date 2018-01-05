@@ -13,6 +13,8 @@
   define('COL_USER_FIRSTNAME', 'FirstName');
   define('COL_USER_LASTNAME', 'LastName');
   define('COL_USER_SEX', 'Sex');
+  define('SEX_MALE', 'M');
+  define('SEX_FEMALE', 'F');
   define('COL_USER_AVATAR', 'Avatar');
   define('COL_USER_EMAIL', 'Email');
   define('COL_USER_MAJOR', 'Major');
