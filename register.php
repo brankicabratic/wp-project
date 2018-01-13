@@ -1,150 +1,91 @@
-<?php 
-session_start();
-
-include "parts.php";
-
-$errors=array();
-
-if(isset($_POST['register']))
-{
-	$name=htmlspecialchars($_POST['firstName']);
-	$lastname=htmlspecialchars($_POST['lastName']);
-	$username=htmlspecialchars($_POST['username']);
-	$email=htmlspecialchars($_POST['email']);
-	$password1=htmlspecialchars($_POST['password1']);
-	$password2=htmlspecialchars($_POST['password2']);
-	$city=htmlspecialchars($_POST['city']);
-	$major=htmlspecialchars($_POST['major']);
-	$startyear=htmlspecialchars($_POST['startyear']);
-	$address=htmlspecialchars($_POST['address']);
-	$date=htmlspecialchars($_POST['birthday']);
-	$gender=htmlspecialchars($_POST['gender']);
-}
-//proverava email
-if(!(filter_var($email, FILTER_VALIDATE_EMAIL)))
-{
-	$errors[]="Niste uneli pravilan email";
-}
-//proverava passworde
-if($password1!=$password2)
-{
-	$errors[]="Niste uneli istu sifru";
-}
-
-// da li korisnicko ime ima vise od 20 karaktera
-if(strlen($username)>20)
-{
-	$errors[]="Korisnicko ime mora sadrzati manje od 20 karaktera";
-}
-
-//U imenu ne smeju da stoje brojevi
-if(strpbrk($name, '1234567890')!= FALSE)
-{
-	$errors[]="Ime ne sme da sadrzi brojeve";
-}
-
-//Prezime ne sme da sadrzi brojeve
-if(strpbrk($lastname, '1234567890')!= FALSE)
-{
-	$errors[]="Prezime ne sme da sadrzi brojeve";
-}
-
-
-
-//Registracija uspesna
-if(count($errors)==0)
-{
-	$success;
-}
-
-
+<?php
+	require_once 'parts.php';
 ?>
-
-
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-	
-	<?php printIncludes("Registracija"); ?>
-	<link rel="stylesheet" type="text/css" href="css/login.css"></link>
+	<?php printIncludes('Registracija') ?>
 </head>
-	<body>
-	<?php printHeader(); ?>
-    <main>	
-		<h2 class="center">Registracija</h2>
-		<form method="post">
-			<fieldset>
-				<div class="form-group">
-					<label for="firstName">Ime:</label>
-					<input type="text" name="firstName" id="firstName">
-				</div>
-				<div class="form-group">
-					<label for="lastName">Prezime:</label>
-					<input type="text" name="lastName" id="lastName">
-				</div>
-				<div class="form-group">
-					<label for="username">Korisničko ime:</label>
-					<input type="text" name="username" id="username">
-				</div>
-				<div class="form-group">
-					<label for="email">Email:</label>
-					<input type="text" name="email" id="email">
-				</div>
-				<div class="form-group">
-					<label for="password1">Lozinka:</label>
-					<input type="password" name="password1" id="password1">
-				</div>
-				<div class="form-group">
-					<label for="password2">Ponovi lozinku:</label>
-					<input type="password" name="password2" id="password2">
-				</div>
-				<div class="form-group">
-					<label for="major">Smer:</label>
-					<select name="major" id="major">
-						<option value="it">Informacione tehnologije</option>
-						<option value="matematika">Matematika</option>
-					</select>
-				</div>
-				<div class="form-group">						
-					<label for="startyear">Godina upisa:</label>
-					<input type="date" name="startyear" id="startyear">
-				</div>
-				<div class="form-group">						
-					<label for="city">Grad:</label>
-					<input type="text" name="city" id="city">
-				</div>
-				<div class="form-group">						
-					<label for="address">Adresa:</label>
-					<input type="text" name="address" id="address">
-				</div>
-				<div class="form-group">						
-					<label for="birthday">Datum rođenja:</label>
-					<input type="date" name="birthday" id="birthday">
-				</div>
-				<div class="form-group">						
-					<label>Pol:</label> 
-					<div class="radios">
-						<input type="radio" name="gender" value="m" id="genderM" checked>
-						<label for="genderM">M</label>
-						<input type="radio" name="gender" value="z" id="genderZ">
-						<label for="genderZ">Ž</label> 
-					</div> 
-				</div>
-			</fieldset>
-			<input type="submit" value="Registruj se" name="register">
-		</form>
+<body>
+	<?php includeNavigation() ?>
 
-				<?php
+	<div class="container main-container">
+		<?php includeQuoteHeader() ?>
 
-				if(count($errors)!=0)
-				{
-					foreach ($errors as $error)
-					 {
-						echo "$error";
+		<div class="row register-tab">
+			<div class="col-lg-6 register-motto">
+				<div class="register-motto-content text-center">
+					<h3>Od studenata za studente</h3>
+					<img src="img/students.png" alt="students">
+				</div>
+			</div>
+			<div class="col-lg-6 registration-form-contaienr">
+				<h2 class="text-center">Pravljenje naloga</h2>
+				<div class="form-result-box"></div>
+				<form>
+					<input type="hidden" name="formType" value="registrationForm">
+					<div class="form-group">
+						<label for="">Korisničko ime:</label>
+						<input type="text" name="" id="" class="form-control">
+						<small class="form-text text-muted">Korisničko ime je vid autentikacije na sajtu.</small>
+					</div>
+					<div class="form-group">
+						<label for="">Email:</label>
+						<input type="text" name="" id="" class="form-control">
+						<small class="form-text text-muted">U nastavku registracije će Vam na ovaj email stici link za aktivaciju naloga. On takođe igra važnu ulogu u slučaju da zaboravite lozinku.</small>
+					</div>
+					<div class="form-group">
+						<label for="">Lozinka:</label>
+						<input type="text" name="" id="" class="form-control">
+					</div>
+					<div class="form-group">
+						<label for="">Ponovite lozinku:</label>
+						<input type="text" name="" id="" class="form-control">
+						<small class="form-text text-muted">Radi sigurnosti je potrebno da unesete lozinku još jednom.</small>
+					</div>
+					<input type="submit" class="btn btn-primary float-right" value="Registruj se">
+				</form>
+			</div>
+		</div>
+		<?php includeFooter() ?>
+	</div>
+
+	<?php includeScripts() ?>
+	<script>
+		$("form").submit(function(event) {
+			event.preventDefault();
+			var form = $(this);
+			var data = form.serialize();
+			var messageBox = $(".form-result-box");
+			var output = "";
+			$.ajax({
+				url: 'formHandler.php',
+				type: 'post',
+				dataType: 'json',
+				data: data,
+				success: function(result) {
+					console.log(result);
+					try {
+						if(result.length === 0) {
+							// POSLATI KORISNIKA NA NEKU STRANICU KOJA MU KAZE DA SE USPESNO REGISTROVAO
+						}
+						else
+							output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.join("<br>") + "</div>";
 					}
+					catch(err) {
+						output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+					}
+				},
+				error: function() {
+					output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+				},
+				complete: function() {
+					messageBox.html(output);
+					$('html').animate({scrollTop:0}, 500);
+			    $('body').animate({scrollTop:0}, 500);
 				}
-				  ?>
-	</main>
-	</body>
+			});
+		});
+	</script>
+</body>
 </html>
