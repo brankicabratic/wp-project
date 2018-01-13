@@ -1,49 +1,39 @@
 <?php
-include "parts.php"; 
-$errors = array();
-$messages = array();
-
-//if (isset($_POST["login"])) {
-//	$username = $_POST ["username"];
-//	$password = $_POST ["password"];
-//	$result = checkLogin($username, $password);
-//	if ($result) {
-//		header("Location: login_success.php?user=$username");
-//	}
-//	else {
-//		$errors[] = "Neispravno korisničko ime ili lozinka.";
-//	}
-	$main_user = false;
-	if (isset($_POST["loginButton"])) {
-		$main_user = getUser($_POST["username"], $_POST["password"]);
-		if (!$main_user) {
-			header( "Location: login.php?login-fail" );
-		} else {
-			$_SESSION["user"] = $main_user;
-			if ($_POST["remember-me"]) {
-				setcookie("username", $main_user[COL_USER_USERNAME], time()+60*60*24*365);
-			}
-			header( "Location: profile.php" );
-		}
+    session_start();
+	include "parts.php";
+	
+    if (isset($_POST["login"])) {
+	    $username = $_POST ["username"];
+	    $password = $_POST ["password"];
+	  //$result = checkLogin($username, $password); //Provera unesenih podataka.
 	}
 ?>
 <html>
-<head>
-	<meta charset="utf-8" /> 
-    <link rel="stylesheet" type="text/css" href="css/style.css"> 
-    <link rel="stylesheet" type="text/css" href="css/profile.css"> 
-    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"> 
-</head>
-<body>
-    <?php printHeader(); ?>
-    <main> 
-      <h1>Dobrodosli na login stranicu</h1>
-	  <h2>Uloguj se</h2>
-	      <form action="login.php" method="post">
-	          Korisničko ime: <br><input type="text" name="username"><br>
-	          Lozinka: <br><input type="password" name="password"><br>
-	      <input type="submit" value="Uloguj se" name="login">
-	      </form>
-	</main>
-</body>
+    <head>
+		<?php printIncludes("Logovanje"); ?>
+		<link rel="stylesheet" type="text/css" href="css/login.css"></link>
+    </head>
+    <body>
+          <?php printHeader(); ?>
+          <main>
+	        <h2 class="center">Uloguj se</h2>
+			<form action="login.php" method="post">
+				<fieldset>
+					<div class="form-group">
+						<label for="username">Korisničko ime:</label> 
+						<input type="text" name="username" id="username">
+					</div>
+					<div class="form-group">
+						<label for="password">Lozinka:</label>
+						<input type="password" name="password" id="password">
+					</div>
+					<div class="form-group check">
+						<input type="checkbox" name="remember-me" checked id="remember-me"> 
+						<label for="remember-me">Zapamti Moj Username<label> 
+					</div>
+				</fieldset>
+				<input type="submit" value="Uloguj se" name="login" />
+			</form>
+	      </main>
+    </body>
 </html>

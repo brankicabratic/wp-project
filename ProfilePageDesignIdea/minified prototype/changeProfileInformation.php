@@ -1,0 +1,1 @@
+<?php $errors=array();if(empty($errors)){}echo json_encode($errors);?>

@@ -1,21 +1,18 @@
 main {
-    width: 1200px;
-    margin: 0 auto;
-    background: white;
     display: flex;
+    padding: 0;
 }
 
 .profile-sidebar {
     width: 400px;
-    -webkit-box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
-    -moz-box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
-    box-shadow: 17px 1px 21px -17px rgba(0,0,0,0.75);
+    box-shadow: 0 -1px 15px 0 #555;
 }
 
 .profile-sidebar .profile-picture {
-    max-width: 60px;
-    max-height: 60px;
+    max-width: 80px;
+    max-height: 80px;
     border-radius: 50%;
+    margin: 20px auto;
 }
 
 .inline-container {
@@ -29,8 +26,13 @@ main {
 }
 
 .profile-info {
-    font-size: 20px;
+    font-size: 18px;
     font-weight: bolder;
+}
+
+.profile-info:first-of-type {
+    width: 30%;
+    text-align: right;
 }
 
 .content {
@@ -43,16 +45,16 @@ main {
 
 .tabs {
     height: 50px;
-    background: #D38000;
     display: flex;
-    flex-wrap: wrap;
 }
 
 .tabs .tab {
-    width: 200px;
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    background: #D38000;
+    transition: background .2s ease-out;
 }
 
 .tabs .tab > * {
@@ -64,3 +66,15 @@ main {
     cursor: pointer;
 }
 
+a {
+    cursor: pointer;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+}
+
+#questions {
+    display: block;
+}

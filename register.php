@@ -66,42 +66,74 @@ if(count($errors)==0)
 <html>
 <head>
 	
-	<title>Register</title>
-
-    <meta charset="utf-8" />
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="css/profile.css">
-    <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css">
-
+	<?php printIncludes("Registracija"); ?>
+	<link rel="stylesheet" type="text/css" href="css/login.css"></link>
 </head>
 	<body>
 	<?php printHeader(); ?>
-    <main>
-		<h1>Dobrodosli!</h1>		
-			<h2>Registracija</h2>
-				<form method="post">
-					Ime: <br><input type="text" name="firstName"><br>
-					Prezime: <br><input type="text" name="lastName"><br>
-					Korisničko ime: <br><input type="text" name="username"><br>
-					Email: <br><input type="text" name="email"><br>
-					Lozinka: <br><input type="password" name="password1"><br>
-					Ponovi lozinku: <br><input type="password" name="password2"><br>
-					Smer:<br><select name="major"><br>
+    <main>	
+		<h2 class="center">Registracija</h2>
+		<form method="post">
+			<fieldset>
+				<div class="form-group">
+					<label for="firstName">Ime:</label>
+					<input type="text" name="firstName" id="firstName">
+				</div>
+				<div class="form-group">
+					<label for="lastName">Prezime:</label>
+					<input type="text" name="lastName" id="lastName">
+				</div>
+				<div class="form-group">
+					<label for="username">Korisničko ime:</label>
+					<input type="text" name="username" id="username">
+				</div>
+				<div class="form-group">
+					<label for="email">Email:</label>
+					<input type="text" name="email" id="email">
+				</div>
+				<div class="form-group">
+					<label for="password1">Lozinka:</label>
+					<input type="password" name="password1" id="password1">
+				</div>
+				<div class="form-group">
+					<label for="password2">Ponovi lozinku:</label>
+					<input type="password" name="password2" id="password2">
+				</div>
+				<div class="form-group">
+					<label for="major">Smer:</label>
+					<select name="major" id="major">
 						<option value="it">Informacione tehnologije</option>
 						<option value="matematika">Matematika</option>
-					</select><br><br>
-					Godina upisa:<br><input type="date" name="startyear"><br>
-					Grad: <br><input type="text" name="city"><br>
-					Adresa: <br><input type="text" name="address"><br>
-					Datum rođenja: <br><input type="date" name="birthday"><br>
-					Pol: <br><input type="radio" name="gender" value="m" checked> M
-					<input type="radio" name="gender" value="z"> Ž <br> 
-
-					<input type="submit" value="Registruj se" name="register">
-				</form>
-				<br>
-				<br>
-				<br>
+					</select>
+				</div>
+				<div class="form-group">						
+					<label for="startyear">Godina upisa:</label>
+					<input type="date" name="startyear" id="startyear">
+				</div>
+				<div class="form-group">						
+					<label for="city">Grad:</label>
+					<input type="text" name="city" id="city">
+				</div>
+				<div class="form-group">						
+					<label for="address">Adresa:</label>
+					<input type="text" name="address" id="address">
+				</div>
+				<div class="form-group">						
+					<label for="birthday">Datum rođenja:</label>
+					<input type="date" name="birthday" id="birthday">
+				</div>
+				<div class="form-group">						
+					<label>Pol:</label> 
+					<div class="radios">
+						<input type="radio" name="gender" value="m" id="genderM" checked>
+						<label for="genderM">M</label>
+						<input type="radio" name="gender" value="z" id="genderZ">
+						<label for="genderZ">Ž</label> 
+					</div> 
+				</div>
+			</fieldset>
+			<input type="submit" value="Registruj se" name="register">
+		</form>
 
 				<?php
 
@@ -109,7 +141,7 @@ if(count($errors)==0)
 				{
 					foreach ($errors as $error)
 					 {
-						echo "$error<br>";
+						echo "$error";
 					}
 				}
 				  ?>
