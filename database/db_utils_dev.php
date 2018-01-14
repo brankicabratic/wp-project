@@ -7,7 +7,7 @@
      * List of methods:
      *
      * getUser($username) DONE
-     * createUser($username, $firstName, $lastName, $password, $email) DONE
+     * createUser($username, $password, $email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
      * doesExist($table, $ID) DONE
@@ -19,6 +19,7 @@
      * getQuestion($questionID) DONE
      * getAnswersRelatedToQuestion($questionID, $page = 1, $step = 100) DONE
      * getPostsScore($postID) DONE
+     * countQuestionsAnswers($questionID) DONE
      * getAvaliableTags() DONE
      * givePostATag($postID, $tagID) DONE
      * getTagsRelatedToQuestion($questionID) DONE
@@ -68,13 +69,13 @@
      * Store user with given parameters in database
      * @return true if everything went fine, otherwise return false(usually whether username already exists in database if types are checked)
      */
-    public function createUser($username, $firstName, $lastName, $password, $email) {
+    public function createUser($username, $password, $email) {
       $ID;
       while($this->doesExist(DB_USER_TABLE, ($ID = rand(-2147483648, 2147483647))));
       $stmt = $this->connection->prepare("INSERT INTO
-                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_FIRSTNAME.", ".COL_USER_LASTNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.")
-                                          VALUES (?, ?, ?, ?, ?, ?)");
-      $stmt->bind_param("isssss", $ID, $username, $firstName, $lastName, $password, $email);
+                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.")
+                                          VALUES (?, ?, ?, ?)");
+      $stmt->bind_param("isss", $ID, $username, $password, $email);
       return $stmt->execute();
     }
 
@@ -243,6 +244,19 @@
       $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
       return $res !== null ? (int)$res : 0;
     }
+
+    /**
+     * @return number of answers associatied with question
+     */
+     public function countQuestionsAnswers($questionID) {
+       $stmt = $this->connection->prepare("SELECT COUNT(1)
+                                           FROM ".DB_ANSWER_TABLE."
+                                           WHERE ".COL_ANSWER_PARENT." = ?");
+       $stmt->bind_param("i", $questionID);
+       $stmt->execute();
+       $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+       return $res !== null ? (int)$res : 0;
+     }
 
     /**
      * @return all avaliable tags as associative array
