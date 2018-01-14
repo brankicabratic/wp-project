@@ -18,6 +18,7 @@
 		case "askQuestion":
 			$errors[] = "Neka greska pri unosu!";
 			$errors[] = "Nevalidni tagovi";
+			$errors[] = $_POST["tags"];
 			break;
 		default:
 			exit(json_encode(null));
