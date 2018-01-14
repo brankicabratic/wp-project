@@ -1,4 +1,5 @@
 <?php
+	require_once 'database/db_utils_dev.php';
 	require_once 'parts.php';
 ?>
 <!DOCTYPE html>
@@ -142,14 +143,38 @@
 
 	<?php includeScripts() ?>
 	<script>
-		var avaliableTags = [
-			"Matematika",
-			"Informatika",
-			"Biologija",
-			"C",
-			"C++",
-			"Javascript"
-		];
+		Array.prototype.findTag = function(tagName) {
+			for(var i = 0; i < this.length; i++)
+				if(this[i].<?php echo COL_TAG_NAME ?> === tagName)
+					return i;
+			return -1;
+		};
+		var avaliableTags = <?php echo json_encode(array(
+			array(
+				COL_TAG_NAME => "Matematika",
+				COL_TAG_ID => 1
+			),
+			array(
+				COL_TAG_NAME => "Informatika",
+				COL_TAG_ID => 2
+			),
+			array(
+				COL_TAG_NAME => "Biologija",
+				COL_TAG_ID => 3
+			),
+			array(
+				COL_TAG_NAME => "C",
+				COL_TAG_ID => 4
+			),
+			array(
+				COL_TAG_NAME => "C++",
+				COL_TAG_ID => 5
+			),
+			array(
+				COL_TAG_NAME => "Javascript",
+				COL_TAG_ID => 6
+			)
+		)) ?>;
 		var choosenTags = [];
 		var tagInput = $("#add-tag");
 		var tagBlock = {
@@ -158,7 +183,7 @@
 				this.target.html("");
 			},
 			add: function(tag) {
-				this.target.append("<div class=\"tag\">" + tag + " <i class=\"fas fa-times\" onclick=\"removeTag('" + tag + "')\" style=\"cursor: pointer\"></i></div>");
+				this.target.append("<div class=\"tag\">" + tag.<?php echo COL_TAG_NAME ?> + " <i class=\"fas fa-times\" onclick=\"removeTag('" + tag.<?php echo COL_TAG_NAME ?> + "')\" style=\"cursor: pointer\"></i></div>");
 			},
 			update: function() {
 				this.reset();
@@ -173,7 +198,7 @@
 				this.target.html("");
 			},
 			add: function(tag) {
-				this.target.append("<option value=\"" + tag + "\">" + tag + "</tag>")
+				this.target.append("<option value=\"" + tag.<?php echo COL_TAG_NAME ?> + "\">" + tag.<?php echo COL_TAG_NAME ?> + "</tag>")
 			},
 			update: function() {
 				this.reset();
@@ -184,14 +209,13 @@
 		};
 
 		var addTag = function(tag) {
-			var indexOfTag = avaliableTags.indexOf(tag), indexOfTagInChoosenTags = choosenTags.indexOf(tag);
+			var indexOfTag = avaliableTags.findTag(tag), indexOfTagInChoosenTags = choosenTags.findTag(tag);
 			if(indexOfTag === -1 || indexOfTagInChoosenTags !== -1)
 				return;
-			console.log(choosenTags.length);
 			if(choosenTags.length >= 5)
 				return;
+			choosenTags.push(Object.assign({}, avaliableTags[indexOfTag]));
 			avaliableTags.splice(indexOfTag, 1);
-			choosenTags.push(tag);
 			tagList.update();
 			tagInput.blur();
 			tagInput.val("");
@@ -199,11 +223,11 @@
 		};
 
 		var removeTag = function(tag) {
-			var indexOfTag = choosenTags.indexOf(tag);
+			var indexOfTag = choosenTags.findTag(tag);
 			if(indexOfTag === -1)
 				return;
+			avaliableTags.push(Object.assign({}, choosenTags[indexOfTag]));
 			choosenTags.splice(indexOfTag, 1);
-			avaliableTags.push(tag);
 			tagBlock.update();
 			tagList.update();
 		};
@@ -222,6 +246,7 @@
 			var data = form.serialize();
 			var messageBox = $(".form-result-box");
 			var output = "";
+			data += "&&tags=" + choosenTags.map(function(el) { return el.<?php echo COL_TAG_ID ?>; }).join();
 			$.ajax({
 				url: 'formHandler.php',
 				type: 'post',
@@ -245,8 +270,8 @@
 				},
 				complete: function() {
 					messageBox.html(output);
-					/*$('html').animate({scrollTop:0}, 500);
-			    $('body').animate({scrollTop:0}, 500);*/
+					$('html').animate({scrollTop:0}, 500);
+			    $('body').animate({scrollTop:0}, 500);
 				}
 			});
 		});
