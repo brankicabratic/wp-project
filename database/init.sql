@@ -5,8 +5,8 @@ USE pmfoverflow;
 CREATE TABLE User(
 	UserID int NOT NULL,
 	Username varchar(32) NOT NULL UNIQUE,
-	FirstName varchar(100) NOT NULL,
-	LastName varchar(100) NOT NULL,
+	FirstName varchar(100) DEFAULT "" NOT NULL,
+	LastName varchar(100) DEFAULT "" NOT NULL,
 	Password varchar(500) NOT NULL,
 	Sex varchar(1) DEFAULT NULL,
 	Avatar varchar(1000) DEFAULT NULL,

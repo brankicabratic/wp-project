@@ -1,6 +1,28 @@
 <?php
 	require_once 'database/db_utils_dev.php';
 	require_once 'parts.php';
+
+	function printQuestion(&$question) {
+		$dateFormat = date("d. m. Y. \u H:i", strtotime($question[COL_POST_POSTED]));
+		echo "<div class=\"question\">
+			<a href=\"question.php?id={$question[COL_QUESTION_ID]}\"><span class=\"heading\">{$question[COL_QUESTION_HEADER]}</span></a>";
+		if(!empty($question["TAGS"])) {
+			echo "<span class=\"tags\">";
+			foreach($question["TAGS"] as &$tag)
+				echo "<a href=\"tag.php?name={$tag[COL_TAG_NAME]}\"><span class=\"tag\">{$tag[COL_TAG_NAME]}</span></a>";
+			echo "</span>";
+		}
+		echo "<span class=\"author\">Pitao <a href=\"profile.php?user={$question[COL_USER_USERNAME]}\">{$question[COL_USER_USERNAME]}</a> {$dateFormat} | odgovora {$question["NUMBEROFASNWERS"]} | ocena {$question["SCORE"]}</span>
+			</div>";
+	}
+
+	$db = new Database;
+	$questions = $db->getNthPageQuestions(1, 5);
+	foreach($questions as &$question) {
+		$question["TAGS"] = $db->getTagsRelatedToQuestion($question[COL_QUESTION_ID]);
+		$question["SCORE"] = $db->getPostsScore($question[COL_QUESTION_ID]);
+		$question["NUMBEROFASNWERS"] = $db->countQuestionsAnswers($question[COL_QUESTION_ID]);
+	}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,41 +104,10 @@
         </div>
 
 				<div id="questions">
-					<div class="question">
-						<a href="#"><span class="heading">How do I make a placeholder for a 'select' box?</span></a>
-						<span class="tags">
-							<span class="tag">Matematika</span>
-							<span class="tag">Informatika</span>
-							<span class="tag">Matematika</span>
-							<span class="tag">Informatika</span>
-							<span class="tag">Matematika</span>
-						</span>
-						<span class="author">Pitao <a href="#">peraPeric</a> 23. 01. 2018. u 17:35 | 15 odgovora | ocena 5</span>
-					</div>
-
-					<div class="question">
-						<a href="#"><span class="heading">How do I make a placeholder for a 'select' box?</span></a>
-						<span class="tags">
-							<span class="tag">Matematika</span>
-							<span class="tag">Informatika</span>
-							<span class="tag">Matematika</span>
-							<span class="tag">Informatika</span>
-							<span class="tag">Matematika</span>
-						</span>
-						<span class="author">Pitao <a href="#">peraPeric</a> 23. 01. 2018. u 17:35 | 15 odgovora | ocena 5</span>
-					</div>
-
-					<div class="question">
-						<a href="#"><span class="heading">How do I make a placeholder for a 'select' box?</span></a>
-						<span class="tags">
-							<span class="tag">Matematika</span>
-							<span class="tag">Informatika</span>
-							<span class="tag">Matematika</span>
-							<span class="tag">Informatika</span>
-							<span class="tag">Matematika</span>
-						</span>
-						<span class="author">Pitao <a href="#">peraPeric</a> 23. 01. 2018. u 17:35 | 15 odgovora | ocena 5</span>
-					</div>
+					<?php
+						foreach($questions as &$question)
+							printQuestion($question);
+					?>
 				</div>
 
 		  </div>
@@ -149,32 +140,7 @@
 					return i;
 			return -1;
 		};
-		var avaliableTags = <?php echo json_encode(array(
-			array(
-				COL_TAG_NAME => "Matematika",
-				COL_TAG_ID => 1
-			),
-			array(
-				COL_TAG_NAME => "Informatika",
-				COL_TAG_ID => 2
-			),
-			array(
-				COL_TAG_NAME => "Biologija",
-				COL_TAG_ID => 3
-			),
-			array(
-				COL_TAG_NAME => "C",
-				COL_TAG_ID => 4
-			),
-			array(
-				COL_TAG_NAME => "C++",
-				COL_TAG_ID => 5
-			),
-			array(
-				COL_TAG_NAME => "Javascript",
-				COL_TAG_ID => 6
-			)
-		)) ?>;
+		var avaliableTags = <?php echo json_encode($db->getAvaliableTags()) ?>;
 		var choosenTags = [];
 		var tagInput = $("#add-tag");
 		var tagBlock = {
