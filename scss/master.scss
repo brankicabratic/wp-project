@@ -5,19 +5,14 @@
   border-radius: $pixels;
 }
 
-/*
-@mixin box-shadow(0px, 0px, 5px, 0px, rgba(0,0,0,0.75)) {
-  -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-	-moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-	box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
-}
-*/
-
 // stylesheet
+body, html, nav {
+  min-width: 300px;
+}
+
 body {
 	font-family: 'Raleway', sans-serif;
 	background: url('../img/noisy-texture-background.png');
-	min-width: 420px;
 }
 
 /* SCROLLBAR CUSTOMIZASTION */
@@ -445,6 +440,7 @@ footer {
     }
 
     .author {
+      display: block;
       font-size: 13px;
     }
 
