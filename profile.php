@@ -311,7 +311,7 @@
         data: data,
         success: function(result) {
           try {
-            if(result.length === 0) {
+            if(result.errors.length === 0) {
               output = "<div class=\"alert alert-success\" role=\"alert\">Izmene su uspešno sačuvane!</div>";
 
               // CLEAN PASSWORD FIELDS DUE TO SECURITY REASONS
@@ -326,7 +326,7 @@
               }
             }
             else
-              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.join("<br>") + "</div>";
+              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
           }
           catch(err) {
             output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";

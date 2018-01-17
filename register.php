@@ -19,7 +19,7 @@
           <img src="img/students.png" alt="students">
         </div>
       </div>
-      <div class="col-lg-6 registration-form-contaienr">
+      <div class="col-lg-6" id="registration-form-container">
         <h2 class="text-center">Pravljenje naloga</h2>
         <div class="form-result-box"></div>
         <form>
@@ -66,11 +66,11 @@
         success: function(result) {
           console.log(result);
           try {
-            if(result.length === 0) {
+            if(result.errors.length === 0) {
               // POSLATI KORISNIKA NA NEKU STRANICU KOJA MU KAZE DA SE USPESNO REGISTROVAO
             }
             else
-              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.join("<br>") + "</div>";
+              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
           }
           catch(err) {
             output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
@@ -80,9 +80,12 @@
           output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
         },
         complete: function() {
+          if(output === "")
+            return;
           messageBox.html(output);
-          $('html').animate({scrollTop:0}, 500);
-          $('body').animate({scrollTop:0}, 500);
+          $('html, body').animate({
+            scrollTop: $("#registration-form-container").offset().top - 59
+          }, 1000);
         }
       });
     });

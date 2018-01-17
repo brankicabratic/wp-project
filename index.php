@@ -220,11 +220,11 @@
         success: function(result) {
           console.log(result);
           try {
-            if(result.length === 0) {
-              // POSLATI KORISNIKA NA NEKU STRANICU KOJA MU KAZE DA SE USPESNO REGISTROVAO
+            if(result.errors.length === 0) {
+              // OTVORITI KORISNIKOVO PITANJE
             }
             else
-              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.join("<br>") + "</div>";
+              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
           }
           catch(err) {
             output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
@@ -235,8 +235,7 @@
         },
         complete: function() {
           messageBox.html(output);
-          $('html').animate({scrollTop:0}, 500);
-          $('body').animate({scrollTop:0}, 500);
+          $('html, body').animate({scrollTop:0}, 500);
         }
       });
     });
