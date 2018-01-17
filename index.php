@@ -109,7 +109,7 @@
           ?>
         </div>
       </div>
-      
+
       <div class="col-md-4 hidden-lg-down">
         <div class="side-block">
           Najcesce teme protekle nedelje:

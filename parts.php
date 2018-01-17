@@ -1,5 +1,8 @@
 <?php
+	require_once 'session.php';
+
   function includeNavigation() {
+  	global $user;
 ?>
   <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
     <div class="container">
@@ -14,19 +17,26 @@
             <a class="nav-link" href="index.php">Pitanja</a>
           </li>
         </ul>
-
-        <!-- FOR ANONYMOUS USERS -->
-          <!--<ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" href="#">Uloguj se</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Registruj se</a>
-            </li>
-          </ul>-->
-
-        <!-- FOR LOGGED IN USERS -->
+<?php
+		if ($user) {
+?>
+				<!-- FOR LOGGED IN USERS -->
         <span class="navbar-text disabled">You're logged in as <a href="profile.php?user=peraPeric">Pera Peric</a> (<a href="#">Log out</a>)</span>
+<?php
+		} else {
+?>       
+        <!-- FOR ANONYMOUS USERS -->
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="login.php">Uloguj se</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="register.php">Registruj se</a>
+          </li>
+        </ul>
+<?php
+		}
+?>      
       </div>
     </div>
   </nav>
@@ -58,8 +68,8 @@
 
   function includeQuoteHeader() {
 ?>
-  <div class="register-header">
-    <div class="register-header-content">
+  <div class="home-header">
+    <div class="home-header-content">
       <h3>"The important thing is not to stop questioning. Curiosity has its own reason for existing."</h3>
       <small>Albert Einstein</small>
     </div>

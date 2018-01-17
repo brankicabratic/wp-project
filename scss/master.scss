@@ -201,13 +201,13 @@ a {
 	text-align: center;
 }
 
-/* REGISTER PAGE HEADER */
-.register-header {
+/* HOME PAGE HEADER */
+.home-header {
 	width: 100%;
 	background: url('../img/reg-bg-1920x600.jpg') 50% 50% no-repeat;
 }
 
-.register-header-content {
+.home-header-content {
 	background-color: rgba(0, 0, 0, 0.7);
 	padding: 5px 15px;
 	@include border-radius(5px);
@@ -218,19 +218,9 @@ a {
 }
 
 @media (max-width: 992px) {
-	.register-header-content {
+	.home-header-content {
 	  	margin: 50px 15px;
 	}
-}
-
-.register-motto {
-	display: flex;
-  	flex-direction: column;
- 	justify-content: center;
-}
-
-.register-motto-content > img {
-	width: 300px;
 }
 
 /* FOOTER */
@@ -256,7 +246,7 @@ footer {
 	footer > .row > div:nth-child(-n+2) {
 		border-right: 1px solid #99c9ff;
 	}
-}
+}  
 
 .footer-heading {
 	display: block;
@@ -456,5 +446,21 @@ footer {
         color: white;
       }
     }
+  }
+}
+
+/* REGISTRATION PAGE */
+
+.register-tab {
+  padding: 50px;
+
+  .register-motto {
+    display: flex;
+      flex-direction: column;
+    justify-content: center;
+  }
+
+  .register-motto-content > img {
+    width: 300px;
   }
 }
