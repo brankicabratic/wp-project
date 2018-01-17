@@ -246,7 +246,7 @@ footer {
 	footer > .row > div:nth-child(-n+2) {
 		border-right: 1px solid #99c9ff;
 	}
-}  
+}
 
 .footer-heading {
 	display: block;
@@ -462,5 +462,9 @@ footer {
 
   .register-motto-content > img {
     width: 300px;
+
+    @media (max-width: 575px) {
+      width: 200px;
+    }
   }
 }
