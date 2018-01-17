@@ -25,22 +25,22 @@
         <form>
           <input type="hidden" name="formType" value="registrationForm">
           <div class="form-group">
-            <label for="">Korisničko ime:</label>
-            <input type="text" name="" id="" class="form-control">
+            <label for="name">Korisničko ime:</label>
+            <input type="text" name="name" id="" class="form-control">
             <small class="form-text text-muted">Korisničko ime je vid autentikacije na sajtu.</small>
           </div>
           <div class="form-group">
-            <label for="">Email:</label>
-            <input type="text" name="" id="" class="form-control">
+            <label for="email">Email:</label>
+            <input type="text" name="email" id="" class="form-control">
             <small class="form-text text-muted">U nastavku registracije će Vam na ovaj email stici link za aktivaciju naloga. On takođe igra važnu ulogu u slučaju da zaboravite lozinku.</small>
           </div>
           <div class="form-group">
-            <label for="">Lozinka:</label>
-            <input type="text" name="" id="" class="form-control">
+            <label for="password">Lozinka:</label>
+            <input type="password" name="password" id="" class="form-control">
           </div>
           <div class="form-group">
-            <label for="">Ponovite lozinku:</label>
-            <input type="text" name="" id="" class="form-control">
+            <label for="password2">Ponovite lozinku:</label>
+            <input type="password" name="password2" id="" class="form-control">
             <small class="form-text text-muted">Radi sigurnosti je potrebno da unesete lozinku još jednom.</small>
           </div>
           <input type="submit" class="btn btn-primary float-right" value="Registruj se">
