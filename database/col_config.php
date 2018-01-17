@@ -28,6 +28,7 @@
   define('COL_POST_POSTED', 'PostingTime');
   define('COL_POST_MODIFIED', 'ModificationTime');
   define('COL_POST_AUTHOR', 'Author');
+  define('COL_POST_TYPE', 'Type');
 
   define('COL_REACTION_USER', 'UserID');
   define('COL_REACTION_POST', 'PostID');
@@ -50,4 +51,8 @@
   define('REACTION_LIKE', 1);
   define('REACTION_DISLIKE', -1);
   define('REACTION_NONE', 0);
+
+  // POST TYPES
+  define('POST_TYPE_QUESTION', 1);
+  define('POST_TYPE_ANSWER', 2);
 ?>

@@ -11,7 +11,7 @@
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
      * doesExist($table, $ID) DONE
-     * insertPost($ID, $author, $content) DONE
+     * insertPost($ID, $author, $content, $type) DONE
      * insertQuestion($author, $header, $content) DONE
      * insertAnswer($author, $content, $questionID) DONE
      * insertTag($name) DONE
@@ -149,11 +149,13 @@
      * @param time (optional) time as string, recommended format "Y-m-d H:i:s"
      * @return ID of inserted post or false if query failed
      */
-    public function insertPost($ID, $author, $content) {
+    public function insertPost($ID, $author, $content, $type) {
+      if($type !== POST_TYPE_ANSWER && $type !== POST_TYPE_QUESTION)
+        return false;
       if(($userID = $this->getUserID($author)) === null)
         return false;
-      $stmt = $this->connection->prepare("INSERT INTO ".DB_POST_TABLE."(".COL_POST_ID.", ".COL_POST_CONTENT.", ".COL_POST_AUTHOR.") VALUES (?, ?, ?)");
-      $stmt->bind_param("isi", $ID, $content, $userID);
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_POST_TABLE."(".COL_POST_ID.", ".COL_POST_CONTENT.", ".COL_POST_AUTHOR.", ".COL_POST_TYPE.") VALUES (?, ?, ?, ?)");
+      $stmt->bind_param("isii", $ID, $content, $userID, $type);
       return $stmt->execute();
     }
 
@@ -162,7 +164,7 @@
      */
     public function insertQuestion($author, $header, $content) {
       $ID = $this->getSmallestAvaliablePostID();
-      if($this->insertPost($ID, $author, $content) === false)
+      if($this->insertPost($ID, $author, $content, POST_TYPE_QUESTION) === false)
         return false;
       $stmt = $this->connection->prepare("INSERT INTO ".DB_QUESTION_TABLE."(".COL_QUESTION_ID.", ".COL_QUESTION_HEADER.") VALUES (?, ?)");
       $stmt->bind_param("is", $ID, $header);
@@ -177,7 +179,7 @@
      */
     public function insertAnswer($author, $content, $questionID) {
       $ID = $this->getSmallestAvaliablePostID();
-      if($this->insertPost($ID, $author, $content) === false)
+      if($this->insertPost($ID, $author, $content, POST_TYPE_ANSWER) === false)
         return false;
       $stmt = $this->connection->prepare("INSERT INTO ".DB_ANSWER_TABLE."(".COL_ANSWER_ID.", ".COL_ANSWER_PARENT.") VALUES (?, ?)");
       $stmt->bind_param("ii", $ID, $questionID);
