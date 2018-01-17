@@ -23,8 +23,6 @@
     $question["SCORE"] = $db->getPostsScore($question[COL_QUESTION_ID]);
     $question["NUMBEROFASNWERS"] = $db->countQuestionsAnswers($question[COL_QUESTION_ID]);
   }
-
-  var_dump($db->insertQuestion("marko1234", "Nesto", "Nesto drugo"));
 ?>
 <!DOCTYPE html>
 <html lang="en">
