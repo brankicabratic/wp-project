@@ -14,6 +14,8 @@ CREATE TABLE User(
 	Major varchar(50) DEFAULT NULL,
 	About varchar(2000) DEFAULT NULL,
 	EnrollmentYear int,
+	Verified tinyint(1) DEFAULT NULL,
+	LastTimeSeen datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	DateOfBirth date DEFAULT NULL,
 	RegistrationTime datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	PRIMARY KEY(UserID)

@@ -7,6 +7,8 @@
      * List of methods:
      *
      * getUser($username, $getter=USER_GETTER_ALL) DONE
+     * updateOnlineTime($username) DONE
+     * verifyUser($username)
      * createUser($username, $password, $email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
@@ -72,6 +74,32 @@
       $stmt->bind_param("s", $username);
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
+    }
+
+    public function updateOnlineTime($username) {
+      /**
+      * Sets that user is online at the moment
+      * @return boolean as successfulness of query
+      */
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET ".COL_USER_LASTSEEN." = now()
+                                          WHERE ".COL_USER_USERNAME." = ?");
+      $stmt->bind_param("s", $username);
+      return $stmt->execute();
+    }
+
+    /**
+     * Verify user
+     * @return boolean as successfulness of query
+     */
+    public function verifyUser($username) {
+      if(!$username)
+        return false;
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET ".COL_USER_VERIFIED." = 1
+                                          WHERE ".COL_USER_USERNAME." = ?");
+      $stmt->bind_param("s", $username);
+      return $stmt->execute();
     }
 
     /**

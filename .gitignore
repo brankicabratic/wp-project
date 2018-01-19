@@ -1,1 +1,3 @@
 .sass-cache/
+database/resetDB.sh
+**/*.swp

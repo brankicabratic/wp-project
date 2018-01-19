@@ -22,6 +22,8 @@
   define('COL_USER_BIRTHDAY', 'DateOfBirth');
   define('COL_USER_REGISTERED', 'RegistrationTime');
   define('COL_USER_ENROLLED', 'EnrollmentYear');
+  define('COL_USER_LASTSEEN', 'LastTimeSeen');
+  define('COL_USER_VERIFIED', 'Verified');
 
   define('COL_POST_ID', 'PostID');
   define('COL_POST_CONTENT', 'Content');
