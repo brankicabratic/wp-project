@@ -55,4 +55,9 @@
   // POST TYPES
   define('POST_TYPE_QUESTION', 1);
   define('POST_TYPE_ANSWER', 2);
+
+  // USER GETTER
+  define('USER_GETTER_ALL', 9900);
+  define('USER_GETTER_AUTHENTICATION', 9901);
+  define('USER_GETTER_LOGIN_DATA', 9902)
 ?>

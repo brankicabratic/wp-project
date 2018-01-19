@@ -6,7 +6,7 @@
     /**
      * List of methods:
      *
-     * getUser($username) DONE
+     * getUser($username, $getter=USER_GETTER_ALL) DONE
      * createUser($username, $password, $email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
@@ -49,6 +49,11 @@
         DB_ANSWER_TABLE => COL_ANSWER_ID,
         DB_TAG_TABLE => COL_TAG_ID
       );
+      $this->getterTable = array(
+        USER_GETTER_ALL => "*",
+        USER_GETTER_AUTHENTICATION => COL_USER_USERNAME . ", " . COL_USER_PASSWORD,
+        USER_GETTER_LOGIN_DATA => COL_USER_USERNAME . ", " . COL_USER_FIRSTNAME . ", " . COL_USER_LASTNAME
+      );
     }
     public function __destruct() {
       $this->connection->close();
@@ -58,8 +63,12 @@
      * @param username as string
      * @return user as associative array or null if user is not found
      */
-    public function getUser($username) {
-      $stmt = $this->connection->prepare("SELECT * FROM ".DB_USER_TABLE." WHERE ".COL_USER_USERNAME." = ?");
+    public function getUser($username, $getter=USER_GETTER_ALL) {
+      if(!$username)
+        return null;
+      if(!isset($this->getterTable[$getter]))
+        throw new Exception("Invalid getter passed to function getUser method in Database class.");
+      $stmt = $this->connection->prepare("SELECT ".$this->getterTable[$getter]." FROM ".DB_USER_TABLE." WHERE ".COL_USER_USERNAME." = ?");
       $stmt->bind_param("s", $username);
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
@@ -102,6 +111,15 @@
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
     }
+
+    public function getUserUsername($userID) {
+      $stmt = $this->connection->prepare("SELECT ".COL_USER_USERNAME." FROM ".DB_USER_TABLE." WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+    }
+
+
 
     /**
      * @param questionID has to be integer
