@@ -1,8 +1,10 @@
 <?php
   require_once 'parts.php';
 
-  if($user)
+  if($user) {
     header("Location: index.php");
+    exit();
+  }
 ?>
 <!DOCTYPE html>
 <html lang="en">
