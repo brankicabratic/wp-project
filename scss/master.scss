@@ -468,3 +468,69 @@ footer {
     }
   }
 }
+
+/* LOGIN PAGE */
+div#login-container {
+  padding: 15px 0;
+  form {
+    text-align: center;
+    display: block;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 15px;
+
+    h3 {
+      padding: 5px 0;
+    }
+
+    input {
+      @include border-radius(0);
+
+      &[name="password"] {
+        background: white url('../img/password.png');
+      }
+
+      &[name="username"] {
+        background: white url('../img/man-user.png');
+      }
+
+      &[type="password"], &[type="text"] {
+        padding: 3px 3px 3px 36px;
+        border: none;
+        font-size: 20px;
+        border-bottom: 3px solid #006DF0;
+        width: 100%;
+        background-position: 5px 5px;
+        background-repeat: no-repeat;
+        background-size: 26px 26px;
+      }
+    }
+
+
+    .form-group {
+      * {
+        margin: 0;
+      }
+
+      label {
+        display: block;
+        width: 100%;
+        text-align: left;
+      }
+    }
+
+    .checkbox {
+      margin-bottom: 5px;
+      text-align: left;
+      label input {
+        position: relative;
+        top: 3px;
+      }
+
+    }
+
+    input[type="submit"].btn {
+      width: 100%;
+    }
+  }
+}
