@@ -6,6 +6,7 @@
   define('DB_POSTTAG_TABLE', 'Tagged');
   define('DB_TAG_TABLE', 'Tag');
   define('DB_REACTION_TABLE', 'Reaction');
+  define('DB_RANK_TABLE', 'Rank');
 
   define('COL_USER_ID', 'UserID');
   define('COL_USER_USERNAME', 'Username');
@@ -24,6 +25,7 @@
   define('COL_USER_ENROLLED', 'EnrollmentYear');
   define('COL_USER_LASTSEEN', 'LastTimeSeen');
   define('COL_USER_VERIFIED', 'Verified');
+  define('COL_USER_RANK', 'BelongsTo');
 
   define('COL_POST_ID', 'PostID');
   define('COL_POST_CONTENT', 'Content');
@@ -49,6 +51,9 @@
   define('COL_POSTTAG_POST', 'PostID');
   define('COL_POSTTAG_TAG', 'TagID');
 
+  define('COL_RANK_ID', 'RankID');
+  define('COL_RANK_NAME', 'Name');
+
   // REACTIONS
   define('REACTION_LIKE', 1);
   define('REACTION_DISLIKE', -1);
@@ -61,5 +66,5 @@
   // USER GETTER
   define('USER_GETTER_ALL', 9900);
   define('USER_GETTER_AUTHENTICATION', 9901);
-  define('USER_GETTER_LOGIN_DATA', 9902)
+  define('USER_GETTER_LOGIN_DATA', 9902);
 ?>

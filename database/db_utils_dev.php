@@ -31,6 +31,8 @@
      * updateAnswer($postID, $content) DONE
      * doesReactionExist($userID, $postID) DONE
      * saveReaction($userID, $postID, $type) DONE
+     * insertRank($rankID, $rankName) DONE
+     * promoteUser($username, $rankID) DONE
      */
     private $connection, $idTable;
     public function __construct($configFile = "db.ini") {
@@ -76,11 +78,13 @@
       return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     }
 
+    /**
+     * Sets that user is online at the moment
+     * @return boolean as successfulness of query
+     */
     public function updateOnlineTime($username) {
-      /**
-      * Sets that user is online at the moment
-      * @return boolean as successfulness of query
-      */
+      if(!$username)
+        return false;
       $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
                                           SET ".COL_USER_LASTSEEN." = now()
                                           WHERE ".COL_USER_USERNAME." = ?");
@@ -446,6 +450,27 @@
                                               VALUES (?, ?, ?)");
         $stmt->bind_param("iii", $type, $userID, $postID);
       }
+      return $stmt->execute();
+    }
+
+    /**
+     * Insert rank into database
+     */
+    public function insertRank($rankID, $rankName) {
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_RANK_TABLE."(".COL_RANK_ID.", ".COL_RANK_NAME.") VALUES (?, ?)");
+      $stmt->bind_param("is", $rankID, $rankName);
+      return $stmt->execute();
+    }
+
+    /**
+     * Promote user to given rank
+     * @return boolean successfulness of query
+     */
+    public function promoteUser($username, $rankID) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET ".COL_USER_RANK." = ?
+                                          WHERE ".COL_USER_USERNAME." = ?");
+      $stmt->bind_param("is", $rankID, $username);
       return $stmt->execute();
     }
   }

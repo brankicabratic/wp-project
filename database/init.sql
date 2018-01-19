@@ -1,6 +1,13 @@
 CREATE DATABASE pmfoverflow;
 USE pmfoverflow;
 
+-- RANKS
+CREATE TABLE Rank(
+	RankID int NOT NULL,
+	Name varchar(50) NOT NULL UNIQUE,
+	PRIMARY KEY(RankID)
+) CHARACTER SET utf8 COLLATE utf8_bin;
+
 -- USERS
 CREATE TABLE User(
 	UserID int NOT NULL,
@@ -15,10 +22,12 @@ CREATE TABLE User(
 	About varchar(2000) DEFAULT NULL,
 	EnrollmentYear int,
 	Verified tinyint(1) DEFAULT NULL,
+	BelongsTo int DEFAULT NULL,
 	LastTimeSeen datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	DateOfBirth date DEFAULT NULL,
 	RegistrationTime datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
-	PRIMARY KEY(UserID)
+	PRIMARY KEY(UserID),
+	FOREIGN KEY(BelongsTo) REFERENCES Rank(RankID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- POSTS
