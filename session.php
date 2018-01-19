@@ -2,8 +2,6 @@
 	session_start();
 	require_once 'database/db_utils_dev.php';
 
-	$_SESSION["userID"] = 595383190;
-
 	$user = null;
 
 	if(isset($_SESSION["userID"])) {
