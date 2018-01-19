@@ -1,6 +1,8 @@
 <?php
 	require_once 'handlers/user_handler.php';
 
+	session_start();
+
 	$result = array(
 		"errors" => array(),
 		"data" => array()
@@ -45,6 +47,9 @@
 			$result["errors"][] = "Neka greska pri unosu!";
 			$result["errors"][] = "Nevalidni tagovi";
 			$result["errors"][] = $_POST["tags"];
+			break;
+		case "loginForm":
+			$result["errors"][] = "Pogresna sifra!";
 			break;
 		default:
 			exit(json_encode(null));

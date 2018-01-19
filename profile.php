@@ -136,7 +136,7 @@
               <!-- CHANGE PROFILE TAB -->
               <div class="tab-pane fade" id="nav-change-profile" role="tabpanel" aria-labelledby="nav-change-profile-tab">
                  <h3>Uredi profil</h3>
-                 <form>
+                 <form method="post">
                     <input type="hidden" name="formType" value="biography">
                     <div class="form-result-box"></div>
                     <div class="table-view">
@@ -237,7 +237,7 @@
                              <span aria-hidden="true">&times;</span>
                              </button>
                           </div>
-                          <form>
+                          <form method="post">
                              <input type="hidden" name="formType" value="password">
                              <div class="modal-body">
                                 <div class="form-result-box"></div>
@@ -297,7 +297,7 @@
       $('#nav-tab a[href="#nav-change-profile"]').tab('show');
     });
 
-    $("form").submit(function(event) {
+    $("form[method=\"post\"]").submit(function(event) {
       event.preventDefault();
       var form = $(this);
       var messageBox = form.find(".form-result-box");
