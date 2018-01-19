@@ -7,6 +7,8 @@
   define('DB_TAG_TABLE', 'Tag');
   define('DB_REACTION_TABLE', 'Reaction');
   define('DB_RANK_TABLE', 'Rank');
+  define('DB_PERMISSION_TABLE', 'Permission');
+  define('DB_RANK_PERMISSION_TABLE', 'HasPermission');
 
   define('COL_USER_ID', 'UserID');
   define('COL_USER_USERNAME', 'Username');
@@ -53,6 +55,12 @@
 
   define('COL_RANK_ID', 'RankID');
   define('COL_RANK_NAME', 'Name');
+
+  define('COL_PERMISSION_ID', 'PermissionID');
+  define('COL_PERMISSION_NAME', 'Name');
+
+  define('COL_RANK_PERMISSION_RANK', 'RankID');
+  define('COL_RANK_PERMISSION_PERMISSION', 'PermissionID');
 
   // REACTIONS
   define('REACTION_LIKE', 1);

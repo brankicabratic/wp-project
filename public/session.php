@@ -1,6 +1,6 @@
 <?php
 	session_start();
-	require_once 'database/db_utils_dev.php';
+	require_once 'db_utils.php';
 
 	$user = null;
 

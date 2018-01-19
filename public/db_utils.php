@@ -33,9 +33,12 @@
      * saveReaction($userID, $postID, $type) DONE
      * insertRank($rankID, $rankName) DONE
      * promoteUser($username, $rankID) DONE
+     * insertPermission($permissionID, $permissionName)
+     * grantRankAPermission($rankID, $permissionID)
+     * deleteRanksPermission($rankID, $permissionID)
      */
     private $connection, $idTable;
-    public function __construct($configFile = "db.ini") {
+    public function __construct($configFile = "../local/config.ini") {
       if($config = parse_ini_file($configFile)) {
         $server = $config["server"];
         $user = $config["user"];
@@ -471,6 +474,28 @@
                                           SET ".COL_USER_RANK." = ?
                                           WHERE ".COL_USER_USERNAME." = ?");
       $stmt->bind_param("is", $rankID, $username);
+      return $stmt->execute();
+    }
+
+    /**
+     * Insert permission into database
+     */
+    public function insertPermission($permissionID, $permissionName) {
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_PERMISSION_TABLE."(".COL_PERMISSION_ID.", ".COL_PERMISSION_NAME.") VALUES (?, ?)");
+      $stmt->bind_param("is", $permissionID, $permissionName);
+      return $stmt->execute();
+    }
+
+    public function grantRankAPermission($rankID, $permissionID) {
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_RANK_PERMISSION_TABLE."(".COL_RANK_PERMISSION_RANK.", ".COL_RANK_PERMISSION_PERMISSION.") VALUES (?, ?)");
+      $stmt->bind_param("ii", $rankID, $permissionID);
+      return $stmt->execute();
+    }
+
+    public function deleteRanksPermission($rankID, $permissionID) {
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_RANK_PERMISSION_TABLE."
+                                          WHERE ".COL_RANK_PERMISSION_RANK." = ? AND ".COL_RANK_PERMISSION_PERMISSION." = ?");
+      $stmt->bind_param("ii", $rankID, $permissionID);
       return $stmt->execute();
     }
   }

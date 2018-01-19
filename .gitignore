@@ -1,3 +1,4 @@
 .sass-cache/
-database/resetDB.sh
+**/resetDB.sh
 **/*.swp
+**/test.php
