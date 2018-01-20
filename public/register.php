@@ -67,7 +67,10 @@
           console.log(result);
           try {
             if(result.errors.length === 0) {
-              // POSLATI KORISNIKA NA NEKU STRANICU KOJA MU KAZE DA SE USPESNO REGISTROVAO
+              output = "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste se registrovali!<br>Na unetu email adresu Vam je poslat link za verifikaciju naloga. Neverifikovanim nalozima se ne može pristupiti.</div>";
+              $("input:not([type=\"hidden\"], [type=\"submit\"])").each(function() {
+                $(this).val("");
+              });
             }
             else
               output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";

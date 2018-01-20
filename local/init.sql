@@ -2,7 +2,7 @@ CREATE DATABASE pmfoverflow;
 USE pmfoverflow;
 
 -- TODO:
--- 1. Think if better way to "delete" data
+-- 1. Think of a better way to "delete" data
 
 -- RANKS
 CREATE TABLE Rank(
