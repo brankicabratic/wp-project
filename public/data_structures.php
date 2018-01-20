@@ -30,6 +30,11 @@
     }
 
     public function add($data) {
+      if(gettype($data) === "array") {
+        foreach($data as $val)
+          $this->add($val);
+        return true;
+      }
       return $this->__add($data, $this->root);
     }
 
@@ -78,5 +83,21 @@
       }
       return true;
     }
+
+    public function pop($data) {
+      return $this->__pop($data, $this->root);
+    }
+
+    /*private function __print(&$node) {
+      if($node === null)
+        return;
+      $this->__print($node->left);
+      echo "{$node->data}<br>";
+      $this->__print($node->right);
+    }
+
+    public function print() {
+      $this->__print($this->root);
+    }*/
   }
 ?>
