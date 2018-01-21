@@ -8,7 +8,6 @@
      *
      * getUser($username, $getter=USER_GETTER_ALL) DONE
      * updateOnlineTime($username) DONE
-     * verifyUser($username)
      * createUser($username, $password, $email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
@@ -33,9 +32,10 @@
      * saveReaction($userID, $postID, $type) DONE
      * insertRank($rankID, $rankName) DONE
      * promoteUser($username, $rankID) DONE
-     * insertPermission($permissionID, $permissionName)
-     * grantRankAPermission($rankID, $permissionID)
-     * deleteRanksPermission($rankID, $permissionID)
+     * insertPermissionOrRestriction($permRestID, $permRestName, $type) DONE
+     * grantRankAPermissionOrRestriction($rankID, $permRestID) DONE
+     * deleteRanksPermissionOrRestriction($rankID, $permRestID) DONE
+     * getUsersPermissionsOrRestrictions($userID)
      */
     private $connection, $idTable;
     public function __construct($configFile = "../local/config.ini") {
@@ -49,6 +49,7 @@
       }
       else
         exit("Missing configuration file.");
+      mysqli_report(MYSQLI_REPORT_ALL);
       $this->idTable = array(
         DB_USER_TABLE => COL_USER_ID,
         DB_POST_TABLE => COL_POST_ID,
@@ -96,20 +97,6 @@
     }
 
     /**
-     * Verify user
-     * @return boolean as successfulness of query
-     */
-    public function verifyUser($username) {
-      if(!$username)
-        return false;
-      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
-                                          SET ".COL_USER_VERIFIED." = 1
-                                          WHERE ".COL_USER_USERNAME." = ?");
-      $stmt->bind_param("s", $username);
-      return $stmt->execute();
-    }
-
-    /**
      * Store user with given parameters in database
      * @return true if everything went fine, otherwise return false(usually whether username already exists in database if types are checked)
      */
@@ -117,8 +104,8 @@
       $ID;
       while($this->doesExist(DB_USER_TABLE, ($ID = rand(-2147483648, 2147483647))));
       $stmt = $this->connection->prepare("INSERT INTO
-                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.")
-                                          VALUES (?, ?, ?, ?)");
+                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.", ".COL_USER_RANK.")
+                                          VALUES (?, ?, ?, ?, ".RANK_UNREGISTERED.")");
       $stmt->bind_param("isss", $ID, $username, $password, $email);
       return $stmt->execute();
     }
@@ -192,8 +179,8 @@
     private function getSmallestAvaliablePostID() {
       $stmt = $this->connection->prepare("SELECT ".COL_POST_ID." FROM ".DB_POST_TABLE." ORDER BY ".COL_POST_ID." DESC LIMIT 1");
       $stmt->execute();
-      $result = $stmt->get_result()->fetch_all(MYSQLI_NUM)[0];
-      return ($result === null) ? -214748364 : ($result[0] + 1); // minimum value of mysqls int
+      $result = $stmt->get_result()->fetch_all(MYSQLI_NUM);
+      return !$result ? -214748364 : ($result[0] + 1); // minimum value of mysqls int
     }
 
     /**
@@ -478,24 +465,51 @@
     }
 
     /**
-     * Insert permission into database
+     * Insert permission or restriction into database
      */
-    public function insertPermission($permissionID, $permissionName) {
-      $stmt = $this->connection->prepare("INSERT INTO ".DB_PERMISSION_TABLE."(".COL_PERMISSION_ID.", ".COL_PERMISSION_NAME.") VALUES (?, ?)");
-      $stmt->bind_param("is", $permissionID, $permissionName);
+    public function insertPermissionOrRestriction($permRestID, $permRestName, $type) {
+      if($type !== PERMREST_PERMISSION && $type !== PERMREST_RESTRICTION)
+        return false;
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_PERMREST_TABLE."(".COL_PERMREST_ID.", ".COL_PERMREST_NAME.", ".COL_PERMREST_TYPE.") VALUES (?, ?, ?)");
+      $stmt->bind_param("isi", $permRestID, $permRestName, $type);
       return $stmt->execute();
     }
 
-    public function grantRankAPermission($rankID, $permissionID) {
-      $stmt = $this->connection->prepare("INSERT INTO ".DB_RANK_PERMISSION_TABLE."(".COL_RANK_PERMISSION_RANK.", ".COL_RANK_PERMISSION_PERMISSION.") VALUES (?, ?)");
-      $stmt->bind_param("ii", $rankID, $permissionID);
+    public function grantRankAPermissionOrRestriction($rankID, $permRestID) {
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_RANK_PERMREST_TABLE."(".COL_RANK_PERMREST_RANK.", ".COL_RANK_PERMREST_PERMREST.") VALUES (?, ?)");
+      $stmt->bind_param("ii", $rankID, $permRestID);
       return $stmt->execute();
     }
 
-    public function deleteRanksPermission($rankID, $permissionID) {
-      $stmt = $this->connection->prepare("DELETE FROM ".DB_RANK_PERMISSION_TABLE."
-                                          WHERE ".COL_RANK_PERMISSION_RANK." = ? AND ".COL_RANK_PERMISSION_PERMISSION." = ?");
-      $stmt->bind_param("ii", $rankID, $permissionID);
+    public function deleteRanksPermissionOrRestriction($rankID, $permRestID) {
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_RANK_PERMREST_TABLE."
+                                          WHERE ".COL_RANK_PERMREST_RANK." = ? AND ".COL_RANK_PERMREST_PERMREST." = ?");
+      $stmt->bind_param("ii", $rankID, $permRestID);
+      return $stmt->execute();
+    }
+
+    public function getUsersPermissionsOrRestrictions($userID) {
+      $stmt = $this->connection->prepare("SELECT ".COL_RANK_PERMREST_PERMREST."
+                                          FROM ".DB_USER_TABLE.", ".DB_RANK_PERMREST_TABLE."
+                                          WHERE ".COL_USER_ID." = ? AND ".COL_USER_RANK." = ".COL_RANK_PERMREST_RANK);
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      return get_first($stmt->get_result()->fetch_all(MYSQLI_NUM));
+    }
+
+    public function givePostADeletionFlag($postID) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_POST_TABLE."
+                                          SET ".COL_POST_DELETIONFLAG." = now()
+                                          WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      return $stmt->execute();
+    }
+
+    public function deletePostsDeletionFlag($postID) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_POST_TABLE."
+                                          SET ".COL_POST_DELETIONFLAG." = null
+                                          WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $postID);
       return $stmt->execute();
     }
   }

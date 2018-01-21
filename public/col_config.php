@@ -7,8 +7,8 @@
   define('DB_TAG_TABLE', 'Tag');
   define('DB_REACTION_TABLE', 'Reaction');
   define('DB_RANK_TABLE', 'Rank');
-  define('DB_PERMISSION_TABLE', 'Permission');
-  define('DB_RANK_PERMISSION_TABLE', 'HasPermission');
+  define('DB_PERMREST_TABLE', 'PermRest');
+  define('DB_RANK_PERMREST_TABLE', 'HasPermRest');
 
   define('COL_USER_ID', 'UserID');
   define('COL_USER_USERNAME', 'Username');
@@ -26,13 +26,13 @@
   define('COL_USER_REGISTERED', 'RegistrationTime');
   define('COL_USER_ENROLLED', 'EnrollmentYear');
   define('COL_USER_LASTSEEN', 'LastTimeSeen');
-  define('COL_USER_VERIFIED', 'Verified');
   define('COL_USER_RANK', 'BelongsTo');
 
   define('COL_POST_ID', 'PostID');
   define('COL_POST_CONTENT', 'Content');
   define('COL_POST_POSTED', 'PostingTime');
   define('COL_POST_MODIFIED', 'ModificationTime');
+  define('COL_POST_DELETIONFLAG', 'Deleted');
   define('COL_POST_AUTHOR', 'Author');
   define('COL_POST_TYPE', 'Type');
 
@@ -56,11 +56,14 @@
   define('COL_RANK_ID', 'RankID');
   define('COL_RANK_NAME', 'Name');
 
-  define('COL_PERMISSION_ID', 'PermissionID');
-  define('COL_PERMISSION_NAME', 'Name');
+  define('COL_PERMREST_ID', 'PermRestID');
+  define('COL_PERMREST_NAME', 'Name');
+  define('COL_PERMREST_TYPE', 'Type');
+  define('PERMREST_PERMISSION', 1);
+  define('PERMREST_RESTRICTION', 2);
 
-  define('COL_RANK_PERMISSION_RANK', 'RankID');
-  define('COL_RANK_PERMISSION_PERMISSION', 'PermissionID');
+  define('COL_RANK_PERMREST_RANK', 'RankID');
+  define('COL_RANK_PERMREST_PERMREST', 'PermRestID');
 
   // REACTIONS
   define('REACTION_LIKE', 1);
@@ -75,4 +78,7 @@
   define('USER_GETTER_ALL', 9900);
   define('USER_GETTER_AUTHENTICATION', 9901);
   define('USER_GETTER_LOGIN_DATA', 9902);
+
+  // RANKS
+  define('RANK_UNREGISTERED', 0);
 ?>

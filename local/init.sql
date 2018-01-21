@@ -1,8 +1,7 @@
 CREATE DATABASE pmfoverflow;
 USE pmfoverflow;
 
--- TODO:
--- 1. Think of a better way to "delete" data
+-- DA BI SE DODAVALI KORISNICI MORA SE DODATI BAR RANK SA ID-om 0 koji predstavlja "Neverifikovanog korisnika"
 
 -- RANKS
 CREATE TABLE Rank(
@@ -11,20 +10,21 @@ CREATE TABLE Rank(
 	PRIMARY KEY(RankID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
--- PERMISSIONS
-CREATE TABLE Permission(
-	PermissionID int NOT NULL,
+-- PERMISSIONS AND RESTRICTIONS
+CREATE TABLE PermRest(
+	PermRestID int NOT NULL,
 	Name varchar(200) NOT NULL,
-	PRIMARY KEY(PermissionID)
+	Type tinyint(5) NOT NULL,
+	PRIMARY KEY(PermRestID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- CONNECTS RANKS AND PERMISSIONS
-CREATE TABLE HasPermission(
+CREATE TABLE HasPermRest(
 	RankID int NOT NULL,
-	PermissionID int NOT NULL,
-	PRIMARY KEY(RankID, PermissionID),
-	FOREIGN KEY(RankID) REFERENCES Rank(RankID),
-	FOREIGN KEY(PermissionID) REFERENCES Permission(PermissionID)
+	PermRestID int NOT NULL,
+	PRIMARY KEY(RankID, PermRestID),
+	FOREIGN KEY(RankID) REFERENCES Rank(RankID) ON DELETE CASCADE,
+	FOREIGN KEY(PermRestID) REFERENCES PermRest(PermRestID) ON DELETE CASCADE
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- USERS
@@ -40,7 +40,6 @@ CREATE TABLE User(
 	Major varchar(50) DEFAULT NULL,
 	About varchar(2000) DEFAULT NULL,
 	EnrollmentYear int,
-	Verified tinyint(1) DEFAULT NULL,
 	BelongsTo int DEFAULT NULL,
 	LastTimeSeen datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	DateOfBirth date DEFAULT NULL,
@@ -55,6 +54,7 @@ CREATE TABLE Post(
 	Content text NOT NULL,
 	PostingTime datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
 	ModificationTime datetime ON UPDATE CURRENT_TIMESTAMP DEFAULT NULL,
+	Deleted datetime DEFAULT NULL,
 	Author int,
 	Type int NOT NULL,
 	PRIMARY KEY(PostID),
@@ -68,8 +68,8 @@ CREATE TABLE Reaction(
 	-- Like +1, dislike -1
 	Type tinyint(1) NOT NULL,
 	PRIMARY KEY(UserID, PostID),
-	FOREIGN KEY(UserID) REFERENCES User(UserID) ON DELETE CASCADE,
-	FOREIGN KEY(PostID) REFERENCES Post(PostID) ON DELETE CASCADE
+	FOREIGN KEY(UserID) REFERENCES User(UserID),
+	FOREIGN KEY(PostID) REFERENCES Post(PostID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- QUESTIONS
@@ -77,7 +77,7 @@ CREATE TABLE Question(
 	PostID int NOT NULL,
 	Header varchar(200) NOT NULL,
 	PRIMARY KEY(PostID),
-	FOREIGN KEY(PostID) REFERENCES Post(PostID) ON DELETE CASCADE
+	FOREIGN KEY(PostID) REFERENCES Post(PostID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- ANSWERS
@@ -86,8 +86,8 @@ CREATE TABLE Answer(
 	RelatedTo int NOT NULL,
 	Accepted tinyint(1) DEFAULT NULL, -- TODO: LOOK FOR BETTER SOLUTION
 	PRIMARY KEY(PostID),
-	FOREIGN KEY(PostID) REFERENCES Post(PostID) ON DELETE CASCADE,
-	FOREIGN KEY(RelatedTo) REFERENCES Question(PostID) ON DELETE CASCADE
+	FOREIGN KEY(PostID) REFERENCES Post(PostID),
+	FOREIGN KEY(RelatedTo) REFERENCES Question(PostID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- TAGS
@@ -102,6 +102,16 @@ CREATE TABLE Tagged(
 	PostID int NOT NULL,
 	TagID int NOT NULL,
 	PRIMARY KEY(PostID, TagID),
-	FOREIGN KEY(PostID) REFERENCES Question(PostID) ON DELETE CASCADE,
-	FOREIGN KEY(TagID) REFERENCES Tag(TagID) ON DELETE CASCADE
+	FOREIGN KEY(PostID) REFERENCES Question(PostID),
+	FOREIGN KEY(TagID) REFERENCES Tag(TagID)
+) CHARACTER SET utf8 COLLATE utf8_bin;
+
+-- REQUESTS(VERIFY ACCOUNT, RESET PASSWORD)
+-- Funkcionalnost za request-ove jos nije ugradjena u db_utils
+CREATE TABLE Request(
+	ID varchar(50) NOT NULL,
+	UserID int NOT NULL,
+	Type int NOT NULL,
+	PRIMARY KEY(ID),
+	FOREIGN KEY(UserID) REFERENCES User(UserID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
