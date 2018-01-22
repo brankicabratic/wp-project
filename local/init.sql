@@ -38,7 +38,7 @@ CREATE TABLE User(
 	Avatar varchar(1000) DEFAULT NULL,
 	Email varchar(100) NOT NULL,
 	Major varchar(50) DEFAULT NULL,
-	About varchar(2000) DEFAULT NULL,
+	About varchar(10000) DEFAULT NULL,
 	EnrollmentYear int,
 	BelongsTo int DEFAULT NULL,
 	LastTimeSeen datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,

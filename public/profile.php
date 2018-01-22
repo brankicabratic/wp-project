@@ -22,11 +22,24 @@
     else if($user[COL_USER_SEX] === SEX_FEMALE)
       echo "<span class=\"gender-tag gender-female\"><i class=\"fas fa-venus\"></i> " . calculateYearsPassedSince($user[COL_USER_BIRTHDAY]) . "</span>";
   }
+
+  function formatDate($date) {
+    echo date("d. m. Y.", strtotime($date));
+  }
+
+  $db = new Database;
+  $opened_user = $db->getUser($_GET["user"]);
+
+  if(!$opened_user) {
+    exit("Korisnik ne postoji!");
+  }
+
+  $user_name_identifier = !empty($opened_user[COL_USER_FIRSTNAME]) && !empty($opened_user[COL_USER_LASTNAME]) ? "{$opened_user[COL_USER_FIRSTNAME]} {$opened_user[COL_USER_LASTNAME]}" : $opened_user[COL_USER_USERNAME];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <?php printIncludes('Pera Perić') ?>
+  <?php printIncludes($user_name_identifier) ?>
 </head>
 <body>
   <?php includeNavigation() ?>
@@ -35,14 +48,18 @@
      <div class="row">
         <!-- USER'S INFO -->
         <div class="col-lg-3 col-md-4 cs-center">
-           <div id="profile-picture" data-img="img/profile-pic.jpg"></div>
+           <div id="profile-picture" data-img="img/<?php echo $opened_user[COL_USER_AVATAR] !== null ? "{$opened_user[COL_USER_AVATAR]}" : "avatar.png" ?>"></div>
            <div class="profile-userinfo">
-              <span class="profile-fullname">Pera Perić <?php printSexAgeTag($a=array(COL_USER_SEX=>SEX_MALE, COL_USER_BIRTHDAY=>"1997-01-15")); ?></span>
+              <span class="profile-fullname"><?php echo "{$user_name_identifier} "; printSexAgeTag($opened_user); ?></span>
               <ul>
                  <li class="section-header">Osnovni podaci</li>
-                 <li class="section-item" title="Korisničko ime"><i class="far fa-user"></i> peraPeric</li>
-                 <li class="section-item" title="Smer"><i class="fas fa-university"></i> Računarske nauke</li>
-                 <li class="section-item" title="Godina upisa"><i class="far fa-calendar"></i> 2017</li>
+                 <li class="section-item" title="Korisničko ime"><i class="far fa-user"></i> <?php echo $opened_user[COL_USER_USERNAME] ?></li>
+                 <?php if(!empty($opened_user[COL_USER_MAJOR])) { ?>
+                   <li class="section-item" title="Smer"><i class="fas fa-university"></i> <?php echo $opened_user[COL_USER_MAJOR] ?></li>
+                 <?php } ?>
+                 <?php if(!empty($opened_user[COL_USER_ENROLLED])) { ?>
+                 <li class="section-item" title="Godina upisa"><i class="far fa-calendar"></i> <?php echo $opened_user[COL_USER_ENROLLED] ?></li>
+                 <?php } ?>
               </ul>
            </div>
         </div>
@@ -52,7 +69,7 @@
               <div class="nav nav-tabs" id="nav-tab" role="tablist">
                  <a class="nav-item nav-link active" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="true">Podaci o korisniku</a>
                  <a class="nav-item nav-link" id="nav-activities-tab" data-toggle="tab" href="#nav-activities" role="tab" aria-controls="nav-activities" aria-selected="false">Aktivnost</a>
-                 <a class="nav-item nav-link" id="nav-change-profile-tab" data-toggle="tab" href="#nav-change-profile" role="tab" aria-controls="nav-change-profile" aria-selected="false">Uredi profil</a>
+                 <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?><a class="nav-item nav-link" id="nav-change-profile-tab" data-toggle="tab" href="#nav-change-profile" role="tab" aria-controls="nav-change-profile" aria-selected="false">Uredi profil</a><?php } ?>
               </div>
            </nav>
            <!-- USER'S BIO TAB -->
@@ -60,38 +77,46 @@
               <div class="tab-pane fade show active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
                  <h3>Podaci o korisniku</h3>
                  <div class="table-view">
-                    <div class="row">
-                       <div class="col-sm-4">Ime i prezime</div>
-                       <div class="col-sm-8">Pera Perić</div>
-                    </div>
-                    <div class="row">
-                       <div class="col-sm-4">E-mail</div>
-                       <div class="col-sm-8">pera.peric@gmail.com</div>
-                    </div>
-                    <div class="row">
-                       <div class="col-sm-4">Pol</div>
-                       <div class="col-sm-8">Muško</div>
-                    </div>
-                    <div class="row">
-                       <div class="col-sm-4">Datum rođenja</div>
-                       <div class="col-sm-8">15. 01. 1997.</div>
-                    </div>
-                    <div class="row">
-                       <div class="col-sm-4">Datum registracije</div>
-                       <div class="col-sm-8">03. 01. 2018.</div>
-                    </div>
-                    <div class="row">
-                       <div class="col-sm-4">Biografija</div>
-                       <div class="col-sm-8">
-                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique nisl nunc, ut vulputate purus porttitor et. Duis porttitor vitae ipsum eget convallis. Pellentesque feugiat rhoncus enim in rutrum. Pellentesque aliquet mi nisi, ac lacinia odio egestas tincidunt. In non feugiat mauris, et bibendum neque. Integer accumsan dolor quis ornare hendrerit. Donec elementum ante sit amet rutrum cursus. Aenean vehicula lacus at leo lobortis commodo. Fusce suscipit metus velit, in facilisis massa semper eget. Duis venenatis massa massa, molestie dictum tellus feugiat vel. Mauris et ipsum faucibus, vehicula erat et, vulputate lorem. Nulla tempus convallis metus ut tincidunt. Etiam fringilla aliquet ante id porta. Proin viverra massa quis orci sagittis, ut tincidunt nulla consectetur.</p>
-                          <p>Vestibulum pretium ante eu mauris pellentesque mattis. Cras eget aliquet ligula. Vestibulum a blandit nisi. Donec sed ultricies nisi, ut consectetur justo. Vivamus viverra erat leo, sit amet viverra lectus malesuada sed. Fusce auctor iaculis metus ac mollis. Duis ornare cursus volutpat. Nulla non aliquam sapien. Pellentesque euismod et lorem eu varius. Nam feugiat est cursus, venenatis massa sit amet, sodales metus. Nam odio felis, viverra et lectus sit amet, tincidunt dapibus mauris.</p>
-                          <p>Quisque ultricies est nec metus feugiat pulvinar. Nulla ac dui non sem maximus consequat sit amet ut justo. Sed egestas rutrum ipsum, et maximus lacus pretium vel. Maecenas facilisis aliquam tincidunt. Aenean semper fermentum diam, at gravida tellus tincidunt ut. Integer blandit fermentum tincidunt. Curabitur vel tortor massa. Fusce fringilla justo at viverra accumsan. Fusce nec sapien ligula. Aenean vitae urna mi.</p>
-                          <p>Duis ligula magna, suscipit at eros eu, fringilla molestie eros. Curabitur pellentesque neque eu erat porta rutrum. Pellentesque nunc dui, ultricies sit amet viverra eget, elementum eu tellus. Nulla pulvinar nulla tempor, sodales massa id, porttitor augue. Duis imperdiet dapibus fermentum. Nam fringilla at lorem non commodo. Phasellus tincidunt feugiat dignissim. Duis tincidunt lacus vitae velit malesuada molestie. Pellentesque purus eros, rhoncus non hendrerit sodales, sagittis ac augue. Aliquam molestie sapien vel ante ultrices, nec ultrices erat convallis. Quisque nibh lorem, commodo vehicula tincidunt nec, mollis eget risus. Vivamus eu aliquam sapien.</p>
-                          <p>Fusce suscipit eros eget arcu dignissim ultrices. Sed vitae lobortis velit. Nam rutrum ornare justo id tincidunt. Nulla vel maximus mauris. Nam non auctor lorem. Fusce faucibus a odio et congue. Donec tempor fringilla nunc ut ornare. Phasellus pretium nulla id placerat varius. Nam nec fringilla nibh, quis rutrum nulla. Aliquam rutrum sodales mauris. Morbi ullamcorper justo egestas molestie dignissim. Quisque sit amet sollicitudin ligula, et semper metus. Etiam non augue sem. Praesent fringilla dignissim dolor eu pellentesque.</p>
-                       </div>
-                    </div>
+                    <?php if(!empty($opened_user[COL_USER_FIRSTNAME]) && !empty($opened_user[COL_USER_LASTNAME])) { ?>
+                      <div class="row">
+                         <div class="col-sm-4">Ime i prezime</div>
+                         <div class="col-sm-8"><?php echo "{$opened_user[COL_USER_FIRSTNAME]} {$opened_user[COL_USER_LASTNAME]}" ?></div>
+                      </div>
+                    <?php }
+                      if(!empty($opened_user[COL_USER_EMAIL])) { ?>
+                      <div class="row">
+                         <div class="col-sm-4">E-mail</div>
+                         <div class="col-sm-8"><?php echo $opened_user[COL_USER_EMAIL] ?></div>
+                      </div>
+                    <?php }
+                      if(!empty($opened_user[COL_USER_SEX]) && ($opened_user[COL_USER_SEX] === SEX_MALE || $opened_user[COL_USER_SEX] === SEX_FEMALE)) { ?>
+                      <div class="row">
+                         <div class="col-sm-4">Pol</div>
+                         <div class="col-sm-8"><?php echo $opened_user[COL_USER_SEX] === SEX_MALE ? "Muško" : "Žensko" ?></div>
+                      </div>
+                    <?php }
+                      if(!empty($opened_user[COL_USER_BIRTHDAY])) { ?>
+                      <div class="row">
+                         <div class="col-sm-4">Datum rođenja</div>
+                         <div class="col-sm-8"><?php formatDate($opened_user[COL_USER_BIRTHDAY]) ?></div>
+                      </div>
+                    <?php }
+                      if(!empty($opened_user[COL_USER_REGISTERED])) { ?>
+                      <div class="row">
+                         <div class="col-sm-4">Datum registracije</div>
+                         <div class="col-sm-8"><?php formatDate($opened_user[COL_USER_REGISTERED]) ?></div>
+                      </div>
+                    <?php }
+                    if(!empty($opened_user[COL_USER_ABOUT])) { ?>
+                      <div class="row">
+                         <div class="col-sm-4">Biografija</div>
+                         <div class="col-sm-8">
+                            <?php echo $opened_user[COL_USER_ABOUT] ?>
+                         </div>
+                      </div>
+                    <?php } ?>
                  </div>
-                 <button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button>
+                 <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
               </div>
               <!-- USER'S ACTIVITIES TAB -->
               <div class="tab-pane fade" id="nav-activities" role="tabpanel" aria-labelledby="nav-activities-tab">
@@ -99,7 +124,7 @@
                     <li class="media">
                        <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
                        <div class="media-body">
-                          <h5><a href="#">Pera Perić</a> je postavio pitanje <a href="#">Customize Android app based on server values</a></h5>
+                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je postavio pitanje <a href="#">Customize Android app based on server values</a></h5>
                           <small>I want to developer an Android app such that a particular function should be executed in the app only when a value in the server is true. If the value in the server is false another function should be executed...</small>
                           <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
                        </div>
@@ -108,7 +133,7 @@
                     <li class="media">
                        <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
                        <div class="media-body">
-                          <h5><a href="#">Pera Perić</a> je ostavio odgovor na pitanje <a href="#">Passing anonymous parameters to functions in C</a></h5>
+                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je ostavio odgovor na pitanje <a href="#">Passing anonymous parameters to functions in C</a></h5>
                           <small>Spanner is Google's globally distributed relational database management system (RDBMS), the successor to BigTable. Google claims it is not a pure relational system because each table must have a primary key. Here is the link of the paper. Spanner is Google's scalable, multi-version, globally-distributed, and synchronously-replicated database. It is the first system to distribute data at global scale and support externally-consistent distributed transactions. This paper describes how Spanner is structured, its feature set, the rationale underlying various design decisions, and a novel time API that exposes clock uncertainty. This API and its implementation are critical to supporting external consistency and a variety of powerful features: non-blocking reads in the past, lock-free read-only transactions, and atomic schema changes, across all of Spanner.</small>
                           <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
                        </div>
@@ -117,7 +142,7 @@
                     <li class="media">
                        <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
                        <div class="media-body">
-                          <h5><a href="#">Pera Perić</a> je postavio pitanje <a href="#">symfony heroku fos_user.registration failure</a></h5>
+                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je postavio pitanje <a href="#">symfony heroku fos_user.registration failure</a></h5>
                           <small>I've recently deployed a symfony 3.4.1 application on Heroku. There are two tables in the database : Post(filled with dataFixtures --no problem) and User (using the FosUserBundle). When trying to register a user i've got this in the log:...</small>
                           <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
                        </div>
@@ -126,13 +151,14 @@
                     <li class="media">
                        <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
                        <div class="media-body">
-                          <h5><a href="#">Pera Perić</a> je postavio pitanje <a href="#">symfony heroku fos_user.registration failure</a></h5>
+                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je postavio pitanje <a href="#">symfony heroku fos_user.registration failure</a></h5>
                           <small>It should work.</small>
                           <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
                        </div>
                     </li>
                  </ul>
               </div>
+              <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?>
               <!-- CHANGE PROFILE TAB -->
               <div class="tab-pane fade" id="nav-change-profile" role="tabpanel" aria-labelledby="nav-change-profile-tab">
                  <h3>Uredi profil</h3>
@@ -145,7 +171,7 @@
                              <label for="change-profile-firstname">Ime</label>
                           </div>
                           <div class="col-sm-8">
-                             <input type="text" class="form-control" name="firstName" id="change-profile-firstname" value="Pera">
+                             <input type="text" class="form-control" name="firstName" id="change-profile-firstname" value="<?php echo $opened_user[COL_USER_FIRSTNAME] ?>">
                           </div>
                        </div>
                        <div class="row">
@@ -153,7 +179,7 @@
                              <label for="change-profile-lastname">Prezime</label>
                           </div>
                           <div class="col-sm-8">
-                             <input type="text" class="form-control" name="lastName" id="change-profile-lastname" value="Perić">
+                             <input type="text" class="form-control" name="lastName" id="change-profile-lastname" value="<?php echo $opened_user[COL_USER_LASTNAME] ?>">
                           </div>
                        </div>
                        <div class="row">
@@ -161,7 +187,7 @@
                              <label for="change-profile-major">Smer</label>
                           </div>
                           <div class="col-sm-8">
-                             <input type="text" class="form-control" name="major" id="change-profile-major" value="Računarske nauke">
+                             <input type="text" class="form-control" name="major" id="change-profile-major" value="<?php echo $opened_user[COL_USER_MAJOR] ?>">
                           </div>
                        </div>
                        <div class="row">
@@ -169,7 +195,7 @@
                              <label for="change-profile-enrollmentyear">Godina upisa</label>
                           </div>
                           <div class="col-sm-8">
-                             <input type="number" class="form-control" name="enrollmentYear" id="change-profile-enrollmentyear" value="2017">
+                             <input type="number" class="form-control" name="enrollmentYear" id="change-profile-enrollmentyear" value="<?php echo $opened_user[COL_USER_ENROLLED] ?>">
                           </div>
                        </div>
                        <div class="row">
@@ -177,7 +203,7 @@
                              <label for="change-profile-email">Email</label>
                           </div>
                           <div class="col-sm-8">
-                             <input type="email" class="form-control" name="email" id="change-profile-email" value="pera.peric@gmail.com">
+                             <input type="email" class="form-control" name="email" id="change-profile-email" value="<?php echo $opened_user[COL_USER_EMAIL] ?>">
                           </div>
                        </div>
                        <div class="row">
@@ -186,8 +212,8 @@
                           </div>
                           <div class="col-sm-8">
                              <select name="sex" id="change-profile-sex" class="form-control">
-                                <option value="male">Muško</option>
-                                <option value="female">Žensko</option>
+                                <option value="male"<?php if($opened_user[COL_USER_SEX] === SEX_MALE) echo " selected" ?>>Muško</option>
+                                <option value="female"<?php if($opened_user[COL_USER_SEX] === SEX_FEMALE) echo " selected" ?>>Žensko</option>
                                 <option value="none">Ne želim da se izjasnim</option>
                              </select>
                           </div>
@@ -197,7 +223,7 @@
                              <label for="change-profile-dateofbirth">Datum rođenja</label>
                           </div>
                           <div class="col-sm-8">
-                             <input type="date" class="form-control" name="dateOfBirth" id="change-profile-dateofbirth" value="1997-01-15">
+                             <input type="date" class="form-control" name="dateOfBirth" id="change-profile-dateofbirth" <?php if($opened_user[COL_USER_BIRTHDAY] !== null) echo "value=\"{$opened_user[COL_USER_BIRTHDAY]}\""?>>
                           </div>
                        </div>
                        <div class="row">
@@ -205,13 +231,7 @@
                              <label for="change-profile-bio">Biografija</label>
                           </div>
                           <div class="col-sm-8">
-                             <textarea name="biography" id="change-profile-bio" rows="20" class="form-control">
-                             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque tristique nisl nunc, ut vulputate purus porttitor et. Duis porttitor vitae ipsum eget convallis. Pellentesque feugiat rhoncus enim in rutrum. Pellentesque aliquet mi nisi, ac lacinia odio egestas tincidunt. In non feugiat mauris, et bibendum neque. Integer accumsan dolor quis ornare hendrerit. Donec elementum ante sit amet rutrum cursus. Aenean vehicula lacus at leo lobortis commodo. Fusce suscipit metus velit, in facilisis massa semper eget. Duis venenatis massa massa, molestie dictum tellus feugiat vel. Mauris et ipsum faucibus, vehicula erat et, vulputate lorem. Nulla tempus convallis metus ut tincidunt. Etiam fringilla aliquet ante id porta. Proin viverra massa quis orci sagittis, ut tincidunt nulla consectetur.
-                             Vestibulum pretium ante eu mauris pellentesque mattis. Cras eget aliquet ligula. Vestibulum a blandit nisi. Donec sed ultricies nisi, ut consectetur justo. Vivamus viverra erat leo, sit amet viverra lectus malesuada sed. Fusce auctor iaculis metus ac mollis. Duis ornare cursus volutpat. Nulla non aliquam sapien. Pellentesque euismod et lorem eu varius. Nam feugiat est cursus, venenatis massa sit amet, sodales metus. Nam odio felis, viverra et lectus sit amet, tincidunt dapibus mauris.
-                             Quisque ultricies est nec metus feugiat pulvinar. Nulla ac dui non sem maximus consequat sit amet ut justo. Sed egestas rutrum ipsum, et maximus lacus pretium vel. Maecenas facilisis aliquam tincidunt. Aenean semper fermentum diam, at gravida tellus tincidunt ut. Integer blandit fermentum tincidunt. Curabitur vel tortor massa. Fusce fringilla justo at viverra accumsan. Fusce nec sapien ligula. Aenean vitae urna mi.
-                             Duis ligula magna, suscipit at eros eu, fringilla molestie eros. Curabitur pellentesque neque eu erat porta rutrum. Pellentesque nunc dui, ultricies sit amet viverra eget, elementum eu tellus. Nulla pulvinar nulla tempor, sodales massa id, porttitor augue. Duis imperdiet dapibus fermentum. Nam fringilla at lorem non commodo. Phasellus tincidunt feugiat dignissim. Duis tincidunt lacus vitae velit malesuada molestie. Pellentesque purus eros, rhoncus non hendrerit sodales, sagittis ac augue. Aliquam molestie sapien vel ante ultrices, nec ultrices erat convallis. Quisque nibh lorem, commodo vehicula tincidunt nec, mollis eget risus. Vivamus eu aliquam sapien.
-                             Fusce suscipit eros eget arcu dignissim ultrices. Sed vitae lobortis velit. Nam rutrum ornare justo id tincidunt. Nulla vel maximus mauris. Nam non auctor lorem. Fusce faucibus a odio et congue. Donec tempor fringilla nunc ut ornare. Phasellus pretium nulla id placerat varius. Nam nec fringilla nibh, quis rutrum nulla. Aliquam rutrum sodales mauris. Morbi ullamcorper justo egestas molestie dignissim. Quisque sit amet sollicitudin ligula, et semper metus. Etiam non augue sem. Praesent fringilla dignissim dolor eu pellentesque.
-                             </textarea>
+                             <textarea name="biography" id="change-profile-bio" rows="20" class="form-control"><?php echo $opened_user[COL_USER_ABOUT] ?></textarea>
                           </div>
                        </div>
                        <div class="row">
@@ -263,6 +283,7 @@
                     </div>
                  </div>
               </div>
+              <?php } ?>
            </div>
         </div>
      </div>
@@ -278,68 +299,69 @@
 
     var profilePic = document.getElementById("profile-picture");
     profilePic.style["background-image"] = "url(\"" + profilePic.dataset.img + "\")";
+    <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?>
 
+      // THE FOLLOWING CODE SHOULD BE SHOWN ONLY IF USER LOOKS HIS PROFILE
+      var msgCookie = $.cookie("biography-user-message");
+      if(msgCookie !== undefined && msgCookie !== "") {
+        $("#nav-change-profile .form-result-box:first").html(msgCookie);
+        $("#nav-about-tab").removeClass("active");
+        $("#nav-change-profile-tab").addClass("active");
+        $("#nav-about").removeClass("show active");
+        $("#nav-change-profile").addClass("show active");
+        $.removeCookie("biography-user-message");
+      }
 
-    // THE FOLLOWING CODE SHOULD BE SHOWN ONLY IF USER LOOKS HIS PROFILE
-    var msgCookie = $.cookie("biography-user-message");
-    if(msgCookie !== undefined && msgCookie !== "") {
-      $("#nav-change-profile .form-result-box:first").html(msgCookie);
-      $("#nav-about-tab").removeClass("active");
-      $("#nav-change-profile-tab").addClass("active");
-      $("#nav-about").removeClass("show active");
-      $("#nav-change-profile").addClass("show active");
-      $.removeCookie("biography-user-message");
-    }
+      var userID = <?php echo $opened_user[COL_USER_ID] ?>; // PUT ACTUAL USER ID VIA PHP
 
-    var userID = 0; // PUT ACTUAL USER ID VIA PHP
-
-    $("#change-profile-button").click(function() {
-      $('#nav-tab a[href="#nav-change-profile"]').tab('show');
-    });
-
-    $("form[method=\"post\"]").submit(function(event) {
-      event.preventDefault();
-      var form = $(this);
-      var messageBox = form.find(".form-result-box");
-      var data = form.serialize();
-      data += "&&userID=" + userID;
-      var output;
-      $.ajax({
-        url: 'formHandler.php',
-        type: 'post',
-        dataType: 'json',
-        data: data,
-        success: function(result) {
-          try {
-            if(result.errors.length === 0) {
-              output = "<div class=\"alert alert-success\" role=\"alert\">Izmene su uspešno sačuvane!</div>";
-
-              // CLEAN PASSWORD FIELDS DUE TO SECURITY REASONS
-              form.find("input[type=\"password\"]").val("");
-
-              // SWITCH MAKES IT EASY TO ADD MORE FUNCTIONALITY
-              switch(form.find("input[name=\"formType\"]").val()) {
-                case "biography":
-                  $.cookie("biography-user-message", output);
-                  location.reload();
-                  break;
-              }
-            }
-            else
-              output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
-          }
-          catch(err) {
-            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
-          }
-        },
-        error: function() {
-          output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
-        },
-        complete: function() {
-          messageBox.html(output);
-        }
+      $("#change-profile-button").click(function() {
+        $('#nav-tab a[href="#nav-change-profile"]').tab('show');
       });
-    });
+
+      $("form[method=\"post\"]").submit(function(event) {
+        event.preventDefault();
+        var form = $(this);
+        var messageBox = form.find(".form-result-box");
+        var data = form.serialize();
+        data += "&&userID=" + userID;
+        var output;
+        $.ajax({
+          url: 'formHandler.php',
+          type: 'post',
+          dataType: 'json',
+          data: data,
+          success: function(result) {
+            try {
+              if(result.errors.length === 0) {
+                output = "<div class=\"alert alert-success\" role=\"alert\">Izmene su uspešno sačuvane!</div>";
+
+                // CLEAN PASSWORD FIELDS DUE TO SECURITY REASONS
+                form.find("input[type=\"password\"]").val("");
+
+                // SWITCH MAKES IT EASY TO ADD MORE FUNCTIONALITY
+                switch(form.find("input[name=\"formType\"]").val()) {
+                  case "biography":
+                    $.cookie("biography-user-message", output);
+                    location.reload();
+                    break;
+                }
+              }
+              else
+                output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
+            }
+            catch(err) {
+              output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+            }
+          },
+          error: function() {
+            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+          },
+          complete: function() {
+            messageBox.html(output);
+          }
+        });
+      });
+  <?php } ?>
   </script>
 </body>
 </html>

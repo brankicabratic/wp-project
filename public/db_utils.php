@@ -49,7 +49,7 @@
       }
       else
         exit("Missing configuration file.");
-      mysqli_report(MYSQLI_REPORT_ALL);
+      // mysqli_report(MYSQLI_REPORT_ALL);
       $this->idTable = array(
         DB_USER_TABLE => COL_USER_ID,
         DB_POST_TABLE => COL_POST_ID,
