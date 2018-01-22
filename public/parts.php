@@ -21,7 +21,7 @@
 		if ($user) {
 ?>
 				<!-- FOR LOGGED IN USERS -->
-        <span class="navbar-text disabled">You're logged in as <a href="profile.php?user=peraPeric">Pera Peric</a> (<a href="#">Log out</a>)</span>
+        <span class="navbar-text disabled">You're logged in as <a href="profile.php?user=peraPeric">Pera Peric</a> (<a href="logout.php">Log out</a>)</span>
 <?php
 		} else {
 ?>

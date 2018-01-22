@@ -1,8 +1,6 @@
 <?php
 	require_once 'handlers/user_handler.php';
 
-	session_start();
-
 	$result = array(
 		"errors" => array(),
 		"data" => array()
@@ -49,7 +47,20 @@
 			$result["errors"][] = $_POST["tags"];
 			break;
 		case "loginForm":
-			$result["errors"][] = "Pogresna sifra!";
+      if (!isset($_POST["username"]) || empty($_POST["username"])) {
+        $result["errors"][] = "Morate uneti korisničko ime";
+      }
+      if (!isset($_POST["password"]) || empty($_POST["password"])) {
+        $result["errors"][] = "Morate uneti šifru";
+      }
+      if (count($result["errors"]) == 0) {
+        $code = login($_POST["username"], $_POST["password"]);
+        if ($code == USER_HANDLER_INVALID_USERNAME) {
+          $result["errors"][] = "Neispravno korisničko ime";
+        } else if ($code == USER_HANDLER_INVALID_PASSWORD) {
+          $result["errors"][] = "Neispravna šifra";
+        }
+      }
 			break;
 		default:
 			exit(json_encode(null));
