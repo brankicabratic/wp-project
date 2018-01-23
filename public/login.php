@@ -21,10 +21,17 @@
         <h3>Prijavljivanje</h3>
         <div class="form-result-box"></div>
         <div class="form-group">
-          <input type="text" name="username" placeholder="Korisničko ime">
+          <div class="login-input-group">
+            <label for="login-form-username">Korisničko ime</label>
+            <input type="text" id="login-form-username" name="username">
+          </div>
         </div>
         <div class="form-group">
-          <input type="password" name="password" placeholder="Lozinka">
+          <div class="login-input-group">
+            <label for="login-form-password">Lozinka</label>
+            <input type="password" id="login-form-password" name="password">
+          </div>
+
         </div>
         <div class="checkbox">
           <label for="loginRemember"><input type="checkbox" id="loginRemember" name="remember-me"> Sačuvaj korisničko ime</label>
@@ -42,6 +49,15 @@
 
   <?php includeScripts() ?>
   <script type="text/javascript">
+    $("input:not([type=\"submit\"])").on("input", function(e) {
+      var el = $(this);
+      var parent = el.parent();
+      if(el.val() == "")
+        parent.removeClass("focused");
+      else
+        parent.addClass("focused");
+    });
+
     $("form").submit(function(event) {
       event.preventDefault();
       var form = $(this);

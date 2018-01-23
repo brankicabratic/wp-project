@@ -485,39 +485,69 @@ div#login-container {
       padding: 5px 0;
     }
 
-    input {
-      @include border-radius(0);
+    .login-input-group {
+      position: relative;
 
-      &[name="password"] {
-        background: white url('../img/password.png');
+      label {
+        text-align: left;
+        cursor: pointer;
+        position: absolute;
+        margin: 0;
+        padding: 0;
+        color: blue;
+        font-size: 21px;
+        left: 42px;
+        top: 5px;
+        -webkit-transition: all 100ms ease-out;
+        -moz-transition: all 100ms ease-out;
+        -ms-transition: all 100ms ease-out;
+        -o-transition: all 100ms ease-out;
+        transition: all 100ms ease-out;
       }
 
-      &[name="username"] {
-        background: white url('../img/man-user.png');
+      &.focused label {
+        font-size: 12px;
+        top: 0;
+        left: 42px;
       }
 
-      &[type="password"], &[type="text"] {
-        padding: 3px 3px 3px 36px;
-        border: none;
-        font-size: 20px;
-        border-bottom: 3px solid #006DF0;
-        width: 100%;
-        background-position: 5px 5px;
-        background-repeat: no-repeat;
-        background-size: 26px 26px;
+      &.focused input:not([type="submit"]) {
+        padding: 12px 3px 0 42px;
+        font-size: 19px;
+      }
+
+      input {
+        @include border-radius(0);
+
+        &[name="password"] {
+          background: white url('../img/password.png');
+        }
+
+        &[name="username"] {
+          background: white url('../img/man-user.png');
+        }
+
+        &[type="password"], &[type="text"] {
+          padding: 5px 3px 4px 42px;
+          border: none;
+          font-size: 21px;
+          width: 100%;
+          background-position: 5px 5px;
+          background-repeat: no-repeat;
+          background-size: 30.5px 30.5px;
+          -webkit-transition: all 100ms ease-out;
+          -moz-transition: all 100ms ease-out;
+          -ms-transition: all 100ms ease-out;
+          -o-transition: all 100ms ease-out;
+          transition: all 100ms ease-out;
+          border-bottom: 2px solid #006DF0;
+        }
       }
     }
-
 
     .form-group {
       * {
         margin: 0;
-      }
-
-      label {
-        display: block;
-        width: 100%;
-        text-align: left;
       }
     }
 
@@ -547,19 +577,12 @@ div#login-container {
     margin: 0 5px;
   }
 
-  .author {
-    display: inline-block;
-    width: 100%;
-    img {
-      width: 100px;
-      height: 100px;
-      border-radius: 100px;
-      float: left
-    }
-  }
-
   .row {
     padding-top: 15px;
+  }
+
+  .question-text {
+
   }
 
   .question-info {
@@ -569,6 +592,76 @@ div#login-container {
 
     a:hover {
       text-decoration: none;
+    }
+
+    .score {
+      display: block;
+      width: 100%;
+      text-align: center;
+      font-size: 25px;
+      .reaction {
+        cursor: pointer;
+        position: relative;
+        top: 2px;
+        color: #808080;
+        &.active {
+          color: black;
+        }
+      }
+
+
+    }
+
+    /*.reactions {
+      display: block;
+      width: 100%;
+      text-align: center;
+    }
+
+    .reaction {
+      border-radius: 4px;
+      -webkit-box-shadow: inset 0px 0px 3px 0px rgba(255,255,255,1);
+      -moz-box-shadow: inset 0px 0px 3px 0px rgba(255,255,255,1);
+      box-shadow: inset 0px 0px 3px 0px rgba(255,255,255,1);
+      padding: 5px 10px;
+      font-weight: bold;
+      font-size: 14px;
+      display: inline-block;
+      margin: 2px 0;
+      color: white;
+      cursor: pointer;
+      width: 150px;
+      text-align: center;
+      -webkit-transition: all 200ms ease-out;
+      -moz-transition: all 200ms ease-out;
+      -ms-transition: all 200ms ease-out;
+      -o-transition: all 200ms ease-out;
+      transition: all 200ms ease-out;
+    }
+
+    .like {
+      background-color: #00cc66;
+    }
+
+    .dislike {
+      background-color: #ff6666;
+    }
+
+    .clicked {
+      -webkit-box-shadow: inset 0px 0px 3px 0px rgba(0,0,0,1);
+      -moz-box-shadow: inset 0px 0px 3px 0px rgba(0,0,0,1);
+      box-shadow: inset 0px 0px 3px 0px rgba(0,0,0,1);
+      &.like {
+        background-color: #008000;
+      }
+
+      &.dislike {
+        background-color: #cc0000;
+      }
+    }*/
+
+    .clicked {
+
     }
   }
 }
