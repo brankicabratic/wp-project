@@ -393,11 +393,11 @@ footer {
 }
 
 $lower-opacity-info: rgba(51,181,229, 0.7);
+$super-low-opacity-info: rgba(51,181,229, 0.1);
 #questions {
   $primary-color: #4285F4;
   $bottom-border-color: #9fc1f9;
   $info-color: #33b5e5;
-  $super-low-opacity-info: rgba(51,181,229, 0.1);
 
   margin: 15px 0;
   padding: 0 10px;
@@ -586,23 +586,24 @@ div#login-container {
   .question-footer {
     text-align: center;
     padding: 0 5px 0 5px;
-    .score {
-      font-size: 25px;
-      font-weight: bold;
-      color: #555;
-      .reaction {
-        color: #999;
-        cursor: pointer;
-        &.active {
-          color: #555;
-        }
-      }
+  }
+}
 
+.score {
+  font-size: 25px;
+  font-weight: bold;
+  color: #555;
+  display: inline-block;
+  .reaction {
+    color: #999;
+    cursor: pointer;
+    &.active {
+      color: #555;
     }
   }
 }
 
-.answer {
+.write-answer {
   form {
     * {
       @include border-radius(0);
@@ -650,6 +651,33 @@ div#login-container {
 }
 
 #answers {
+  background-color: $super-low-opacity-info;
+  padding: 0 5px;
+  .answer {
+    padding: 10px 5px;
+    &:not(:first-child) {
+      border-top: 1px solid #ccc;
+    }
+
+    .content {
+
+    }
+
+    .footer {
+      padding-top: 15px;
+      font-size: 15px;
+      .aligned-right {
+        text-align: right;
+      }
+
+      .score {
+        display: block;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+      }
+    }
+  }
 
 }
 
