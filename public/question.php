@@ -24,7 +24,6 @@
               </div>
             </div>
             <div class="question-content">
-              <a href="#answers">ans</a>
               My database was created from a DOS system by importing the .dbf files into Access 2016. After completing the setup of the Access database I will have to re-import updated .dbf files. The personal information (first, last, ssn, address, etc.) of customers are listed in multiple tables rather than using a primary ID so about 10+ tables contain the same person and details. A customer can be listed multiple times in some tables such as the life and health claims tables (when a person files multiple claims).
               <br><br>
               Each of these tables is the source of a form (i.e. customers.tbl = Customers form). I want to be able to make a personal information update in any of the forms and have it reflected everywhere...if I change the address in my Health Claims form, I would like that change to be reflected in my Life Claims form/table as well as everywhere else for the same SSN.
@@ -48,12 +47,12 @@
 
           <div class="row">
             <div class="col-1 d-none d-lg-block scroll-top-answers-side">
-              <span class="arrow invisible"><i class="fas fa-arrow-circle-up"></i></span>
+              <span class="arrow invisible back-to-top-button"><a title="Back to top" href="#answers"><i class="fas fa-arrow-circle-up"></i></a></span>
             </div>
             <div class="col-lg-11">
               <div id="answers">
                 <h4>Ostavi odgovor:</h4>
-                <div class="ask">
+                <div class="answer">
                   <form method="post">
                       <div class="text-formating-tools">
                         <span class="tool"><i class="fas fa-trash-alt"></i></span>
@@ -65,6 +64,10 @@
                       </div>
                   </form>
                 </div>
+
+                asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>asdasdasdssad <br>
+
+                <span class="back-to-top-button d-lg-none"><a title="Back to top" href="#answers"><i class="fas fa-arrow-circle-up"></i></a></span>
               </div>
             </div>
           </div>
@@ -79,18 +82,61 @@
 
     <?php includeScripts() ?>
     <script type="text/javascript">
-      var answersContainer = $("#answers");
-      var scrollTopFixedArrow = $(".scroll-top-answers-side .arrow");
+      // Side scroll to top
+      var arrowContainer = $(".scroll-top-answers-side");
+      var arrow = arrowContainer.find(".arrow");
+      var waiting = false;
 
-      $(window).scroll(function (){
-        var answContPos = answersContainer.offset().top - 60;
-        console.log(answersContainer.height());
-        var relPos = $(window).scrollTop() - answContPos;
-        if(relPos < 0)
-          scrollTopFixedArrow.addClass("invisible");
+      var resetWaiting = function() {
+        waiting = false;
+      };
+
+      var calculateArrowToTopStyle = function() {
+        if(arrowContainer.css("display") == "none" || waiting)
+          return;
+        waiting = true;
+        setTimeout(resetWaiting, 50);
+        var windowTop = $(window).scrollTop() + 60;
+        var arrowHeight = arrow.height();
+        var arrowContainerStart = arrowContainer.offset().top;
+        var arrowContainerHeight = arrowContainer.height();
+        var arrowContainerEnd = arrowContainerStart + arrowContainerHeight;
+
+        if(arrowContainerHeight < 350 || windowTop < arrowContainerStart)
+          arrow.addClass("invisible");
         else {
-          scrollTopFixedArrow.removeClass("invisible");
+          var dif = windowTop - arrowContainerStart;
+          arrow.css({
+            "opacity": Math.min(dif / 250, 1),
+            "top": Math.min(dif + 50, arrowContainerHeight - arrowHeight)
+          });
+          arrow.removeClass("invisible");
         }
+      };
+
+      $(window).scroll(function() {
+        calculateArrowToTopStyle();
+      });
+
+      $(document).ready(function() {
+        calculateArrowToTopStyle();
+      });
+
+      $(window).resize(function() {
+        calculateArrowToTopStyle();
+      });
+
+      $('a[href*="#"]').on('click', function (e) {
+      	e.preventDefault();
+
+        var scrollTo = $($(this).attr('href')).offset().top - 60;
+
+      	$('html, body').animate({
+      		scrollTop: scrollTo
+      	}, 500, 'linear', function() {
+          waiting = false;
+          calculateArrowToTopStyle();
+        });
       });
     </script>
   </body>

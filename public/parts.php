@@ -4,7 +4,7 @@
   function includeNavigation() {
   	global $user;
 ?>
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
+  <nav id="mainNavigationBar" class="navbar navbar-expand-lg navbar-dark fixed-top bg-primary">
     <div class="container">
       <a href="index.php" class="navbar-brand">PMFOverflow</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
