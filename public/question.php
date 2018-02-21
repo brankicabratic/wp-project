@@ -54,7 +54,6 @@
               <div class="write-answer">
                 <form method="post" id="answer-form">
                     <div class="text-formating-tools">
-                      <span class="tool" onclick="tools.delete()"><i class="fas fa-trash-alt"></i></span>
                       <span class="tool" onclick="tools.addCustomTag(' [superscript]', '[/superscript] ')"><i class="fas fa-superscript"></i></span>
                       <span class="tool" onclick="tools.addCustomTag('[code lang=\'html\']\n', '\n[/code]')"><i class="fas fa-code"></i></span>
                     </div>
@@ -131,8 +130,8 @@
                   </div>
                 </div>
 
-                <span class="back-to-top-button d-lg-none"><a title="Back to top" href="#the-question"><i class="fas fa-arrow-circle-up"></i></a></span>
               </div>
+              <span class="back-to-top-button d-lg-none"><a title="Back to top" href="#the-question"><i class="fas fa-arrow-circle-up"></i></a></span>
             </div>
           </div>
 
@@ -210,10 +209,6 @@
       }
 
       var tools = {
-        delete: function() {
-          textAreaVal = getTextAreaSelection();
-          answerInput.value = textAreaVal.pre + textAreaVal.post;
-        },
         addCustomTag: function(preTag, postTag) {
           textAreaVal = getTextAreaSelection();
           answerInput.value = textAreaVal.pre + preTag + textAreaVal.selected + postTag + textAreaVal.post;

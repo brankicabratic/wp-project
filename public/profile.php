@@ -35,6 +35,8 @@
   }
 
   $user_name_identifier = !empty($opened_user[COL_USER_FIRSTNAME]) && !empty($opened_user[COL_USER_LASTNAME]) ? "{$opened_user[COL_USER_FIRSTNAME]} {$opened_user[COL_USER_LASTNAME]}" : $opened_user[COL_USER_USERNAME];
+
+  $is_opened_users_profile = $user !== null && $user[COL_USER_USERNAME] === $opened_user[COL_USER_USERNAME];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -69,7 +71,7 @@
               <div class="nav nav-tabs" id="nav-tab" role="tablist">
                  <a class="nav-item nav-link active" id="nav-about-tab" data-toggle="tab" href="#nav-about" role="tab" aria-controls="nav-about" aria-selected="true">Podaci o korisniku</a>
                  <a class="nav-item nav-link" id="nav-activities-tab" data-toggle="tab" href="#nav-activities" role="tab" aria-controls="nav-activities" aria-selected="false">Aktivnost</a>
-                 <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?><a class="nav-item nav-link" id="nav-change-profile-tab" data-toggle="tab" href="#nav-change-profile" role="tab" aria-controls="nav-change-profile" aria-selected="false">Uredi profil</a><?php } ?>
+                 <?php if($is_opened_users_profile) { ?><a class="nav-item nav-link" id="nav-change-profile-tab" data-toggle="tab" href="#nav-change-profile" role="tab" aria-controls="nav-change-profile" aria-selected="false">Uredi profil</a><?php } ?>
               </div>
            </nav>
            <!-- USER'S BIO TAB -->
@@ -116,7 +118,7 @@
                       </div>
                     <?php } ?>
                  </div>
-                 <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
+                 <?php if($is_opened_users_profile) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
               </div>
               <!-- USER'S ACTIVITIES TAB -->
               <div class="tab-pane fade" id="nav-activities" role="tabpanel" aria-labelledby="nav-activities-tab">
@@ -158,7 +160,7 @@
                     </li>
                  </ul>
               </div>
-              <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?>
+              <?php if($is_opened_users_profile) { ?>
               <!-- CHANGE PROFILE TAB -->
               <div class="tab-pane fade" id="nav-change-profile" role="tabpanel" aria-labelledby="nav-change-profile-tab">
                  <h3>Uredi profil</h3>
@@ -299,7 +301,7 @@
 
     var profilePic = document.getElementById("profile-picture");
     profilePic.style["background-image"] = "url(\"" + profilePic.dataset.img + "\")";
-    <?php if($user !== null && $user[COL_USER_ID] === $opened_user[COL_USER_ID]) { ?>
+    <?php if($is_opened_users_profile) { ?>
 
       // THE FOLLOWING CODE SHOULD BE SHOWN ONLY IF USER LOOKS HIS PROFILE
       var msgCookie = $.cookie("biography-user-message");

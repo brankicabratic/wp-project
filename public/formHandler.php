@@ -60,6 +60,12 @@
         } else if ($code == USER_HANDLER_INVALID_PASSWORD) {
           $result["errors"][] = "Neispravna šifra";
         }
+				else {
+					if(isset($_POST["remember-me"]))
+						setcookie("remembered_username", $_POST["username"], time() + COOKIE_EXP_TIME);
+					else
+						setcookie("remembered_username", "");
+				}
       }
 			break;
 		default:

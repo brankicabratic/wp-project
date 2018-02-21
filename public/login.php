@@ -5,6 +5,10 @@
     header("Location: index.php");
     exit();
   }
+
+  $remembered_username;
+  if(isset($_COOKIE["remembered_username"]))
+    $remembered_username = htmlspecialchars($_COOKIE["remembered_username"]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,9 +25,9 @@
         <h3>Prijavljivanje</h3>
         <div class="form-result-box"></div>
         <div class="form-group">
-          <div class="login-input-group">
+          <div class="login-input-group<?php if($remembered_username) echo " focused" ?>">
             <label for="login-form-username">Korisničko ime</label>
-            <input type="text" id="login-form-username" name="username">
+            <input type="text" id="login-form-username" name="username"<?php if($remembered_username) echo " value=\"$remembered_username\"" ?>>
           </div>
         </div>
         <div class="form-group">
@@ -34,7 +38,7 @@
 
         </div>
         <div class="checkbox">
-          <label for="loginRemember"><input type="checkbox" id="loginRemember" name="remember-me"> Sačuvaj korisničko ime</label>
+          <label for="loginRemember"><input type="checkbox" id="loginRemember" name="remember-me"<?php if($remembered_username) echo " checked" ?>> Sačuvaj korisničko ime</label>
         </div>
         <div class="form-group">
           <input type="submit" class="btn btn-primary" value="Prijavi se">
@@ -57,6 +61,8 @@
       else
         parent.addClass("focused");
     });
+
+
 
     $("form").submit(function(event) {
       event.preventDefault();

@@ -7,6 +7,8 @@
   define("USER_HANDLER_INVALID_USERNAME", 2);
   define("USER_HANDLER_INVALID_PASSWORD", 3);
 
+	define('COOKIE_EXP_TIME', 315360000); // 10 years
+
   function login($username, $password) {
     $db = new Database;
     $user = $db->getUser($username);
