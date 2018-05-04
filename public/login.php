@@ -6,7 +6,7 @@
     exit();
   }
 
-  $remembered_username;
+  $remembered_username = "";
   if(isset($_COOKIE["remembered_username"]))
     $remembered_username = htmlspecialchars($_COOKIE["remembered_username"]);
 ?>
