@@ -157,18 +157,36 @@
     }
 
     /**
-     * @return question suited for page $page and step $step ordered by ID, every newer record has ID bigger than older one
+     * @return question suited for page $page and step $step, filtered by $filterType and ordered by $order
      */
-    public function getNthPageQuestions($page, $step) {
+    public function getNthPageQuestions($page, $step, $filterType = "dateOfCreation", $order = "0") {
       if($step < 1 || $page < 1)
         return null;
       $start = ($page - 1) * $step;
-      $stmt = $this->connection->prepare("SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
-                                          FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                                          WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
-                                          ORDER BY P.".COL_POST_ID." DESC
-                                          LIMIT ?, ?");
-      $stmt->bind_param("ii", $start, $step);
+      $order = $order == "0" ? "DESC" : "ASC";
+      switch ($filterType) {
+        case "authorScore":
+          $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A, ".DB_REACTION_TABLE." R, ".DB_POST_TABLE." P2
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." AND A.".COL_USER_ID." = P2.".COL_POST_AUTHOR." AND
+                        P2.".COL_POST_ID." = R.".COL_REACTION_POST."
+                  GROUP BY Q.".COL_QUESTION_ID.", A.".COL_USER_ID."
+                  ORDER BY SUM(R.".COL_REACTION_TYPE.") $order 
+                  LIMIT ?, ?";
+          $stmt = $this->connection->prepare($sql);
+          $stmt->bind_param("ii", $start, $step);
+          break;
+        
+        default:
+          $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
+                  ORDER BY P.".COL_POST_ID." $order 
+                  LIMIT ?, ?";
+          $stmt = $this->connection->prepare($sql);
+          $stmt->bind_param("ii", $start, $step);
+          break;
+      }
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }

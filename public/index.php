@@ -17,7 +17,12 @@
   }
 
   $db = new Database;
-  $questions = $db->getNthPageQuestions(1, 5);
+  if (isset($_GET["filterQuestions"])) {
+    $questions = $db->getNthPageQuestions(1, $_GET["step"], $_GET["filterType"], $_GET["order"]);
+  }
+  else {
+    $questions = $db->getNthPageQuestions(1, 25);
+  }
   foreach($questions as &$question) {
     $question["TAGS"] = $db->getTagsRelatedToQuestion($question[COL_QUESTION_ID]);
     $question["SCORE"] = $db->getPostsScore($question[COL_QUESTION_ID]);
@@ -72,29 +77,29 @@
                     <div class="select-header">
                       <p>Sortiraj prema:</p>
                     </div>
-                    <select class="form-control" name="">
-                      <option value="">Datumu objave</option>
-                      <option value="">Oceni korisnika</option>
+                    <select class="form-control" name="filterType">
+                      <option value="dateOfCreation">Datumu objave</option>
+                      <option value="authorScore">Oceni korisnika</option>
                     </select>
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>U redosledu:</p>
                     </div>
-                    <select class="form-control" name="">
-                      <option value="">Opadajuće</option>
-                      <option value="">Rastuće</option>
+                    <select class="form-control" name="order">
+                      <option value="0">Opadajuće</option>
+                      <option value="1">Rastuće</option>
                     </select>
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Prikaži po:</p>
                     </div>
-                    <select class="form-control" name="">
-                      <option value="">25</option>
-                      <option value="">50</option>
+                    <select class="form-control" name="step">
+                      <option value="25">25</option>
+                      <option value="50">50</option>
                     </select>
-                    <input type="submit" class="btn btn-primary" name="" value="Primeni">
+                    <input type="submit" class="btn btn-primary" name="filterQuestions" value="Primeni">
                   </div>
                 </div>
               </form>
