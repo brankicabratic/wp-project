@@ -22,11 +22,12 @@
                 $db = new Database;
                 $id = $_GET["id"];
                 if (isset($id)) {
+                  print_r($db->getQuestion($id));
                   $question = $db->getQuestion($id);
                   echo "<h1>".$question["Header"]."</h1>";
+                  echo "<small>Pitao <a href=\"#\">".$question["Username"]."</a> ".$question["PostingTime"]."</small>";
                 }
               ?>
-              <small>Pitao <a href="#">peraPeric</a> 26. 01. 2018. u 22:25</small>
               <div class="tags">
                 <div class="tag">Matematika</div>
                 <div class="tag">Informatika</div>
