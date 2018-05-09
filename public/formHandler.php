@@ -53,7 +53,7 @@
 				$result["errors"][] = "Morate uneti sadrzaj";
 			}
 			
-			$success = insertQuestion($_COOKIE["remembered_username"], $_POST["naslov"], $_POST["sadrzaj"]);
+			$success = insertQuestion($_SESSION["username"], $_POST["naslov"], $_POST["sadrzaj"]);
 			
 			if ($success == QUESTION_HANDLER_OK) {
 				$result["succ"][] = "Uspesno uneto pitanje.";
@@ -74,9 +74,10 @@
         if ($code == USER_HANDLER_INVALID_USERNAME) {
           $result["errors"][] = "Neispravno korisničko ime";
         } else if ($code == USER_HANDLER_INVALID_PASSWORD) {
-          $result["errors"][] = "Neispravna šifra";
-        }
+					$result["errors"][] = "Neispravna šifra";
+				}
 				else {
+					$_SESSION["username"] = $_POST["username"];
 					if(isset($_POST["remember-me"]))
 						setcookie("remembered_username", $_POST["username"], time() + COOKIE_EXP_TIME);
 					else
