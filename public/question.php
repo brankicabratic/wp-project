@@ -22,7 +22,6 @@
                 $db = new Database;
                 $id = $_GET["id"];
                 if (isset($id)) {
-                  print_r($db->getQuestion($id));
                   $question = $db->getQuestion($id);
                   echo "<h1>".$question["Header"]."</h1>";
                   echo "<small>Pitao <a href=\"#\">".$question["Username"]."</a> ".$question["PostingTime"]."</small>";
