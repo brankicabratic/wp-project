@@ -23,8 +23,8 @@
                 $id = $_GET["id"];
                 if (isset($id)) {
                   $question = $db->getQuestion($id);
-                  echo "<h1>".$question["Header"]."</h1>";
-                  echo "<small>Pitao <a href=\"#\">".$question["Username"]."</a> ".$question["PostingTime"]."</small>";
+                  echo "<h1>$question[Header]</h1>";
+                  echo "<small>Pitao <a href=\"#\">$question[Username]</a> $question[PostingTime]</small>";
                 }
               ?>
               <div class="tags">
@@ -36,7 +36,7 @@
             <?php 
               if (isset($id)) {
                 $question = $db->getQuestion($id);
-                echo "<div class=\"question-content\">".$question["Content"]."</div>";
+                echo "<div class=\"question-content\">$question[Content]</div>";
               }
             ?>
             <div class="question-footer">
