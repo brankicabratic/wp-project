@@ -1,5 +1,6 @@
 <?php
 	require_once 'handlers/user_handler.php';
+	require_once 'handlers/question_handler.php';
 
 	$result = array(
 		"errors" => array(),
@@ -42,9 +43,24 @@
 			}
 			break;
 		case "askQuestion":
-			$result["errors"][] = "Neka greska pri unosu!";
-			$result["errors"][] = "Nevalidni tagovi";
-			$result["errors"][] = $_POST["tags"];
+			// if (!isset($_COOKIE["remembered_username"]) || empty($_COOKIE["remembered_username"])) {
+			// 	$result["errors"][] = "Morate biti prijavljeni";
+			// }	
+			if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
+				$result["errors"][] = "Morate uneti naslov";
+			}
+			if (!isset($_POST["sadrzaj"]) || empty($_POST["sadrzaj"])) {
+				$result["errors"][] = "Morate uneti sadrzaj";
+			}
+			
+			$success = insertQuestion($_COOKIE["remembered_username"], $_POST["naslov"], $_POST["sadrzaj"]);
+			
+			if ($success == QUESTION_HANDLER_OK) {
+				$result["succ"][] = "Uspesno uneto pitanje.";
+			}
+			if ($success == QUESTION_HANDLER_INVALID) {
+				$result["errors"][] = "Neka greska pri unosu!";
+			}
 			break;
 		case "loginForm":
       if (!isset($_POST["username"]) || empty($_POST["username"])) {
