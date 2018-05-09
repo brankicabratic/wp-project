@@ -43,9 +43,9 @@
 			}
 			break;
 		case "askQuestion":
-			// if (!isset($_COOKIE["remembered_username"]) || empty($_COOKIE["remembered_username"])) {
-			// 	$result["errors"][] = "Morate biti prijavljeni";
-			// }	
+			if (!isset($_SESSION["userID"])) {
+				$result["errors"][] = "Morate biti prijavljeni";
+			}	
 			if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
 				$result["errors"][] = "Morate uneti naslov";
 			}
