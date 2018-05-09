@@ -168,10 +168,12 @@
         case "authorScore":
           $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A, ".DB_REACTION_TABLE." R, ".DB_POST_TABLE." P2
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." AND A.".COL_USER_ID." = P2.".COL_POST_AUTHOR." AND
-                        P2.".COL_POST_ID." = R.".COL_REACTION_POST."
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
                   GROUP BY Q.".COL_QUESTION_ID.", A.".COL_USER_ID."
-                  ORDER BY SUM(R.".COL_REACTION_TYPE.") $order 
+                  ORDER BY COALESCE((SELECT SUM(R.".COL_REACTION_TYPE.")
+                                      FROM ".DB_POST_TABLE." P2, ".DB_REACTION_TABLE." R
+                                      WHERE A.".COL_USER_ID." = P2.".COL_POST_AUTHOR." AND P2.".COL_POST_ID." = R.".COL_REACTION_POST."
+                                      GROUP BY A.".COL_USER_ID."), 0) $order 
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
           $stmt->bind_param("ii", $start, $step);
@@ -181,7 +183,7 @@
           $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
                   WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
-                  ORDER BY P.".COL_POST_ID." $order 
+                  ORDER BY P.".COL_POST_POSTED." $order 
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
           $stmt->bind_param("ii", $start, $step);
