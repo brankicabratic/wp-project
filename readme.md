@@ -1,14 +1,14 @@
 # PMFOverflow
 
-## Info
-
-| Name | Value |
-| ------ | ------ |
-| Color scheme | [Bundeva](https://color.adobe.com/Bundeva-color-theme-2356874) |
-
 ## Authors
 
 * Miloš Vujasinović
+* Nemanja Gajić
+* Tamaš Horvat
+* Jan Kolek
+* Ognjen Kulić
+* Ilija Matić
+* Miroslav Mirković
 * Katarina Ivanović
 * Ognjen Vučković
 * Nikola Fimić
