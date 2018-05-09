@@ -199,7 +199,7 @@
     private function getSmallestAvaliablePostID() {
       $stmt = $this->connection->prepare("SELECT ".COL_POST_ID." FROM ".DB_POST_TABLE." ORDER BY ".COL_POST_ID." DESC LIMIT 1");
       $stmt->execute();
-      $result = $stmt->get_result()->fetch_all(MYSQLI_NUM);
+      $result = $stmt->get_result()->fetch_row();
       return !$result ? -214748364 : ($result[0] + 1); // minimum value of mysqls int
     }
 

@@ -57,11 +57,11 @@
               <form method="post">
                 <div class="form-result-box"></div>
                 <div class="form-group">
-                  <input type="text" class="form-control" name="" value="" placeholder="Naslov pitanja">
+                  <input type="text" class="form-control" name="naslov" placeholder="Naslov pitanja">
                   <input type="hidden" name="formType" value="askQuestion">
-                  <textarea name="name" class="form-control" rows="8" cols="80" placeholder="Tekst pitanja"></textarea>
+                  <textarea name="sadrzaj" class="form-control" rows="8" cols="80" placeholder="Tekst pitanja"></textarea>
                   <div id="tag-block"></div>
-                  <input type="text" id="add-tag" name="" value="" list="tag-list" placeholder="Dodaj tag" autocomplete="off">
+                  <input type="text" id="add-tag" name="tag" list="tag-list" placeholder="Dodaj tag" autocomplete="off">
                   <datalist id="tag-list"></datalist>
                   <div class="submit-container">
                     <input type="submit" class="btn btn-primary" name="" value="Pitaj">
@@ -227,6 +227,7 @@
           try {
             if(result.errors.length === 0) {
               // OTVORITI KORISNIKOVO PITANJE
+              output = "<div class=\"alert alert-success\" role=\"alert\">" + result.succ.join("<br>") + "</div>";
             }
             else
               output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
