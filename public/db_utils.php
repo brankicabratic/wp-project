@@ -389,6 +389,22 @@
       return $stmt->execute();
     }
 
+    public function updateProfile($ID, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET
+                                          ".COL_USER_FIRSTNAME." = ?,
+                                          ".COL_USER_LASTNAME." = ?,
+                                          ".COL_USER_SEX." = ?,
+                                          ".COL_USER_EMAIL." = ?,
+                                          ".COL_USER_MAJOR." = ?,
+                                          ".COL_USER_ABOUT." = ?,
+                                          ".COL_USER_BIRTHDAY." = ?,
+                                          ".COL_USER_ENROLLED." = ?
+                                          WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("sssssssii", $firstName, $lastName, $sex, $email, $major, $biography, $dateOfBirth, $enrollmentYear, $ID);
+      return $stmt->execute();
+    }
+
     public function updatePassword($ID, $password) {
       $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
                                           SET

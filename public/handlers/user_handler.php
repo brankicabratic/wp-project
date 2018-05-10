@@ -26,6 +26,16 @@
 		return $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email);
 	}
 
+  function updateProfile($username, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography){
+    $db = new Database;
+    $user_id = $db->getUserID($username);
+    $success = $db->updateProfile($user_id, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography);
+    if($success){
+      return USER_HANDLER_OK;
+    }
+    return USER_HANDLER_INVALID_USERNAME;
+  }
+
    function updatePassword($username, $password) {
     $db = new Database;
     $user_id = $db->getUserID($username);
