@@ -20,9 +20,8 @@
             <div class="question-header">
               <?php
                 $db = new Database;
-                $id = $_GET["id"];
-                if (isset($id)) {
-                  $question = $db->getQuestion($id);
+                if (isset($_GET["id"])) {
+                  $question = $db->getQuestion($_GET["id"]);
                   echo "<h1>$question[Header]</h1>";
                   echo "<small>Pitao <a href=\"#\">$question[Username]</a> $question[PostingTime]</small>";
                 }
@@ -34,8 +33,8 @@
               </div>
             </div>
             <?php 
-              if (isset($id)) {
-                $question = $db->getQuestion($id);
+              if (isset($_GET["id"])) {
+                $question = $db->getQuestion($_GET["id"]);
                 echo "<div class=\"question-content\">$question[Content]</div>";
               }
             ?>
