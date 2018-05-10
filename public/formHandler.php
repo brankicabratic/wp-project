@@ -63,27 +63,26 @@
 			}
 			break;
 		case "loginForm":
-      if (!isset($_POST["username"]) || empty($_POST["username"])) {
-        $result["errors"][] = "Morate uneti korisničko ime";
-      }
-      if (!isset($_POST["password"]) || empty($_POST["password"])) {
-        $result["errors"][] = "Morate uneti šifru";
-      }
-      if (count($result["errors"]) == 0) {
-        $code = login($_POST["username"], $_POST["password"]);
-        if ($code == USER_HANDLER_INVALID_USERNAME) {
-          $result["errors"][] = "Neispravno korisničko ime";
-        } else if ($code == USER_HANDLER_INVALID_PASSWORD) {
-					$result["errors"][] = "Neispravna šifra";
-				}
-				else {
+			if (!isset($_POST["username"]) || empty($_POST["username"])) {
+				$result["errors"][] = "Morate uneti korisničko ime";
+			}
+			if (!isset($_POST["password"]) || empty($_POST["password"])) {
+				$result["errors"][] = "Morate uneti šifru";
+			}
+			if (count($result["errors"]) == 0) {
+				$code = login($_POST["username"], $_POST["password"]);
+				if ($code == USER_HANDLER_INVALID_USERNAME) {
+				$result["errors"][] = "Neispravno korisničko ime";
+				} else if ($code == USER_HANDLER_INVALID_PASSWORD) {
+							$result["errors"][] = "Neispravna šifra";
+				} else {
 					$_SESSION["username"] = $_POST["username"];
 					if(isset($_POST["remember-me"]))
 						setcookie("remembered_username", $_POST["username"], time() + COOKIE_EXP_TIME);
 					else
 						setcookie("remembered_username", "");
 				}
-      }
+      		}
 			break;
 		default:
 			exit(json_encode(null));
