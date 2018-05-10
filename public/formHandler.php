@@ -15,7 +15,24 @@
 			// CHANGING PROFILE INFO GOES HERE
 			break;
 		case "password":
-			// CHANGING PASSWORD GOES HERE
+			if (!isset($_POST["current-password"]) || !isset($_POST["new-password"]) || !isset($_POST["new-password-repeated"]) || empty($_POST["current-password"]) || empty($_POST["new-password"]) || empty($_POST["new-password-repeated"])){
+				$result["errors"][] = "Morate popuniti sva polja.";
+			}
+			if ($_POST["new-password"] != $_POST["new-password-repeated"]) {
+				$result["errors"][] = "Unete lozinke nisu jednake.";
+			}
+			
+			$success = checkPassword($_SESSION["username"], $_POST["current-password"]);
+			if ($success==USER_HANDLER_INVALID_PASSWORD){
+				$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
+			}
+			
+			if (count($result["errors"]) == 0) {
+				$success = updatePassword($_SESSION["username"], $_POST["new-password"]);
+				if ($success==USER_HANDLER_INVALID_PASSWORD) {
+					$result["errors"][] = "Došlo je do greške pri promeni lozinke. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
+				}
+			}
 			break;
 		case "registrationForm":
 			if (!isset($_POST["name"]) || empty($_POST["name"])) {
@@ -87,6 +104,5 @@
 		default:
 			exit(json_encode(null));
 	}
-
 	echo json_encode($result);
 ?>

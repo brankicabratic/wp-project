@@ -25,4 +25,26 @@
 		$db = new Database;
 		return $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email);
 	}
+
+   function updatePassword($username, $password) {
+    $db = new Database;
+    $user_id = $db->getUserID($username);
+    $success = $db->updatePassword($user_id, password_hash($password, PASSWORD_DEFAULT));
+    if($success) {
+      return USER_HANDLER_OK;
+    }
+    return USER_HANDLER_INVALID_PASSWORD;
+  }
+
+  function checkPassword($username, $password){
+    $db = new Database;
+    $user_id = $db->getUserID($username);
+    $db_password = $db->getPasswordById($user_id);
+    $success = password_verify($password, $db_password);
+    if($success) {
+      return USER_HANDLER_OK;
+    }
+    return USER_HANDLER_INVALID_PASSWORD;
+  }
+  
 ?>

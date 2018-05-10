@@ -28,6 +28,8 @@
      * updatePost($postID, $content) DONE
      * updateQuestion($postID, $header, $content) DONE
      * updateAnswer($postID, $content) DONE
+     * updatePassword($ID, $password) DONE
+     * getPasswordByID($ID) DONE
      * doesReactionExist($userID, $postID) DONE
      * saveReaction($userID, $postID, $type) DONE
      * insertRank($rankID, $rankName) DONE
@@ -387,6 +389,25 @@
       return $stmt->execute();
     }
 
+    public function updatePassword($ID, $password) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET
+                                          ".COL_USER_PASSWORD." = ?
+                                          WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("si", $password, $ID);
+      return $stmt->execute();
+    }
+
+    public function getPasswordById($ID) {
+      $stmt = $this->connection->prepare("SELECT " .COL_USER_PASSWORD. 
+                                          " FROM "
+                                          .DB_USER_TABLE."
+                                           WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("i", $ID);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_row();
+      return $result[0];
+    }
 
     /**
      * Change content of post with given ID
