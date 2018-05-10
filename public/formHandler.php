@@ -15,7 +15,24 @@
 			// CHANGING PROFILE INFO GOES HERE
 			break;
 		case "password":
-			// CHANGING PASSWORD GOES HERE
+			if (!isset($_POST["current-password"]) || !isset($_POST["new-password"]) || !isset($_POST["new-password-repeated"]) || empty($_POST["current-password"]) || empty($_POST["new-password"]) || empty($_POST["new-password-repeated"])){
+				$result["errors"][] = "Morate popuniti sva polja.";
+			}
+			if ($_POST["new-password"] != $_POST["new-password-repeated"]) {
+				$result["errors"][] = "Unete lozinke nisu jednake.";
+			}
+			
+			$success = checkPassword($_SESSION["username"], $_POST["current-password"]);
+			if ($success==USER_HANDLER_INVALID_PASSWORD){
+				$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
+			}
+			
+			if (count($result["errors"]) == 0) {
+				$success = updatePassword($_SESSION["username"], $_POST["new-password"]);
+				if ($success==USER_HANDLER_INVALID_PASSWORD) {
+					$result["errors"][] = "Došlo je do greške pri promeni lozinke. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
+				}
+			}
 			break;
 		case "registrationForm":
 			if (!isset($_POST["name"]) || empty($_POST["name"])) {
@@ -63,31 +80,29 @@
 			}
 			break;
 		case "loginForm":
-      if (!isset($_POST["username"]) || empty($_POST["username"])) {
-        $result["errors"][] = "Morate uneti korisničko ime";
-      }
-      if (!isset($_POST["password"]) || empty($_POST["password"])) {
-        $result["errors"][] = "Morate uneti šifru";
-      }
-      if (count($result["errors"]) == 0) {
-        $code = login($_POST["username"], $_POST["password"]);
-        if ($code == USER_HANDLER_INVALID_USERNAME) {
-          $result["errors"][] = "Neispravno korisničko ime";
-        } else if ($code == USER_HANDLER_INVALID_PASSWORD) {
-					$result["errors"][] = "Neispravna šifra";
-				}
-				else {
+			if (!isset($_POST["username"]) || empty($_POST["username"])) {
+				$result["errors"][] = "Morate uneti korisničko ime";
+			}
+			if (!isset($_POST["password"]) || empty($_POST["password"])) {
+				$result["errors"][] = "Morate uneti šifru";
+			}
+			if (count($result["errors"]) == 0) {
+				$code = login($_POST["username"], $_POST["password"]);
+				if ($code == USER_HANDLER_INVALID_USERNAME) {
+				$result["errors"][] = "Neispravno korisničko ime";
+				} else if ($code == USER_HANDLER_INVALID_PASSWORD) {
+							$result["errors"][] = "Neispravna šifra";
+				} else {
 					$_SESSION["username"] = $_POST["username"];
 					if(isset($_POST["remember-me"]))
 						setcookie("remembered_username", $_POST["username"], time() + COOKIE_EXP_TIME);
 					else
 						setcookie("remembered_username", "");
 				}
-      }
+      		}
 			break;
 		default:
 			exit(json_encode(null));
 	}
-
 	echo json_encode($result);
 ?>
