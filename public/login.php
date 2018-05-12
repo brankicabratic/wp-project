@@ -80,8 +80,9 @@
             if(result.errors.length === 0) {
               window.open("index.php", "_self");
             }
-            else
+            else {
               output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
+            }
           }
           catch(err) {
             output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
