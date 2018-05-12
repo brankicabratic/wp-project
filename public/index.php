@@ -106,7 +106,7 @@
                 <div class="row">
                   <div class="col-lg-4">
                     <div class="select-header">
-                      <p>Pretraga po imenu pitanja:</p>
+                      <p>Pretraga po naslovu pitanja:</p>
                     </div>
                     <input type="text" name="nameSearch">
                   </div>

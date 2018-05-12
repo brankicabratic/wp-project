@@ -159,11 +159,14 @@
     }
 
     /**
-     * @return question suited for page $page and step $step, filtered by $filterType and ordered by $order
+     * @return question suited for page $page and step $step, filtered by $filterType and ordered by $order. The search will be done by $name and $tags parameters (which are 
+     * the question's name (doesn't have to be full name) and tags, respectively) if they are specified.
      */
     public function getNthPageQuestions($page, $step, $filterType = "dateOfCreation", $order = "0", $name = "", $tags = "") {
       if($step < 1 || $page < 1)
         return null;
+
+      //Preparation of various variables required for the querries
       $start = ($page - 1) * $step;
       $order = $order == "0" ? "DESC" : "ASC";
       $name = "%".$name."%";
@@ -173,6 +176,8 @@
       $sqlType = "";
       $sqlData = array();
       $tagsSQL = "";
+
+      // Preparation of the dynamic part of the querry which depends upon the number of tags beaing searched by
       if ($tags != "") {
         $tags = preg_split("/[\s,]+/", $tags);
         $firstTag = true;
@@ -192,7 +197,11 @@
                                 WHERE P.".COL_POST_ID." = PT.".COL_POSTTAG_POST." AND PT.".COL_POSTTAG_TAG." = T.".COL_TAG_ID." 
                                 AND T.".COL_TAG_NAME." IN (".$tagParams."))";
       }
+
+      // Executing the correct querry specified by the $filterType
       switch ($filterType) {
+
+        //Filtering by author's score
         case "authorScore":
           $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
@@ -212,6 +221,7 @@
           call_user_func_array(array($stmt, "bind_param"), $sqlData);
           break;
         
+        //Filtering by the date of question's posting
         default:
           $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
