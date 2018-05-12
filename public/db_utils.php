@@ -169,15 +169,17 @@
       $name = "%".$name."%";
       $tagParams = "";
       $tags = trim($tags);
+      $name = trim($name);
       $sqlType = "";
       $sqlData = array();
+      $tagsSQL = "";
       if ($tags != "") {
         $tags = preg_split("/[\s,]+/", $tags);
-        $tagsSQL = "";
         $firstTag = true;
         foreach ($tags as $tag) {
           if ($firstTag) {
             $tagParams = "?";
+            $firstTag = false;
           }
           else {
             $tagParams = $tagParams.",?";
@@ -194,7 +196,7 @@
         case "authorScore":
           $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." AND Q.".COL_QUESTION_HEADER." LIKE ? $tagsSQL
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
                   GROUP BY Q.".COL_QUESTION_ID."
                   ORDER BY COALESCE((SELECT SUM(R.".COL_REACTION_TYPE.")
                                       FROM ".DB_POST_TABLE." P2, ".DB_REACTION_TABLE." R
@@ -213,7 +215,7 @@
         default:
           $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." AND Q.".COL_QUESTION_HEADER." LIKE ? $tagsSQL
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
                   ORDER BY P.".COL_POST_POSTED." $order 
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
