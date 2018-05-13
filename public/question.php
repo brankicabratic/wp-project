@@ -40,13 +40,13 @@
             ?>
             <div class="question-footer">
               <span class="score">
-                <span class="reaction dislike active"><i class="fas fa-caret-left"></i></span>
-                <span class="actual-score">0</span>
-                <span class="reaction like"><i class="fas fa-caret-right"></i></span>
+				
+                <span class="reaction dislike"><button class="fas fa-caret-left" onclick="increment()"></button></span>
+                <span id="demo">0</span>
+                <span class="reaction like active"><button class="fas fa-caret-right" onclick="decrement()"></button></span>
               </span>
             </div>
           </div>
-
           <div class="row">
             <div class="col-1 d-none d-lg-block scroll-top-answers-side">
               <span class="arrow invisible back-to-top-button"><a title="Back to top" href="#the-question"><i class="fas fa-arrow-circle-up"></i></a></span>
@@ -242,6 +242,17 @@
           calculateArrowToTopStyle();
         });
       });
-    </script>
+	  
+	  function increment(){
+		if(document.getElementById("demo").innerHTML > 0){
+			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) -1;
+		}
+	  }
+	  
+	   function decrement(){
+			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
+	  }
+	  
+	</script>
   </body>
 </html>

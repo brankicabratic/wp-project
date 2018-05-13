@@ -14,6 +14,20 @@
 	switch($_POST["formType"]) {
 		case "biography":
 			// CHANGING PROFILE INFO GOES HERE
+			if (!isset($_SESSION["username"])) {
+				$result["errors"][]="Morate biti ulogovani.";
+			}
+			$success = checkPassword($_SESSION["username"], $_POST["authenticationPassword"]);
+			if($success==USER_HANDLER_INVALID_PASSWORD){
+				$result["errors"][] = "Neispravna lozinka.";
+			}
+
+			if(count($result["errors"])==0) {
+				$success = updateProfile($_SESSION["username"], $_POST["firstName"], $_POST["lastName"], $_POST["major"], $_POST["enrollmentYear"], $_POST["email"], $_POST["sex"], $_POST["dateOfBirth"], $_POST["biography"]);
+				if(!$success){
+					$result["errors"][] = "Došlo je do greške pri podesavanje profila. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
+				}
+			}
 			break;
 		case "password":
 			if (!isset($_POST["current-password"]) || !isset($_POST["new-password"]) || !isset($_POST["new-password-repeated"]) || empty($_POST["current-password"]) || empty($_POST["new-password"]) || empty($_POST["new-password-repeated"])){
