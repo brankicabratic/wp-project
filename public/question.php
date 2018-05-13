@@ -23,7 +23,7 @@
                 if (isset($_GET["id"])) {
                   $question = $db->getQuestion($_GET["id"]);
                   echo "<h1>$question[Header]</h1>";
-                  echo "<small>Pitao <a href=\"#\">$question[Username]</a> $question[PostingTime]</small>";
+                  echo "<small>Pitao <a href=\"#\">".$question[COL_USER_USERNAME]."</a> ".$question[COL_POST_POSTED]."</small>";
                 }
               ?>
               <div class="tags">

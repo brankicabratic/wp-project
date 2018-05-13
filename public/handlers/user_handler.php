@@ -1,7 +1,6 @@
 <?php
 	require_once 'db_utils.php';
-
-  session_start();
+	require_once 'session.php';
 
   define("USER_HANDLER_OK", 1);
   define("USER_HANDLER_INVALID_USERNAME", 2);
