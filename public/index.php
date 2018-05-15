@@ -227,7 +227,8 @@
           try {
             if(result.errors.length === 0) {
               // OTVORITI KORISNIKOVO PITANJE
-              output = "<div class=\"alert alert-success\" role=\"alert\">" + result.succ.join("<br>") + "</div>";
+              window.location.href = "question.php?id=" + result["succ"][1];
+              //output = "<div class=\"alert alert-success\" role=\"alert\">" + result.succ.join("<br>") + "</div>";
             }
             else
               output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";

@@ -88,11 +88,9 @@
 			if (count($result["errors"]) == 0) {
 				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"]);
 				
-				if ($success == QUESTION_HANDLER_OK) {
+				if ($success) {
 					$result["succ"][] = "Uspešno uneto pitanje.";
-				}
-				if ($success == QUESTION_HANDLER_INVALID) {
-					$result["errors"][] = "Neka greška pri unosu!";
+					$result["succ"][] = $success;
 				}
 			}
 			break;

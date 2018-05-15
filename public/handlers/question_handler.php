@@ -10,7 +10,7 @@
     if (!$success) {
       return QUESTION_HANDLER_INVALID;
     } 
-    return QUESTION_HANDLER_OK;
+    return $success;
   }
 
   function insertTag($name) {
