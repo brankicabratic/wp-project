@@ -22,8 +22,13 @@
                 $db = new Database;
                 if (isset($_GET["id"])) {
                   $question = $db->getQuestion($_GET["id"]);
-                  echo "<h1>$question[Header]</h1>";
-                  echo "<small>Pitao <a href=\"#\">".$question[COL_USER_USERNAME]."</a> ".$question[COL_POST_POSTED]."</small>";
+                  if (is_null($question)) {
+                    header("Location: questionNotFound.php");
+                    exit();
+                  } else {
+                    echo "<h1>$question[Header]</h1>";
+                    echo "<small>Pitao <a href=\"#\">".$question[COL_USER_USERNAME]."</a> ".$question[COL_POST_POSTED]."</small>";
+                  }
                 }
               ?>
               <div class="tags">
