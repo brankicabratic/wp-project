@@ -27,7 +27,13 @@
                     exit();
                   } else {
                     echo "<h1>$question[Header]</h1>";
-                    echo "<small>Pitao <a href=\"#\">".$question[COL_USER_USERNAME]."</a> ".$question[COL_POST_POSTED]."</small>";
+                    $nameToShow = $question[COL_USER_USERNAME];
+                    $firstName = $question[COL_USER_FIRSTNAME];
+                    $lastName = $question[COL_USER_LASTNAME];
+                    if (!empty($firstName) && !empty($lastName)) {
+                      $nameToShow = "$firstName $lastName";
+                    }
+                    echo "<small>Pitao <a href=\"profile.php?user=".$question[COL_USER_USERNAME]."\">$nameToShow</a> ".$question[COL_POST_POSTED]."</small>";
                   }
                 }
               ?>
