@@ -18,10 +18,10 @@
 
   $db = new Database;
   if (isset($_GET["filterQuestions"])) {
-    $questions = $db->getNthPageQuestions(1, $_GET["step"], $_GET["filterType"], $_GET["order"]);
+    $questions = $db->getNthPageQuestions(1, $_GET["step"], $_GET["filterType"], $_GET["order"], $_GET["nameSearch"], $_GET["tagSearch"]);
   }
   else {
-    $questions = $db->getNthPageQuestions(1, 25);
+    $questions = $db->getNthPageQuestions(1, 10);
   }
   foreach($questions as &$question) {
     $question["TAGS"] = $db->getTagsRelatedToQuestion($question[COL_QUESTION_ID]);
@@ -104,9 +104,27 @@
                       <p>Prikaži po:</p>
                     </div>
                     <select class="form-control" name="step">
+                      <option value="5">5</option>
+                      <option value="10" selected="true">10</option>
                       <option value="25">25</option>
                       <option value="50">50</option>
                     </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4">
+                    <div class="select-header">
+                      <p>Pretraga po naslovu pitanja:</p>
+                    </div>
+                    <input type="text" name="nameSearch">
+                  </div>
+                  <div class="col-lg-4">
+                    <div class="select-header">
+                      <p>Pretraga po tagovima:</p>
+                    </div>
+                    <input type="text" name="tagSearch">
+                  </div>
+                  <div class="col-lg-4">
                     <input type="submit" class="btn btn-primary" name="filterQuestions" value="Primeni">
                   </div>
                 </div>

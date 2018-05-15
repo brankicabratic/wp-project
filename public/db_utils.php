@@ -159,36 +159,82 @@
     }
 
     /**
-     * @return question suited for page $page and step $step, filtered by $filterType and ordered by $order
+     * @return question suited for page $page and step $step, filtered by $filterType and ordered by $order. The search will be done by $name and $tags parameters (which are 
+     * the question's name (doesn't have to be full name) and tags, respectively) if they are specified.
      */
-    public function getNthPageQuestions($page, $step, $filterType = "dateOfCreation", $order = "0") {
+    public function getNthPageQuestions($page, $step, $filterType = "dateOfCreation", $order = "0", $name = "", $tags = "") {
       if($step < 1 || $page < 1)
         return null;
+
+      //Preparation of various variables required for the querries
       $start = ($page - 1) * $step;
       $order = $order == "0" ? "DESC" : "ASC";
+      $name = "%".$name."%";
+      $tagParams = "";
+      $tags = trim($tags);
+      $name = trim($name);
+      $sqlType = "";
+      $sqlData = array();
+      $tagsSQL = "";
+
+      // Preparation of the dynamic part of the querry which depends upon the number of tags beaing searched by
+      if ($tags != "") {
+        $tags = preg_split("/[\s,]+/", $tags);
+        $firstTag = true;
+        foreach ($tags as $tag) {
+          if ($firstTag) {
+            $tagParams = "?";
+            $firstTag = false;
+          }
+          else {
+            $tagParams = $tagParams.",?";
+          }
+          $sqlType = $sqlType."s";
+          $sqlData[] = &$tag;
+        }
+        $tagsSQL = "AND EXISTS (SELECT *
+                                FROM ".DB_POSTTAG_TABLE." PT, ".DB_TAG_TABLE." T
+                                WHERE P.".COL_POST_ID." = PT.".COL_POSTTAG_POST." AND PT.".COL_POSTTAG_TAG." = T.".COL_TAG_ID." 
+                                AND T.".COL_TAG_NAME." IN (".$tagParams."))";
+      }
+
+      // Executing the correct querry specified by the $filterType
       switch ($filterType) {
+
+        //Filtering by author's score
         case "authorScore":
           $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
-                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A, ".DB_REACTION_TABLE." R, ".DB_POST_TABLE." P2
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
-                  GROUP BY Q.".COL_QUESTION_ID.", A.".COL_USER_ID."
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  GROUP BY Q.".COL_QUESTION_ID."
                   ORDER BY COALESCE((SELECT SUM(R.".COL_REACTION_TYPE.")
                                       FROM ".DB_POST_TABLE." P2, ".DB_REACTION_TABLE." R
                                       WHERE A.".COL_USER_ID." = P2.".COL_POST_AUTHOR." AND P2.".COL_POST_ID." = R.".COL_REACTION_POST."
                                       GROUP BY A.".COL_USER_ID."), 0) $order 
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
-          $stmt->bind_param("ii", $start, $step);
+          $sqlType = $sqlType."sii";
+          $sqlData[] = &$name;
+          $sqlData[] = &$start;
+          $sqlData[] = &$step;
+          array_unshift($sqlData, $sqlType);
+          call_user_func_array(array($stmt, "bind_param"), $sqlData);
           break;
         
+        //Filtering by the date of question's posting
         default:
           $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR."
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
                   ORDER BY P.".COL_POST_POSTED." $order 
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
-          $stmt->bind_param("ii", $start, $step);
+          $sqlType = $sqlType."sii";
+          $sqlData[] = &$name;
+          $sqlData[] = &$start;
+          $sqlData[] = &$step;
+          array_unshift($sqlData, $sqlType);
+          call_user_func_array(array($stmt, "bind_param"), $sqlData);
           break;
       }
       $stmt->execute();
