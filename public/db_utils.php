@@ -162,7 +162,7 @@
      * @return question suited for page $page and step $step, filtered by $filterType and ordered by $order. The search will be done by $name and $tags parameters (which are 
      * the question's name (doesn't have to be full name) and tags, respectively) if they are specified.
      */
-    public function getNthPageQuestions($page, $step, $filterType = "dateOfCreation", $order = "0", $name = "", $tags = "") {
+    public function getNthPageQuestions($page, $step, $filterType = "dateOfCreation", $order = "0", $name = "", $tags = "", $category = "0") {
       if($step < 1 || $page < 1)
         return null;
 
@@ -198,6 +198,13 @@
                                 AND T.".COL_TAG_NAME." IN (".$tagParams."))";
       }
 
+      $categorySQL = "";
+      if ($category != "0") {
+        $categorySQL = "AND Q.".COL_QUESTION_CATEGORY." = ? ";
+        $sqlType = $sqlType."i";
+        $sqlData[] = &$category;
+      } 
+
       // Executing the correct querry specified by the $filterType
       switch ($filterType) {
 
@@ -205,7 +212,8 @@
         case "authorScore":
           $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+                        AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
                   GROUP BY Q.".COL_QUESTION_ID."
                   ORDER BY COALESCE((SELECT SUM(R.".COL_REACTION_TYPE.")
                                       FROM ".DB_POST_TABLE." P2, ".DB_REACTION_TABLE." R
@@ -225,7 +233,8 @@
         default:
           $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
                   FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+                        AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
                   ORDER BY P.".COL_POST_POSTED." $order 
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
@@ -237,6 +246,14 @@
           call_user_func_array(array($stmt, "bind_param"), $sqlData);
           break;
       }
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getAllCategories() {
+      $stmt = $this->connection->prepare("SELECT *
+                                          FROM ".DB_CATEGORY_TABLE."
+                                          ORDER BY ".COL_CATEGORY_ID);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
@@ -270,12 +287,12 @@
     /**
      * @return ID of inserted question if insertion was successful, otherwise return false
      */
-    public function insertQuestion($author, $header, $content) {
+    public function insertQuestion($author, $header, $content, $category) {
       $ID = $this->getSmallestAvaliablePostID();
       if($this->insertPost($ID, $author, $content, POST_TYPE_QUESTION) === false)
         return false;
-      $stmt = $this->connection->prepare("INSERT INTO ".DB_QUESTION_TABLE."(".COL_QUESTION_ID.", ".COL_QUESTION_HEADER.") VALUES (?, ?)");
-      $stmt->bind_param("is", $ID, $header);
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_QUESTION_TABLE."(".COL_QUESTION_ID.", ".COL_QUESTION_HEADER.", ".COL_QUESTION_CATEGORY.") VALUES (?, ?, ?)");
+      $stmt->bind_param("isi", $ID, $header, $category);
       $result = $stmt->execute();
       if(!$result)
         $this->deletePost($ID);

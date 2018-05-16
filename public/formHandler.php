@@ -85,8 +85,9 @@
 				$result["errors"][] = "Morate uneti sadržaj.";
 			}
 			
+
 			if (count($result["errors"]) == 0) {
-				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"]);
+				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"]);
 				
 				if ($success) {
 					$result["succ"][] = "Uspešno uneto pitanje.";
