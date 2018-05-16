@@ -12,7 +12,7 @@
     <div class="container main-container">
       <?php includeNavigation() ?>
       
-      <!-- Move style to css -->
+      <!-- TODO Move style to css -->
       <div style="width: 100%; margin:50px 0px 45%; text-align: center; font-size: 25px; width: 100%;">
           Pitanje kojem ste pokušali da pristupite više ne postoji
       </div>
