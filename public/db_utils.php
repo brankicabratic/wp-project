@@ -7,6 +7,7 @@
      * List of methods:
      *
      * getUser($username, $getter=USER_GETTER_ALL) DONE
+     * getUserByID($id, $getter=USER_GETTER_ALL) DONE
      * updateOnlineTime($username) DONE
      * createUser($username, $password, $email) DONE
      * getUserID($username) DONE
@@ -51,7 +52,7 @@
       }
       else
         exit("Missing configuration file.");
-      // mysqli_report(MYSQLI_REPORT_ALL);
+      mysqli_report(MYSQLI_REPORT_ALL);
       $this->idTable = array(
         DB_USER_TABLE => COL_USER_ID,
         DB_POST_TABLE => COL_POST_ID,
@@ -80,6 +81,21 @@
         throw new Exception("Invalid getter passed to function getUser method in Database class.");
       $stmt = $this->connection->prepare("SELECT ".$this->getterTable[$getter]." FROM ".DB_USER_TABLE." WHERE ".COL_USER_USERNAME." = ?");
       $stmt->bind_param("s", $username);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
+    }
+
+    /**
+     * @param id of the user
+     * @return user as associative array or null if user is not found
+     */
+    public function getUserByID($id, $getter=USER_GETTER_ALL) {
+      if(!$id)
+        return null;
+      if(!isset($this->getterTable[$getter]))
+        throw new Exception("Invalid getter passed to function getUserByID method in Database class.");
+      $stmt = $this->connection->prepare("SELECT ".$this->getterTable[$getter]." FROM ".DB_USER_TABLE." WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("i", $id);
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     }
@@ -447,6 +463,8 @@
                                           ".COL_USER_BIRTHDAY." = ?,
                                           ".COL_USER_ENROLLED." = ?
                                           WHERE ".COL_USER_ID." = ?");
+      if (empty($dateOfBirth))
+        $dateOfBirth = null;
       $stmt->bind_param("sssssssii", $firstName, $lastName, $sex, $email, $major, $biography, $dateOfBirth, $enrollmentYear, $ID);
       return $stmt->execute();
     }

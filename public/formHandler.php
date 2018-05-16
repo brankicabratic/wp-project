@@ -14,16 +14,16 @@
 	switch($_POST["formType"]) {
 		case "biography":
 			// CHANGING PROFILE INFO GOES HERE
-			if (!isset($_SESSION["username"])) {
+			if (!$user) {
 				$result["errors"][]="Morate biti ulogovani.";
 			}
-			$success = checkPassword($_SESSION["username"], $_POST["authenticationPassword"]);
+			$success = checkPassword($user[COL_USER_USERNAME], $_POST["authenticationPassword"]);
 			if($success==USER_HANDLER_INVALID_PASSWORD){
 				$result["errors"][] = "Neispravna lozinka.";
 			}
 
 			if(count($result["errors"])==0) {
-				$success = updateProfile($_SESSION["username"], $_POST["firstName"], $_POST["lastName"], $_POST["major"], $_POST["enrollmentYear"], $_POST["email"], $_POST["sex"], $_POST["dateOfBirth"], $_POST["biography"]);
+				$success = updateProfile($user[COL_USER_ID], $_POST["firstName"], $_POST["lastName"], $_POST["major"], $_POST["enrollmentYear"], $_POST["email"], $_POST["sex"], $_POST["dateOfBirth"], $_POST["biography"]);
 				if(!$success){
 					$result["errors"][] = "Došlo je do greške pri podesavanje profila. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
 				}
@@ -117,7 +117,7 @@
 			break;
 		case "avatar":
 			if(isset($_POST["saveAvatarChanges"])){
-				if (!isset($_SESSION["username"])) {
+				if (!$user) {
 					$result["errors"][]="Morate biti ulogovani.";
 				}
 				if (isset( $_FILES["photo"]) and $_FILES["photo"]["error"] == UPLOAD_ERR_OK) {
@@ -143,7 +143,7 @@
 					echo "Izvinite, došlo je do greške tokom uploada. $message";
 				}
 			}
-			if(count($result["errors"][] == 0)){
+			if(count($result["errors"]) == 0){
 				$newAvatar = "img/" . basename($_FILES["photo"]["name"]);
 				$success = updateAvatar($user[COL_USER_USERNAME], $newAvatar);
 			}

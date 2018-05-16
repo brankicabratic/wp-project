@@ -3,8 +3,9 @@
 	require_once 'session.php';
 
   define("USER_HANDLER_OK", 1);
-  define("USER_HANDLER_INVALID_USERNAME", 2);
-  define("USER_HANDLER_INVALID_PASSWORD", 3);
+  define("USER_HANDLER_ERROR", 2);
+  define("USER_HANDLER_INVALID_USERNAME", 3);
+  define("USER_HANDLER_INVALID_PASSWORD", 4);
 
 	define('COOKIE_EXP_TIME', 315360000); // 10 years
 
@@ -14,7 +15,7 @@
     if (!$user) return USER_HANDLER_INVALID_USERNAME;
     $success = password_verify($password, $user[COL_USER_PASSWORD]);
     if ($success) {
-      $_SESSION["userID"] = $user[COL_USER_ID];
+      $_SESSION[SESSION_USER_ID] = $user[COL_USER_ID];
       return USER_HANDLER_OK;
     }
     return USER_HANDLER_INVALID_PASSWORD;
@@ -25,14 +26,13 @@
 		return $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email);
 	}
 
-  function updateProfile($username, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography){
+  function updateProfile($user_id, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography){
     $db = new Database;
-    $user_id = $db->getUserID($username);
     $success = $db->updateProfile($user_id, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography);
     if($success){
       return USER_HANDLER_OK;
     }
-    return USER_HANDLER_INVALID_USERNAME;
+    return USER_HANDLER_ERROR;
   }
 
   function updateAvatar($username, $newAvatar){

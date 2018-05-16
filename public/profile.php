@@ -214,8 +214,8 @@
                           </div>
                           <div class="col-sm-8">
                              <select name="sex" id="change-profile-sex" class="form-control">
-                                <option value="male"<?php if($opened_user[COL_USER_SEX] === SEX_MALE) echo " selected" ?>>Muško</option>
-                                <option value="female"<?php if($opened_user[COL_USER_SEX] === SEX_FEMALE) echo " selected" ?>>Žensko</option>
+                                <option value="m"<?php if($opened_user[COL_USER_SEX] === SEX_MALE) echo " selected" ?>>Muško</option>
+                                <option value="f"<?php if($opened_user[COL_USER_SEX] === SEX_FEMALE) echo " selected" ?>>Žensko</option>
                                 <option value="none">Ne želim da se izjasnim</option>
                              </select>
                           </div>

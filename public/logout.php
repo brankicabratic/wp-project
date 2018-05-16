@@ -1,5 +1,5 @@
 <?php
-  session_start();
-  unset($_SESSION["userID"]);
+  require_once 'session.php';
+  logout();
   header("Location: index.php");
 ?>
