@@ -121,9 +121,10 @@
 					$result["errors"][]="Morate biti ulogovani.";
 				}
 				if (isset( $_FILES["photo"]) and $_FILES["photo"]["error"] == UPLOAD_ERR_OK) {
+					$target_file="img/" . basename($_FILES["photo"]["name"]);
 					if ($_FILES["photo"]["type"] != "image/jpeg" && $_FILES["photo"]["type"] != "image/jpg" && $_FILES["photo"]["type"] != "image/png" && $_FILES["photo"]["type"] != "image/gif") {
 						$result["errors"][]="Slika za avatar mora da bude formata: .jpeg, .jpg, .png ili .gif .";
-					}elseif(!move_uploaded_file( $_FILES["photo"]["tmp_name"], "img/" . basename($_FILES["photo"]["name"]))) {
+					}elseif(!move_uploaded_file( $_FILES["photo"]["tmp_name"], $target_file)) {
 				        $result["errors"][]="Došlo je do greške tokom uploada vašeg slike." . $_FILES["photo"]["error"];
 					    }
 				}else{
@@ -146,7 +147,7 @@
 			if(count($result["errors"]) == 0){
 				$newAvatar = "img/" . basename($_FILES["photo"]["name"]);
 				$success = updateAvatar($user[COL_USER_USERNAME], $newAvatar);
-			}
+			}*/
 			break;
 		default:
 			exit(json_encode(null));
