@@ -9,6 +9,7 @@
   define('DB_RANK_TABLE', 'Rank');
   define('DB_PERMREST_TABLE', 'PermRest');
   define('DB_RANK_PERMREST_TABLE', 'HasPermRest');
+  define('DB_CATEGORY_TABLE', 'Category');
 
   define('COL_USER_ID', 'UserID');
   define('COL_USER_USERNAME', 'Username');

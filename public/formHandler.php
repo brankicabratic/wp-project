@@ -84,7 +84,7 @@
 				$result["errors"][] = "Morate uneti sadrzaj";
 			}
 			
-			$success = insertQuestion($_SESSION["username"], $_POST["naslov"], $_POST["sadrzaj"]);
+			$success = insertQuestion($_SESSION["username"], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"]);
 			
 			if ($success == QUESTION_HANDLER_OK) {
 				$result["succ"][] = "Uspesno uneto pitanje.";
