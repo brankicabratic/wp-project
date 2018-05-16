@@ -35,6 +35,16 @@
     return USER_HANDLER_INVALID_USERNAME;
   }
 
+  function updateAvatar($username, $newAvatar){
+    $db = new Database;
+    $user_id = $db->getUserID($username);
+    $success = $db->updateAvatar($username, $newAvatar);
+    if($success){
+      return USER_HANDLER_OK;
+    }
+    return USER_HANDLER_INVALID_USERNAME;
+  }
+
    function updatePassword($username, $password) {
     $db = new Database;
     $user_id = $db->getUserID($username);

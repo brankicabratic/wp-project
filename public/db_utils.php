@@ -451,6 +451,15 @@
       return $stmt->execute();
     }
 
+    public function updateAvatar($ID, $newAvatar){
+      $stmt = $this->connection->prepare("UPDATE " .DB_USER_TABLE. "
+                                          SET
+                                          ".COL_USER_AVATAR." = ?
+                                          WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("si", $newAvatar, $ID);
+      return $stmt->execute();
+    }
+
     public function updatePassword($ID, $password) {
       $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
                                           SET
