@@ -76,8 +76,10 @@ CREATE TABLE Reaction(
 CREATE TABLE Question(
 	PostID int NOT NULL,
 	Header varchar(200) NOT NULL,
+	CategoryID int NOT NULL,
 	PRIMARY KEY(PostID),
-	FOREIGN KEY(PostID) REFERENCES Post(PostID)
+	FOREIGN KEY(PostID) REFERENCES Post(PostID),
+	FOREIGN KEY(CategoryID) REFERENCES Category(CategoryID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
 
 -- ANSWERS
@@ -114,4 +116,10 @@ CREATE TABLE Request(
 	Type int NOT NULL,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(UserID) REFERENCES User(UserID)
+) CHARACTER SET utf8 COLLATE utf8_bin;
+
+CREATE TABLE Category(
+	CategoryID int NOT NULL,
+	Name varchar(50) NOT NULL UNIQUE,
+	PRIMARY KEY(CategoryID)
 ) CHARACTER SET utf8 COLLATE utf8_bin;
