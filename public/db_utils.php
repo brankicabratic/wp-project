@@ -132,6 +132,15 @@
       mail($to, $subject, $message, $headers);
       return $stmt->execute();
     }
+    /**
+     * returns User with given email and hash or null if user doesnt exist
+     */
+    public function getUserEmailAndHash($email, $hash) {
+      $stmt = $this->connection->prepare("SELECT ".COL_USER_EMAIL.",".COL_USER_HASH." FROM ".DB_USER_TABLE." WHERE ".COL_USER_EMAIL." = ? AND ".COL_USER_HASH."= ?");
+      $stmt->bind_param("ss", $email, $hash);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+    }
 
     /**
      * @return whether record with id $ID exist in $table

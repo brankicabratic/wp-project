@@ -13,7 +13,7 @@
   define('COL_USER_ID', 'UserID');
   define('COL_USER_USERNAME', 'Username');
   define('COL_USER_PASSWORD', 'Password');
-  define('COL_USER_HASH', HashActivation);
+  define('COL_USER_HASH', 'HashActivation');
   define('COL_USER_FIRSTNAME', 'FirstName');
   define('COL_USER_LASTNAME', 'LastName');
   define('COL_USER_SEX', 'Sex');
