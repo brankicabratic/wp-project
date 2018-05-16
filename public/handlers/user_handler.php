@@ -55,5 +55,14 @@
     }
     return USER_HANDLER_INVALID_PASSWORD;
   }
+
+  function getUserEmailAndHash($email, $hash) {
+    $db = new Database;
+    $match = $db->getUserEmailAndHash($email, $hash);
+    if ($match) {
+      return true;
+    }
+    return false;
+  }
   
 ?>
