@@ -132,13 +132,13 @@
                     <div class="select-header">
                       <p>Pretraga po naslovu pitanja:</p>
                     </div>
-                    <input type="text" name="nameSearch">
+                    <input type="text" name="nameSearch" class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Pretraga po tagovima:</p>
                     </div>
-                    <input type="text" name="tagSearch">
+                    <input type="text" name="tagSearch" class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
