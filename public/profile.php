@@ -50,7 +50,7 @@
      <div class="row">
         <!-- USER'S INFO -->
         <div class="col-lg-3 col-md-4 cs-center">
-           <div id="profile-picture" data-img="img/<?php echo $opened_user[COL_USER_AVATAR] !== null ? "{$opened_user[COL_USER_AVATAR]}" : "avatar.png" ?>"></div>
+           <div id="profile-picture" data-img="<?php echo $opened_user[COL_USER_AVATAR] !== null ? "{$opened_user[COL_USER_AVATAR]}" : "img/avatar.png" ?>"></div>
            <div class="profile-userinfo">
               <span class="profile-fullname"><?php echo "{$user_name_identifier} "; printSexAgeTag($opened_user); ?></span>
               <ul>
@@ -214,8 +214,8 @@
                           </div>
                           <div class="col-sm-8">
                              <select name="sex" id="change-profile-sex" class="form-control">
-                                <option value="male"<?php if($opened_user[COL_USER_SEX] === SEX_MALE) echo " selected" ?>>Muško</option>
-                                <option value="female"<?php if($opened_user[COL_USER_SEX] === SEX_FEMALE) echo " selected" ?>>Žensko</option>
+                                <option value="m"<?php if($opened_user[COL_USER_SEX] === SEX_MALE) echo " selected" ?>>Muško</option>
+                                <option value="f"<?php if($opened_user[COL_USER_SEX] === SEX_FEMALE) echo " selected" ?>>Žensko</option>
                                 <option value="none">Ne želim da se izjasnim</option>
                              </select>
                           </div>
@@ -247,6 +247,8 @@
                        </div>
                     </div>
                     <button id="change-password-opener" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#change-password-dialog">Promeni lozinku</button>
+                    <!--CSS move --> 
+                    <button style="margin-top:20px;font-size:13px" id="change-avatar-opener" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#change-avatar-dialog">Promeni avatar</button>
                     <input type="submit" name="saveProfileChanges" value="Sačuvaj izmene" class="btn btn-primary">
                  </form>
                  <!-- CHANGE PASSWORD DIALOG -->
@@ -279,6 +281,34 @@
                              <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Izađi</button>
                                 <input type="submit" name="savePasswordChanges" class="btn btn-primary" value="Sačuvaj izmene">
+                             </div>
+                          </form>
+                       </div>
+                    </div>
+                 </div>
+                 <!-- CHANGE AVATAR DIALOG -->
+                 <div id="change-avatar-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                       <div class="modal-content">
+                          <div class="modal-header">
+                             <h5 class="modal-title">Izmeni avatar</h5>
+                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                             </button>
+                          </div>
+                          <form action="formHandler.php" method="post" enctype="multipart/form-data">
+                             <input type="hidden" name="formType" value="avatar">
+                             <input type="hidden" name="MAX_FILE_SIZE" value="5000000" />
+                             <div class="modal-body">
+                                <div class="form-result-box"></div> 
+                                <div class="form-group">
+                                   <label for="new-avatar">Vaša slika za avatar:</label>
+                                   <input type="file" name="photo" id="photo" class="form-control">
+                                </div>
+                             </div>
+                             <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Izađi</button>
+                                <input type="submit" name="saveAvatarChanges" class="btn btn-primary" value="Sačuvaj izmene">
                              </div>
                           </form>
                        </div>
@@ -324,14 +354,17 @@
         event.preventDefault();
         var form = $(this);
         var messageBox = form.find(".form-result-box");
-        var data = form.serialize();
-        data += "&&userID=" + userID;
+        var data = new FormData(this);
         var output;
         $.ajax({
           url: 'formHandler.php',
           type: 'post',
+          method: 'post',
           dataType: 'json',
           data: data,
+          cache: false,
+          contentType: false,
+          processData: false,
           success: function(result) {
             try {
               if(result.errors.length === 0) {
@@ -346,17 +379,20 @@
                     $.cookie("biography-user-message", output);
                     location.reload();
                     break;
+                  case "avatar":
+                    location.reload();
+                    break;
                 }
               }
               else
                 output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
             }
             catch(err) {
-              output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+              output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
             }
           },
           error: function() {
-            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
           },
           complete: function() {
             messageBox.html(output);
