@@ -116,38 +116,35 @@
       		}
 			break;
 		case "avatar":
-			if(isset($_POST["saveAvatarChanges"])){
-				if (!$user) {
-					$result["errors"][]="Morate biti ulogovani.";
-				}
-				if (isset( $_FILES["photo"]) and $_FILES["photo"]["error"] == UPLOAD_ERR_OK) {
-					$target_file="img/" . basename($_FILES["photo"]["name"]);
-					if ($_FILES["photo"]["type"] != "image/jpeg" && $_FILES["photo"]["type"] != "image/jpg" && $_FILES["photo"]["type"] != "image/png" && $_FILES["photo"]["type"] != "image/gif") {
-						$result["errors"][]="Slika za avatar mora da bude formata: .jpeg, .jpg, .png ili .gif .";
-					}elseif(!move_uploaded_file( $_FILES["photo"]["tmp_name"], $target_file)) {
-				        $result["errors"][]="Došlo je do greške tokom uploada vašeg slike." . $_FILES["photo"]["error"];
-					    }
-				}else{
-				    switch($_FILES["photo"]["error"]) {
-				      case UPLOAD_ERR_INI_SIZE:
-				        $message = "Slika je prevelika.";
-				        break;
-				      case UPLOAD_ERR_FORM_SIZE:
-				        $message = "Slika je prevelika.";
-				        break;
-				      case UPLOAD_ERR_NO_FILE:
-				        $message = "Slika nije uploadovan. Budite sigurni da ste izabrali fajl za upload.";
-				        break;
-				      default:
-				        $message = "Potražite administratora za pomoć.";
-				    }
-					echo "Izvinite, došlo je do greške tokom uploada. $message";
-				}
-			}
-			if(count($result["errors"]) == 0){
-				$newAvatar = "img/" . basename($_FILES["photo"]["name"]);
-				$success = updateAvatar($user[COL_USER_USERNAME], $newAvatar);
-			}*/
+      if (!$user) {
+				$result["errors"][] = "Morate biti ulogovani.";
+			} else if (!isset( $_FILES["photo"]) || $_FILES["photo"]["error"] != UPLOAD_ERR_OK) {
+        switch($_FILES["photo"]["error"]) {
+          case UPLOAD_ERR_INI_SIZE:
+            $message = "Slika je prevelika.";
+            break;
+          case UPLOAD_ERR_FORM_SIZE:
+            $message = "Slika je prevelika.";
+            break;
+          case UPLOAD_ERR_NO_FILE:
+            $message = "Niste okačili fajl.";
+            break;
+          default:
+            $message = "Obratite se administratorima.";
+        }
+        $result["errors"][] = "Izvinite, došlo je do greške tokom kačenja slike. $message";
+      } else {
+        $target_file = "img/avatars/" . $user[COL_USER_USERNAME] . "." . pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
+        if ($_FILES["photo"]["type"] != "image/jpeg" && $_FILES["photo"]["type"] != "image/jpg" && $_FILES["photo"]["type"] != "image/png" && $_FILES["photo"]["type"] != "image/gif") {
+          $result["errors"][] = "Slika za avatar mora da bude formata: .jpeg, .jpg, .png ili .gif .";
+        } elseif(!move_uploaded_file( $_FILES["photo"]["tmp_name"], $target_file)) {
+          $result["errors"][] = "Došlo je do greške tokom kačenja vaše slike.";
+        }
+
+        if(count($result["errors"]) == 0){
+          $success = updateAvatar($user[COL_USER_ID], $target_file);
+        }
+      }
 			break;
 		default:
 			exit(json_encode(null));

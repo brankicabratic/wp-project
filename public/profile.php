@@ -50,7 +50,7 @@
      <div class="row">
         <!-- USER'S INFO -->
         <div class="col-lg-3 col-md-4 cs-center">
-           <div id="profile-picture" data-img="img/<?php echo $opened_user[COL_USER_AVATAR] !== null ? "{$opened_user[COL_USER_AVATAR]}" : "avatar.png" ?>"></div>
+           <div id="profile-picture" data-img="<?php echo $opened_user[COL_USER_AVATAR] !== null ? "{$opened_user[COL_USER_AVATAR]}" : "img/avatar.png" ?>"></div>
            <div class="profile-userinfo">
               <span class="profile-fullname"><?php echo "{$user_name_identifier} "; printSexAgeTag($opened_user); ?></span>
               <ul>
@@ -354,14 +354,17 @@
         event.preventDefault();
         var form = $(this);
         var messageBox = form.find(".form-result-box");
-        var data = form.serialize();
-        data += "&&userID=" + userID;
+        var data = new FormData(this);
         var output;
         $.ajax({
           url: 'formHandler.php',
           type: 'post',
+          method: 'post',
           dataType: 'json',
           data: data,
+          cache: false,
+          contentType: false,
+          processData: false,
           success: function(result) {
             try {
               if(result.errors.length === 0) {
@@ -376,17 +379,20 @@
                     $.cookie("biography-user-message", output);
                     location.reload();
                     break;
+                  case "avatar":
+                    location.reload();
+                    break;
                 }
               }
               else
                 output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
             }
             catch(err) {
-              output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+              output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
             }
           },
           error: function() {
-            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
           },
           complete: function() {
             messageBox.html(output);
