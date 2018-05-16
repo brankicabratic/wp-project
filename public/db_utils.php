@@ -104,11 +104,32 @@
      */
     public function createUser($username, $password, $email) {
       $ID;
+      $hash = md5( rand(0,1000) );
       while($this->doesExist(DB_USER_TABLE, ($ID = rand(-2147483648, 2147483647))));
       $stmt = $this->connection->prepare("INSERT INTO
-                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.", ".COL_USER_RANK.")
-                                          VALUES (?, ?, ?, ?, ".RANK_UNREGISTERED.")");
-      $stmt->bind_param("isss", $ID, $username, $password, $email);
+                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.", ".COL_USER_RANK.", ".COL_USER_HASH.")
+                                          VALUES (?, ?, ?, ?, ".RANK_UNREGISTERED.",?)");
+      $stmt->bind_param("issss", $ID, $username, $password, $email, $hash);
+
+      $to = $email;
+      $subject = 'Signup | Verification';
+      $message = '
+        
+        Thanks for signing up!
+        Your account has been created, you can login with the following credentials after you have activated your account by pressing the url below.
+        
+        ------------------------
+        Username: '.$username.'
+        Password: '.$password.'
+        ------------------------
+        
+        Please click this link to activate your account:
+        http://localhost/wp-project/public/verify.php?email='.$email.'&hash='.$hash.'
+        
+      ';
+
+      $headers = 'From:noreply@yourwebsite.com'. "\r\n";
+      mail($to, $subject, $message, $headers);
       return $stmt->execute();
     }
 
