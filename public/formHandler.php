@@ -1,4 +1,5 @@
 <?php
+	require_once 'session.php';
 	require_once 'handlers/user_handler.php';
 	require_once 'handlers/question_handler.php';
 
@@ -36,15 +37,15 @@
 				$result["errors"][] = "Unete lozinke nisu jednake.";
 			}
 			
-			$success = checkPassword($_SESSION["username"], $_POST["current-password"]);
-			if ($success==USER_HANDLER_INVALID_PASSWORD){
-				$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
-			}
-			
 			if (count($result["errors"]) == 0) {
-				$success = updatePassword($_SESSION["username"], $_POST["new-password"]);
-				if ($success==USER_HANDLER_INVALID_PASSWORD) {
-					$result["errors"][] = "Došlo je do greške pri promeni lozinke. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
+				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password"]);
+				if ($success==USER_HANDLER_INVALID_PASSWORD){
+					$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
+				} else {
+					$success = updatePassword($user[COL_USER_USERNAME], $_POST["new-password"]);
+					if ($success==USER_HANDLER_INVALID_PASSWORD) {
+						$result["errors"][] = "Došlo je do greške pri promeni lozinke. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
+					}
 				}
 			}
 			break;
@@ -74,23 +75,24 @@
 			}
 			break;
 		case "askQuestion":
-			if (!isset($_SESSION["userID"])) {
-				$result["errors"][] = "Morate biti prijavljeni";
+			if (!$user) {
+				$result["errors"][] = "Morate biti prijavljeni.";
 			}	
 			if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
-				$result["errors"][] = "Morate uneti naslov";
+				$result["errors"][] = "Morate uneti naslov.";
 			}
 			if (!isset($_POST["sadrzaj"]) || empty($_POST["sadrzaj"])) {
-				$result["errors"][] = "Morate uneti sadrzaj";
+				$result["errors"][] = "Morate uneti sadržaj.";
 			}
 			
-			$success = insertQuestion($_SESSION["username"], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"]);
-			
-			if ($success == QUESTION_HANDLER_OK) {
-				$result["succ"][] = "Uspesno uneto pitanje.";
-			}
-			if ($success == QUESTION_HANDLER_INVALID) {
-				$result["errors"][] = "Neka greska pri unosu!";
+
+			if (count($result["errors"]) == 0) {
+				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"]);
+				
+				if ($success) {
+					$result["succ"][] = "Uspešno uneto pitanje.";
+					$result["succ"][] = $success;
+				}
 			}
 			break;
 		case "loginForm":
@@ -107,7 +109,6 @@
 				} else if ($code == USER_HANDLER_INVALID_PASSWORD) {
 							$result["errors"][] = "Neispravna šifra";
 				} else {
-					$_SESSION["username"] = $_POST["username"];
 					if(isset($_POST["remember-me"]))
 						setcookie("remembered_username", $_POST["username"], time() + COOKIE_EXP_TIME);
 					else

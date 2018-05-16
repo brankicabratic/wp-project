@@ -43,6 +43,7 @@
 <html lang="en">
 <head>
   <?php printIncludes('Pitanja - PMFOverflow') ?>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 </head>
 <body>
   <?php includeNavigation() ?>
@@ -80,7 +81,14 @@
                       <?php insertCategories(true);?>
                     </select>
                   <div class="submit-container">
-                    <input type="submit" class="btn btn-primary" name="" value="Pitaj">
+                  <?php 
+                    if ($user) {
+                      echo '<input type="submit" class="btn btn-primary" name="" value="Pitaj">'; 
+                    } else {
+                      echo '<input type="submit" class="btn btn-primary" data-toggle="popover" title="Info" data-content="Access is denied. User need to be registered." name="" value="Pitaj">';
+                    }
+                  ?>
+                    
                   </div>
                 </div>
               </form>
@@ -188,6 +196,11 @@
 
   <?php includeScripts() ?>
   <script>
+
+    $(document).ready(function(){
+      $('[data-toggle="popover"]').popover();     
+    });
+
     Array.prototype.findTag = function(tagName) {
       for(var i = 0; i < this.length; i++)
         if(this[i].<?php echo COL_TAG_NAME ?> === tagName)
@@ -277,7 +290,8 @@
           try {
             if(result.errors.length === 0) {
               // OTVORITI KORISNIKOVO PITANJE
-              output = "<div class=\"alert alert-success\" role=\"alert\">" + result.succ.join("<br>") + "</div>";
+              window.location.href = "question.php?id=" + result["succ"][1];
+              //output = "<div class=\"alert alert-success\" role=\"alert\">" + result.succ.join("<br>") + "</div>";
             }
             else
               output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
@@ -290,8 +304,8 @@
           output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
         },
         complete: function() {
-          messageBox.html(output);
-          $('html, body').animate({scrollTop:0}, 500);
+          //messageBox.html(output);
+          //$('html, body').animate({scrollTop:0}, 500);
         }
       });
     });
