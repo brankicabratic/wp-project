@@ -12,7 +12,6 @@
     <div class="container main-container">
       <?php includeNavigation() ?>
 
-
       <div class="row">
         <div class="col-lg-1"><!-- Sometime in the future something may even be here! It only exists for filling up the space at the moment. --></div>
         <div class="col-lg-8">
@@ -21,7 +20,8 @@
               <?php
                 $db = new Database;
                 if (isset($_GET["id"])) {
-                  $question = $db->getQuestion($_GET["id"]);
+                  $questionId = $_GET["id"];
+                  $question = $db->getQuestion($questionId);
                   if (is_null($question)) {
                     header("Location: questionNotFound.php");
                     exit();
@@ -65,14 +65,17 @@
             <div class="col-lg-11">
               <h4>Ostavi odgovor:</h4>
               <div class="write-answer">
+                <div class="form-result-box"></div>
                 <form method="post" id="answer-form">
+                    <input type="hidden" name="formType" value="answerQuestionForm">
                     <div class="text-formating-tools">
                       <span class="tool" onclick="tools.addCustomTag(' [superscript]', '[/superscript] ')"><i class="fas fa-superscript"></i></span>
                       <span class="tool" onclick="tools.addCustomTag('[code lang=\'html\']\n', '\n[/code]')"><i class="fas fa-code"></i></span>
                     </div>
                     <textarea name="answer-content" spellcheck="false" placeholder="Odgovor"></textarea>
+                    <input type="hidden" name="questionId" value="<?php echo $questionId ?>">
                     <div class="submit-group">
-                      <input type="submit" class="btn btn-primary" name="" value="Odgovori">
+                      <input type="submit" class="btn btn-primary" value="Odgovori">
                     </div>
                 </form>
               </div>
@@ -263,7 +266,39 @@
 	   function decrement(){
 			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
 	  }
-	  
+
+      $("form").submit(function(event) {
+          event.preventDefault();
+          var form = $(this);
+          var data = form.serialize();
+          var messageBox = $(".form-result-box");
+          var output = "";
+          $.ajax({
+              url: 'formHandler.php',
+              type: 'post',
+              dataType: 'json',
+              data: data,
+              success: function(result) {
+                  try {
+                      if(result.errors.length === 0) {
+                          output = "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste postavili odgovor.</div>";
+                      }
+                      else
+                          output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
+                  }
+                  catch(err) {
+                      output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
+                  }
+              },
+              error: function() {
+                  console.log("HEEHH");
+                  output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
+              },
+              complete: function() {
+                  messageBox.html(output);
+              }
+          });
+      });
 	</script>
   </body>
 </html>
