@@ -20,7 +20,8 @@
               <?php
                 $db = new Database;
                 if (isset($_GET["id"])) {
-                  $question = $db->getQuestion($_GET["id"]);
+                  $questionId = $_GET["id"];
+                  $question = $db->getQuestion($questionId);
                   if (is_null($question)) {
                     header("Location: questionNotFound.php");
                     exit();
@@ -64,44 +65,17 @@
             <div class="col-lg-11">
               <h4>Ostavi odgovor:</h4>
               <div class="write-answer">
-                <script>
-                  function validateAnswer(messageType) {
-                    console.log("Called")
-                    if(messageType == 1) {
-                      return "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste se ostavili odgovor.</div>";
-                    } else if (messageType == 2) {
-                      return "<div class=\"alert alert-danger\" role=\"alert\">Došlo je do greške prilikom postavljanja odgovora.</div>";
-                    } else if (messageType == 3) {
-                      return "<div class=\"alert alert-danger\" role=\"alert\">Morate biti ulogovani da biste postavili odgovor.</div>";
-                    }
-                  }  
-                </script>
-                <?php
-                  if (isset($_POST["answerProvided"]) && isset($_POST["answer-content"])) {
-                    if (isset($_SESSION["userID"]) ) {
-                      $autor = $_SESSION["userID"];
-                      $answerContent = htmlspecialchars($_POST["answer-content"]);
-                      $questionId = $_GET["id"];
-                      $successfullyInserted = $db->insertAnswer($autor, $answerContent, $questionId);
-                      if ($successfullyInserted) {
-                        echo "<script>document.write(validateAnswer(1));</script>";
-                      } else {
-                        echo "<script>document.write(validateAnswer(2));</script>";
-                      }
-                    } else {
-                      echo "<script>document.write(validateAnswer(3));</script>";
-                    }
-                    
-                  }
-                ?>
+                <div class="form-result-box"></div>
                 <form method="post" id="answer-form">
+                    <input type="hidden" name="formType" value="answerQuestionForm">
                     <div class="text-formating-tools">
                       <span class="tool" onclick="tools.addCustomTag(' [superscript]', '[/superscript] ')"><i class="fas fa-superscript"></i></span>
                       <span class="tool" onclick="tools.addCustomTag('[code lang=\'html\']\n', '\n[/code]')"><i class="fas fa-code"></i></span>
                     </div>
                     <textarea name="answer-content" spellcheck="false" placeholder="Odgovor"></textarea>
+                    <input type="hidden" name="questionId" value="<?php echo $questionId ?>">
                     <div class="submit-group">
-                      <input type="submit" class="btn btn-primary" name="answerProvided" value="Odgovori">
+                      <input type="submit" class="btn btn-primary" value="Odgovori">
                     </div>
                 </form>
               </div>
@@ -292,6 +266,39 @@
 	   function decrement(){
 			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
 	  }
+
+      $("form").submit(function(event) {
+          event.preventDefault();
+          var form = $(this);
+          var data = form.serialize();
+          var messageBox = $(".form-result-box");
+          var output = "";
+          $.ajax({
+              url: 'formHandler.php',
+              type: 'post',
+              dataType: 'json',
+              data: data,
+              success: function(result) {
+                  try {
+                      if(result.errors.length === 0) {
+                          output = "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste postavili odgovor.</div>";
+                      }
+                      else
+                          output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
+                  }
+                  catch(err) {
+                      output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
+                  }
+              },
+              error: function() {
+                  console.log("HEEHH");
+                  output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
+              },
+              complete: function() {
+                  messageBox.html(output);
+              }
+          });
+      });
 	</script>
   </body>
 </html>

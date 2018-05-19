@@ -291,10 +291,12 @@
      * @return ID of inserted post or false if query failed
      */
     public function insertPost($ID, $author, $content, $type) {
-      if($type !== POST_TYPE_ANSWER && $type !== POST_TYPE_QUESTION)
-        return false;
-      if(($userID = $this->getUserID($author)) === null)
-        return false;
+      if($type !== POST_TYPE_ANSWER && $type !== POST_TYPE_QUESTION) {
+          return false;
+      }
+      if(($userID = $this->getUserID($author)) === null) {
+          return false;
+      }
       $stmt = $this->connection->prepare("INSERT INTO ".DB_POST_TABLE."(".COL_POST_ID.", ".COL_POST_CONTENT.", ".COL_POST_AUTHOR.", ".COL_POST_TYPE.") VALUES (?, ?, ?, ?)");
       $stmt->bind_param("isii", $ID, $content, $userID, $type);
       return $stmt->execute();
@@ -320,7 +322,8 @@
      */
     public function insertAnswer($author, $content, $questionID) {
       $ID = $this->getSmallestAvaliablePostID();
-      if($this->insertPost($ID, $author, $content, POST_TYPE_ANSWER) === false)
+      $authorUsername = $this->getUserUsername($author);
+      if($this->insertPost($ID, $authorUsername, $content, POST_TYPE_ANSWER) === false)
         return false;
       $stmt = $this->connection->prepare("INSERT INTO ".DB_ANSWER_TABLE."(".COL_ANSWER_ID.", ".COL_ANSWER_PARENT.") VALUES (?, ?)");
       $stmt->bind_param("ii", $ID, $questionID);

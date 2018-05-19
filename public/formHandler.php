@@ -116,6 +116,24 @@
 				}
       		}
 			break;
+        case "answerQuestionForm":
+            if (isset($_POST["answer-content"])) {
+                if ($user) {
+                    $author = $user[COL_USER_ID];
+                    $answerContent = htmlspecialchars($_POST["answer-content"]);
+                    $questionId = $_POST["questionId"];
+                    $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
+                    if ($successfullyInserted) {
+                        $result["succ"][] = "Uspesno unet odgovor";
+                    } else {
+                        $result["errors"][] = "Doslo je do greske prilikom postavljanja odgovora";
+                    }
+                } else {
+                    $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";
+                }
+
+            }
+            break;
 		case "avatar":
       if (!$user) {
 				$result["errors"][] = "Morate biti ulogovani.";
