@@ -1,13 +1,20 @@
 <?php
-	session_start();
 	require_once 'db_utils.php';
 
-	$user = null;
+  define("SESSION_USER_ID", "user_id");
 
-	if(isset($_SESSION["userID"])) {
+  function logout() {
+    unset($_SESSION[SESSION_USER_ID]);
+  }
+
+	session_start();
+  
+  $user = null;
+
+	if(isset($_SESSION[SESSION_USER_ID])) {
 		$db = new Database;
 		try {
-			$user = $db->getUser($db->getUserUsername($_SESSION["userID"]), USER_GETTER_LOGIN_DATA);
+			$user = $db->getUserByID($_SESSION[SESSION_USER_ID]);
 		}
 		catch(Exception $e) {}
 	}

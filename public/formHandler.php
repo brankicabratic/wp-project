@@ -14,16 +14,16 @@
 	switch($_POST["formType"]) {
 		case "biography":
 			// CHANGING PROFILE INFO GOES HERE
-			if (!isset($_SESSION["username"])) {
+			if (!$user) {
 				$result["errors"][]="Morate biti ulogovani.";
 			}
-			$success = checkPassword($_SESSION["username"], $_POST["authenticationPassword"]);
+			$success = checkPassword($user[COL_USER_USERNAME], $_POST["authenticationPassword"]);
 			if($success==USER_HANDLER_INVALID_PASSWORD){
 				$result["errors"][] = "Neispravna lozinka.";
 			}
 
 			if(count($result["errors"])==0) {
-				$success = updateProfile($_SESSION["username"], $_POST["firstName"], $_POST["lastName"], $_POST["major"], $_POST["enrollmentYear"], $_POST["email"], $_POST["sex"], $_POST["dateOfBirth"], $_POST["biography"]);
+				$success = updateProfile($user[COL_USER_ID], $_POST["firstName"], $_POST["lastName"], $_POST["major"], $_POST["enrollmentYear"], $_POST["email"], $_POST["sex"], $_POST["dateOfBirth"], $_POST["biography"]);
 				if(!$success){
 					$result["errors"][] = "Došlo je do greške pri podesavanje profila. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
 				}
@@ -85,8 +85,9 @@
 				$result["errors"][] = "Morate uneti sadržaj.";
 			}
 			
+
 			if (count($result["errors"]) == 0) {
-				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"]);
+				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"]);
 				
 				if ($success) {
 					$result["succ"][] = "Uspešno uneto pitanje.";
@@ -114,6 +115,37 @@
 						setcookie("remembered_username", "");
 				}
       		}
+			break;
+		case "avatar":
+      if (!$user) {
+				$result["errors"][] = "Morate biti ulogovani.";
+			} else if (!isset( $_FILES["photo"]) || $_FILES["photo"]["error"] != UPLOAD_ERR_OK) {
+        switch($_FILES["photo"]["error"]) {
+          case UPLOAD_ERR_INI_SIZE:
+            $message = "Slika je prevelika.";
+            break;
+          case UPLOAD_ERR_FORM_SIZE:
+            $message = "Slika je prevelika.";
+            break;
+          case UPLOAD_ERR_NO_FILE:
+            $message = "Niste okačili fajl.";
+            break;
+          default:
+            $message = "Obratite se administratorima.";
+        }
+        $result["errors"][] = "Izvinite, došlo je do greške tokom kačenja slike. $message";
+      } else {
+        $target_file = "img/avatars/" . $user[COL_USER_USERNAME] . "." . pathinfo($_FILES["photo"]["name"], PATHINFO_EXTENSION);
+        if ($_FILES["photo"]["type"] != "image/jpeg" && $_FILES["photo"]["type"] != "image/jpg" && $_FILES["photo"]["type"] != "image/png" && $_FILES["photo"]["type"] != "image/gif") {
+          $result["errors"][] = "Slika za avatar mora da bude formata: .jpeg, .jpg, .png ili .gif .";
+        } elseif(!move_uploaded_file( $_FILES["photo"]["tmp_name"], $target_file)) {
+          $result["errors"][] = "Došlo je do greške tokom kačenja vaše slike.";
+        }
+
+        if(count($result["errors"]) == 0){
+          $success = updateAvatar($user[COL_USER_ID], $target_file);
+        }
+      }
 			break;
 		default:
 			exit(json_encode(null));

@@ -9,6 +9,7 @@
   define('DB_RANK_TABLE', 'Rank');
   define('DB_PERMREST_TABLE', 'PermRest');
   define('DB_RANK_PERMREST_TABLE', 'HasPermRest');
+  define('DB_CATEGORY_TABLE', 'Category');
 
   define('COL_USER_ID', 'UserID');
   define('COL_USER_USERNAME', 'Username');
@@ -42,6 +43,7 @@
 
   define('COL_QUESTION_ID', 'PostID');
   define('COL_QUESTION_HEADER', 'Header');
+  define('COL_QUESTION_CATEGORY', 'CategoryID');
 
   define('COL_ANSWER_ID', 'PostID');
   define('COL_ANSWER_PARENT', 'RelatedTo');
@@ -64,6 +66,9 @@
 
   define('COL_RANK_PERMREST_RANK', 'RankID');
   define('COL_RANK_PERMREST_PERMREST', 'PermRestID');
+
+  define('COL_CATEGORY_ID','CategoryID');
+  define('COL_CATEGORY_NAME', 'Name');
 
   // REACTIONS
   define('REACTION_LIKE', 1);

@@ -18,7 +18,7 @@
 
   $db = new Database;
   if (isset($_GET["filterQuestions"])) {
-    $questions = $db->getNthPageQuestions(1, $_GET["step"], $_GET["filterType"], $_GET["order"], $_GET["nameSearch"], $_GET["tagSearch"]);
+    $questions = $db->getNthPageQuestions(1, $_GET["step"], $_GET["filterType"], $_GET["order"], $_GET["nameSearch"], $_GET["tagSearch"], $_GET["category"]);
   }
   else {
     $questions = $db->getNthPageQuestions(1, 10);
@@ -27,6 +27,16 @@
     $question["TAGS"] = $db->getTagsRelatedToQuestion($question[COL_QUESTION_ID]);
     $question["SCORE"] = $db->getPostsScore($question[COL_QUESTION_ID]);
     $question["NUMBEROFASNWERS"] = $db->countQuestionsAnswers($question[COL_QUESTION_ID]);
+  }
+
+  function insertCategories($insert) {
+    $db = new Database;
+    $categories = $db->getAllCategories();
+    foreach ($categories as $category) {
+      if ($insert && $category[COL_CATEGORY_ID] == 0) continue;
+      $selected = $category[COL_CATEGORY_ID] == 0 ? "selected" : "";
+      echo "<option value=\"{$category[COL_CATEGORY_ID]}\" $selected >{$category[COL_CATEGORY_NAME]}</option>";
+    }
   }
 ?>
 <!DOCTYPE html>
@@ -64,6 +74,12 @@
                   <div id="tag-block"></div>
                   <input type="text" id="add-tag" name="tag" list="tag-list" placeholder="Dodaj tag" autocomplete="off">
                   <datalist id="tag-list"></datalist>
+                  <div class="select-header">
+                      <p>Kategorija:</p>
+                    </div>
+                    <select class="form-control" name="category">
+                      <?php insertCategories(true);?>
+                    </select>
                   <div class="submit-container">
                   <?php 
                     if ($user) {
@@ -116,15 +132,31 @@
                     <div class="select-header">
                       <p>Pretraga po naslovu pitanja:</p>
                     </div>
-                    <input type="text" name="nameSearch">
+                    <input type="text" name="nameSearch" class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Pretraga po tagovima:</p>
                     </div>
-                    <input type="text" name="tagSearch">
+                    <input type="text" name="tagSearch" class="form-control">
                   </div>
                   <div class="col-lg-4">
+                    <div class="select-header">
+                      <p>Kategorija:</p>
+                    </div>
+                    <select class="form-control" name="category">
+                      <?php insertCategories(false);?>
+                    </select>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-lg-4">
+                    
+                  </div>
+                  <div class="col-lg-4">
+                    
+                  </div>
+                  <div class="col-md-4">
                     <input type="submit" class="btn btn-primary" name="filterQuestions" value="Primeni">
                   </div>
                 </div>
@@ -265,11 +297,11 @@
               output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
           }
           catch(err) {
-            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+            output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
           }
         },
         error: function() {
-          output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa servevom, molimo pokušajte kasnije!</div>";
+          output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
         },
         complete: function() {
           //messageBox.html(output);
