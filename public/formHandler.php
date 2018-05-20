@@ -75,7 +75,6 @@
 			}
 			break;
 		case "askQuestion":
-			print_r($_POST);
 			if (!$user) {
 				$result["errors"][] = "Morate biti prijavljeni.";
 			}	
