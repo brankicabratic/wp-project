@@ -330,8 +330,9 @@
       $stmt = $this->connection->prepare("INSERT INTO ".DB_QUESTION_TABLE."(".COL_QUESTION_ID.", ".COL_QUESTION_HEADER.", ".COL_QUESTION_CATEGORY.") VALUES (?, ?, ?)");
       $stmt->bind_param("isi", $ID, $header, $category);
       $result = $stmt->execute();
-      $tags = preg_split("/[\s,]+/", $tags);
       foreach ($tags as $tag) {
+      	if ($tag == "")
+      		continue;
       	$tagID = $this->getTagIDByName($tag);
       	if (!$tagID) {
       		$this->insertTag($tag);

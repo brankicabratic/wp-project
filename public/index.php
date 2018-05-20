@@ -203,7 +203,7 @@
 
     Array.prototype.findTag = function(tagName) {
       for(var i = 0; i < this.length; i++)
-        if(this[i].<?php echo COL_TAG_NAME ?> === tagName)
+        if(this[i].name === tagName)
           return i;
       return -1;
     };
@@ -216,7 +216,7 @@
         this.target.html("");
       },
       add: function(tag) {
-        this.target.append("<div class=\"tag\">" + tag.<?php echo COL_TAG_NAME ?> + " <i class=\"fas fa-times\" onclick=\"removeTag('" + tag.<?php echo COL_TAG_NAME ?> + "')\" style=\"cursor: pointer\"></i></div>");
+        this.target.append("<div class=\"tag\">" + tag.name + " <i class=\"fas fa-times\" onclick=\"removeTag('" + tag.name + "')\" style=\"cursor: pointer\"></i></div>");
       },
       update: function() {
         this.reset();
@@ -231,7 +231,7 @@
         this.target.html("");
       },
       add: function(tag) {
-        this.target.append("<option value=\"" + tag.<?php echo COL_TAG_NAME ?> + "\">" + tag.<?php echo COL_TAG_NAME ?> + "</tag>")
+        this.target.append("<option value=\"" + tag.name + "\">" + tag.name + "</tag>")
       },
       update: function() {
         this.reset();
@@ -243,16 +243,18 @@
 
     var addTag = function(tag) {
       var indexOfTag = avaliableTags.findTag(tag), indexOfTagInChoosenTags = choosenTags.findTag(tag);
-      if(indexOfTag === -1 || indexOfTagInChoosenTags !== -1)
-        return;
       if(choosenTags.length >= 5)
         return;
-      choosenTags.push(Object.assign({}, avaliableTags[indexOfTag]));
-      avaliableTags.splice(indexOfTag, 1);
+      if (indexOfTagInChoosenTags !== -1)
+        return;
+      if(!indexOfTag === -1) {
+        avaliableTags.splice(indexOfTag, 1);
+      }
+      choosenTags.push(Object.assign({}, { name : tag }));
       tagList.update();
+      tagBlock.update();
       tagInput.blur();
       tagInput.val("");
-      tagBlock.update();
     };
 
     var removeTag = function(tag) {
@@ -267,8 +269,16 @@
 
     $('#add-tag').on('keyup keypress', function(e) {
       var keyCode = e.keyCode || e.which;
-      if (keyCode === 13)
-        addTag($(this).val());
+      if (keyCode === 13) {
+        var inputVal = $(this).val();
+        var tagsSplit = inputVal.split(/[\s,]+/);
+        var len = tagsSplit.length;
+        for (var i = 0; i < len; i++) {
+          if (tagsSplit[i] === "")
+            return;
+          addTag(tagsSplit[i]);
+        }
+      }
     });
 
     tagList.update();
@@ -279,7 +289,7 @@
       var data = form.serialize();
       var messageBox = $(".form-result-box");
       var output = "";
-      data += "&&tags=" + choosenTags.map(function(el) { return el.<?php echo COL_TAG_ID ?>; }).join();
+      data += "&&tags=" + choosenTags.map(function(el) { return el.name; }).join();
       $.ajax({
         url: 'formHandler.php',
         type: 'post',
