@@ -19,9 +19,11 @@
             <div class="question-header">
               <?php
                 $db = new Database;
+                $answers = array();
                 if (isset($_GET["id"])) {
                   $questionId = $_GET["id"];
                   $question = $db->getQuestion($questionId);
+                  $answers = $db->getAnswersRelatedToQuestion($questionId);
                   if (is_null($question)) {
                     header("Location: questionNotFound.php");
                     exit();
@@ -46,7 +48,7 @@
             <?php 
               if (isset($_GET["id"])) {
                 $question = $db->getQuestion($_GET["id"]);
-                echo "<div class=\"question-content\">$question[Content]</div>";
+                echo "<div class=\"question-content\">".$question[COL_POST_CONTENT]."</div>";
               }
             ?>
             <div class="question-footer">
@@ -81,10 +83,18 @@
               </div>
 
               <div id="answers">
-
+                <?php
+                    for($i = 0; $i < count($answers); $i++) {
+                        $nameToShow = $answers[$i][COL_USER_USERNAME];
+                        $firstName = $answers[$i][COL_USER_FIRSTNAME];
+                        $lastName = $answers[$i][COL_USER_LASTNAME];
+                        if (!empty($firstName) && !empty($lastName)) {
+                            $nameToShow = "$firstName $lastName";
+                        }
+                ?>
                 <div class="answer">
                   <div class="content">
-                    Another solution that I have developed and might be worth considering: http://codility.com/demo/results/demoM658NU-DYR/
+                    <?php echo $answers[$i][COL_POST_CONTENT] ?>
                   </div>
                   <div class="footer">
                     <div class="aligned-right">
@@ -93,58 +103,13 @@
                         <span class="actual-score">0</span>
                         <span class="reaction like"><i class="fas fa-caret-right"></i></span>
                       </span>
-                      Odgovorio <a href="#">peraPeric</a> 25. 01. 2018. u 14:52
+                      <?php echo "Odgovorio <a href=\"profile.php?user=".$answers[$i][COL_USER_USERNAME]."\">$nameToShow</a> ".$answers[$i][COL_POST_POSTED]; ?>
                     </div>
                   </div>
                 </div>
-
-                <div class="answer">
-                  <div class="content">
-                    Another solution that I have developed and might be worth considering: http://codility.com/demo/results/demoM658NU-DYR/
-                  </div>
-                  <div class="footer">
-                    <div class="aligned-right">
-                      <span class="score">
-                        <span class="reaction dislike active"><i class="fas fa-caret-left"></i></span>
-                        <span class="actual-score">0</span>
-                        <span class="reaction like"><i class="fas fa-caret-right"></i></span>
-                      </span>
-                      Odgovorio <a href="#">peraPeric</a> 25. 01. 2018. u 14:52
-                    </div>
-                  </div>
-                </div>
-
-                <div class="answer">
-                  <div class="content">
-                    Another solution that I have developed and might be worth considering: http://codility.com/demo/results/demoM658NU-DYR/
-                  </div>
-                  <div class="footer">
-                    <div class="aligned-right">
-                      <span class="score">
-                        <span class="reaction dislike active"><i class="fas fa-caret-left"></i></span>
-                        <span class="actual-score">0</span>
-                        <span class="reaction like"><i class="fas fa-caret-right"></i></span>
-                      </span>
-                      Odgovorio <a href="#">peraPeric</a> 25. 01. 2018. u 14:52
-                    </div>
-                  </div>
-                </div>
-
-                <div class="answer">
-                  <div class="content">
-                    Another solution that I have developed and might be worth considering: http://codility.com/demo/results/demoM658NU-DYR/
-                  </div>
-                  <div class="footer">
-                    <div class="aligned-right">
-                      <span class="score">
-                        <span class="reaction dislike active"><i class="fas fa-caret-left"></i></span>
-                        <span class="actual-score">0</span>
-                        <span class="reaction like"><i class="fas fa-caret-right"></i></span>
-                      </span>
-                      Odgovorio <a href="#">peraPeric</a> 25. 01. 2018. u 14:52
-                    </div>
-                  </div>
-                </div>
+                <?php
+                    }
+                ?>
 
               </div>
               <span class="back-to-top-button d-lg-none"><a title="Back to top" href="#the-question"><i class="fas fa-arrow-circle-up"></i></a></span>
@@ -281,7 +246,7 @@
               success: function(result) {
                   try {
                       if(result.errors.length === 0) {
-                          output = "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste postavili odgovor.</div>";
+                          location.reload();
                       }
                       else
                           output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";
@@ -291,7 +256,6 @@
                   }
               },
               error: function() {
-                  console.log("HEEHH");
                   output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
               },
               complete: function() {
