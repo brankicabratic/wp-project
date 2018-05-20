@@ -4,9 +4,9 @@
   define("QUESTION_HANDLER_OK", 1);
   define("QUESTION_HANDLER_INVALID", 2);
 
-  function insertQuestion($author, $header, $content, $category) {
+  function insertQuestion($author, $header, $content, $category, $tags) {
     $db = new Database;
-    $success = $db->insertQuestion($author, $header, $content, $category);
+    $success = $db->insertQuestion($author, $header, $content, $category, $tags);
     if (!$success) {
       return QUESTION_HANDLER_INVALID;
     } 

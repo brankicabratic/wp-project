@@ -12,6 +12,8 @@
      * createUser($username, $password, $email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
+     * getAllCategories() DONE
+     * getTagIDByName($name) DONE
      * doesExist($table, $ID) DONE
      * insertPost($ID, $author, $content, $type) DONE
      * insertQuestion($author, $header, $content) DONE
@@ -206,6 +208,7 @@
             $tagParams = $tagParams.",?";
           }
           $sqlType = $sqlType."s";
+          $tag = strtolower($tag);
           $sqlData[] = &$tag;
         }
         $tagsSQL = "AND EXISTS (SELECT *
@@ -275,6 +278,21 @@
     }
 
     /**
+	* @param name of the tag
+	* @return tag or NULL if that tag doesn't exist
+    */
+    public function getTagIDByName($name) {
+    	$stmt = $this->connection->prepare("SELECT *
+                                          FROM ".DB_TAG_TABLE."
+                                          WHERE ".COL_TAG_NAME." = ?");
+    	$name = strtolower($name);
+    	$stmt->bind_param("s", $name);
+    	$stmt->execute();
+    	$result = $stmt->get_result()->fetch_row();
+    	return $result[0];
+    }
+
+    /**
      * Helper function for inserting post, so ids are in same order as posting time
      */
     private function getSmallestAvaliablePostID() {
@@ -305,13 +323,23 @@
     /**
      * @return ID of inserted question if insertion was successful, otherwise return false
      */
-    public function insertQuestion($author, $header, $content, $category) {
+    public function insertQuestion($author, $header, $content, $category, $tags) {
       $ID = $this->getSmallestAvaliablePostID();
       if($this->insertPost($ID, $author, $content, POST_TYPE_QUESTION) === false)
         return false;
       $stmt = $this->connection->prepare("INSERT INTO ".DB_QUESTION_TABLE."(".COL_QUESTION_ID.", ".COL_QUESTION_HEADER.", ".COL_QUESTION_CATEGORY.") VALUES (?, ?, ?)");
       $stmt->bind_param("isi", $ID, $header, $category);
       $result = $stmt->execute();
+      foreach ($tags as $tag) {
+      	if ($tag == "")
+      		continue;
+      	$tagID = $this->getTagIDByName($tag);
+      	if (!$tagID) {
+      		$this->insertTag($tag);
+      		$tagID = $this->getTagIDByName($tag);
+      	}
+      	$result = $result ? $this->givePostATag($ID, $tagID) : $result ;
+      }
       if(!$result)
         $this->deletePost($ID);
       return $result ? $ID : false;
@@ -341,6 +369,7 @@
       $ID;
       while($this->doesExist(DB_TAG_TABLE, ($ID = rand(-2147483648, 2147483647))));
       $stmt = $this->connection->prepare("INSERT INTO ".DB_TAG_TABLE."(".COL_TAG_ID.", ".COL_TAG_NAME.") VALUES (?, ?)");
+      $name = strtolower($name);
       $stmt->bind_param("is", $ID, $name);
       return $stmt->execute();
     }
@@ -354,13 +383,35 @@
       $stmt = $this->connection->prepare("SELECT ".COL_ANSWER_ID." FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_PARENT." = ?");
       $stmt->bind_param("i", $postID);
       $stmt->execute();
-      $answers = get_first($stmt->get_result()->fetch_all(MYSQLI_NUM));
+      $answers = $stmt->get_result()->fetch_all(MYSQLI_NUM);
+      $result = true;
       foreach($answers as $ans)
-        $this->connection->query("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = $ans");
+        $result = $this->connection->query("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = $ans");
 
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_POSTTAG_TABLE." 
+      																		WHERE ".COL_POSTTAG_POST." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      $result = $result ? $stmt->execute() : $result ;
+
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_TAG_TABLE."
+      																		WHERE ".COL_TAG_ID." NOT IN (SELECT ".COL_POSTTAG_TAG." 
+      																																	FROM ".DB_POSTTAG_TABLE.")");
+      $stmt->execute();
+      $result = $result ? $stmt->execute() : $result ;
+
+      $post = $this->getQuestion($postID);
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_QUESTION_TABLE." 
+      																		WHERE ".COL_QUESTION_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      $result = $result ? $stmt->execute() : $result ;
+
+      
       $stmt = $this->connection->prepare("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = ?");
       $stmt->bind_param("i", $postID);
-      return $stmt->execute();
+      $result = $result ? $stmt->execute() : $result ;
+      return $result;
     }
 
     /**

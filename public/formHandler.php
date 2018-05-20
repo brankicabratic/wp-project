@@ -75,6 +75,7 @@
 			}
 			break;
 		case "askQuestion":
+			print_r($_POST);
 			if (!$user) {
 				$result["errors"][] = "Morate biti prijavljeni.";
 			}	
@@ -84,10 +85,13 @@
 			if (!isset($_POST["sadrzaj"]) || empty($_POST["sadrzaj"])) {
 				$result["errors"][] = "Morate uneti sadržaj.";
 			}
-			
+			$tags = array_merge(explode(",", $_POST["tags"]), preg_split("/[\s,]+/", $_POST["tag"]));
+			if (count($tags) > 5) {
+				$result["errors"][] = "Imate više od 5 tagova.";
+			}
 
 			if (count($result["errors"]) == 0) {
-				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"]);
+				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"], $tags);
 				
 				if ($success) {
 					$result["succ"][] = "Uspešno uneto pitanje.";
