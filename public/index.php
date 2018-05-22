@@ -16,12 +16,50 @@
       </div>";
   }
 
+  function printPageLinks($numAllPages, $page) {
+    echo "<div class=\"pages\">";
+    if ($numAllPages > 10) {
+      $from = $page - 5;
+      $to = $page + 4;
+      while ($from < 1) {
+        $from = $from + 1;
+        $to = $to + 1;
+      }
+      while ($to > $numAllPages) {
+        $from = $from - 1;
+        $to = $to - 1;
+      }
+    }
+    else {
+      $from = 1;
+      $to = $numAllPages;
+    }
+    for ($i = $from; $i <= $to; $i++) {
+      $class = $i == $page ? "page-link-selected" : "page-link";
+      $url = $_SERVER['REQUEST_URI'];
+      if (empty($_GET) && $i != $page) {
+        $url = $_SERVER['REQUEST_URI']."?page={$i}";
+      }
+      else {
+        $url = isset($_GET["page"]) ? preg_replace("%page=[\d+]%", "page=$i", $url) : $_SERVER['REQUEST_URI']."&page={$i}" ;
+      }
+      echo $i == $page ? "<span class=\"page-link-selected\"> $i </span>" : "<a href=\"{$url}\"><span class=\"page-link\"> $i </span></a>";
+    }
+    echo "</div>";
+  }
+
   $db = new Database;
+
+  $numQuestions = $db->getNumberOfQuestions();
+  $step = isset($_GET["step"]) && $_GET["step"] > 0 ? $_GET["step"] : 10;
+  $numAllPages = ceil($numQuestions / $step); 
+  $page = isset($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $numAllPages ? $_GET["page"] : 1;
+
   if (isset($_GET["filterQuestions"])) {
-    $questions = $db->getNthPageQuestions(1, $_GET["step"], $_GET["filterType"], $_GET["order"], $_GET["nameSearch"], $_GET["tagSearch"], $_GET["category"]);
+    $questions = $db->getNthPageQuestions($page, $step, $_GET["filterType"], $_GET["order"], $_GET["nameSearch"], $_GET["tagSearch"], $_GET["category"]);
   }
   else {
-    $questions = $db->getNthPageQuestions(1, 10);
+    $questions = $db->getNthPageQuestions($page, $step);
   }
   foreach($questions as &$question) {
     $question["TAGS"] = $db->getTagsRelatedToQuestion($question[COL_QUESTION_ID]);
@@ -171,6 +209,7 @@
               printQuestion($question);
           ?>
         </div>
+        <?php printPageLinks($numAllPages, $page);?>
       </div>
 
       <div class="col-md-4 hidden-lg-down">
