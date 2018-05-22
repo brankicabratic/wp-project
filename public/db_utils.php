@@ -41,6 +41,7 @@
      * grantRankAPermissionOrRestriction($rankID, $permRestID) DONE
      * deleteRanksPermissionOrRestriction($rankID, $permRestID) DONE
      * getUsersPermissionsOrRestrictions($userID)
+     * getNumberOfQuestions() DONE
      */
     private $connection, $idTable;
     public function __construct($configFile = "../local/config.ini") {
@@ -712,6 +713,17 @@
                                           WHERE ".COL_POST_ID." = ?");
       $stmt->bind_param("i", $postID);
       return $stmt->execute();
+    }
+
+    /**
+    *	@return returns the number of question in the database
+    */
+    public function getNumberOfQuestions() {
+    	$stmt = $this->connection->prepare("SELECT COUNT(".COL_QUESTION_ID.")
+                                          FROM ".DB_QUESTION_TABLE);
+    	$stmt->execute();
+    	$result = $stmt->get_result()->fetch_row();
+      return $result[0];
     }
   }
 ?>

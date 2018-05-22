@@ -713,3 +713,12 @@ div#login-container {
     }
   }
 }
+
+.page-link {
+	display: inline-block;
+	padding: 10;
+	margin: 10px 5px;
+	.page-link-selected {
+		color: #3a3a3a;
+	}
+}
