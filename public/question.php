@@ -48,7 +48,7 @@
             <?php 
               if (isset($_GET["id"])) {
                 $question = $db->getQuestion($_GET["id"]);
-                echo "<div class=\"question-content\">".$question[COL_POST_CONTENT]."</div>";
+                echo "<div class=\"question-content\">".htmlspecialchars($question[COL_POST_CONTENT])."</div>";
               }
             ?>
             <div class="question-footer">
@@ -94,7 +94,7 @@
                 ?>
                 <div class="answer">
                   <div class="content">
-                    <?php echo $answers[$i][COL_POST_CONTENT] ?>
+                    <?php echo htmlspecialchars($answers[$i][COL_POST_CONTENT]) ?>
                   </div>
                   <div class="footer">
                     <div class="aligned-right">
