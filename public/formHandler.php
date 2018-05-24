@@ -128,8 +128,20 @@
                     $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
                     if ($successfullyInserted) {
                         $result["succ"][] = "Uspesno unet odgovor";
+                        // Send email notification
+                        $question = $db->getQuestion($questionId);
+                        $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
+                        $questionAuthor = $db->getUserByID($questionAuthorId[0]);
+                        $to = $questionAuthor[COL_USER_EMAIL];
+                        $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
+                        $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
+
+                        $mailSuccessfullySent = mail($to,$subject,$txt);
+                        if (!$mailSuccessfullySent) {
+                            $result["errors"][] = "Došlo je do greške prilikom slanja mail-a";
+                        }
                     } else {
-                        $result["errors"][] = "Doslo je do greske prilikom postavljanja odgovora";
+                        $result["errors"][] = "Došlo je do greške prilikom postavljanja odgovora";
                     }
                 } else {
                     $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";

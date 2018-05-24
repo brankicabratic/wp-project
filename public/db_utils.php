@@ -23,6 +23,7 @@
      * getQuestion($questionID) DONE
      * getAnswersRelatedToQuestion($questionID, $page = 1, $step = 100) DONE
      * getPostsScore($postID) DONE
+     * getPostsAuthor($postID) DONE
      * countQuestionsAnswers($questionID) DONE
      * getAvaliableTags() DONE
      * givePostATag($postID, $tagID) DONE
@@ -441,6 +442,17 @@
       $stmt->execute();
       $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
       return $res !== null ? (int)$res : 0;
+    }
+
+      /**
+       * @param $postID
+       * @return array which contains user id at zero index
+       */
+    public function getPostsAuthor($postID) {
+      $stmt = $this->connection->prepare("SELECT P.".COL_POST_AUTHOR." FROM ".DB_POST_TABLE." P WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_row();
     }
 
     /**
