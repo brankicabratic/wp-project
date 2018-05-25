@@ -81,5 +81,6 @@
   define('USER_GETTER_LOGIN_DATA', 9902);
 
   // RANKS
-  define('RANK_UNREGISTERED', 0);
+  define('RANK_NOT_ACTIVATED', 0);
+  define('RANK_ACTIVATED', 1);
 ?>

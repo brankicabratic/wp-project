@@ -69,7 +69,7 @@
 			}
 			if (count($result["errors"]) == 0) {
 				$success = createUser($_POST["name"], $_POST["password"], $_POST["email"]);
-				if (!$success) {
+				if ($success !== USER_HANDLER_OK) {
 					$result["errors"][] = "Došlo je do greške pri registraciji. Pokušajte sa drugim korisničkim imenom. Ukoliko to ne uspe, kontaktirajte administratore.";
 				}
 			}

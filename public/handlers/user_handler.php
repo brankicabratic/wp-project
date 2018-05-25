@@ -3,8 +3,10 @@
 	require_once 'session.php';
 
   define("USER_HANDLER_OK", 1);
-  define("USER_HANDLER_INVALID_USERNAME", 2);
-  define("USER_HANDLER_INVALID_PASSWORD", 3);
+  define("USER_HANDLER_INVALID", 2);
+  define("USER_HANDLER_INVALID_USERNAME", 3);
+  define("USER_HANDLER_INVALID_PASSWORD", 4);
+  define("USER_HANDLER_INVALID_ACTIVATION", 5);
 
 	define('COOKIE_EXP_TIME', 315360000); // 10 years
 
@@ -21,9 +23,38 @@
   }
 
 	function createUser($username, $password, $email) {
-		$db = new Database;
-		return $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email);
-	}
+    $db = new Database;
+    $hash;
+    $userSuccessfullyCreated = $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email, $hash);
+    if ($userSuccessfullyCreated) {
+      $to = $email;
+      $subject = 'Signup | Verification';
+      $message = '
+        
+        Thanks for signing up!
+        Your account has been created, you can login with the following credentials after you have activated your account by pressing the url below.
+        
+        ------------------------
+        Username: '.$username.'
+        Password: '.$password.'
+        ------------------------
+        
+        Please click this link to activate your account:
+        http://localhost/wp-project/public/verify.php?email='.$email.'&hash='.$hash.'
+        
+      ';
+
+      $headers = 'From:noreply@yourwebsite.com'. "\r\n";
+      $mailSuccessfullySent = mail($to, $subject, $message, $headers);
+      if (!$mailSuccessfullySent) {
+          return USER_HANDLER_INVALID_ACTIVATION;
+      }
+    } else {
+      return USER_HANDLER_INVALID;
+    }
+    return USER_HANDLER_OK;
+
+	} 
 
   function updateProfile($username, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography){
     $db = new Database;
@@ -58,11 +89,16 @@
 
   function getUserEmailAndHash($email, $hash) {
     $db = new Database;
-    $match = $db->getUserEmailAndHash($email, $hash);
-    if ($match) {
+    $success = $db->getUserEmailAndHash($email, $hash);
+    if ($success) {
       return true;
     }
     return false;
+  }
+
+  function activateUser($email) {
+    $db = new Database;
+    return $success = $db->activateUser($email);
   }
   
 ?>
