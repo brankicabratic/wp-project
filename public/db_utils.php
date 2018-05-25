@@ -117,18 +117,40 @@
       $stmt->bind_param("s", $username);
       return $stmt->execute();
     }
-
     /**
      * Store user with given parameters in database
      * @return true if everything went fine, otherwise return false(usually whether username already exists in database if types are checked)
      */
-    public function createUser($username, $password, $email) {
+    public function createUser($username, $password, $email, & $hash) {
       $ID;
+      $hash = md5( rand(0,1000) );
       while($this->doesExist(DB_USER_TABLE, ($ID = rand(-2147483648, 2147483647))));
       $stmt = $this->connection->prepare("INSERT INTO
-                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.", ".COL_USER_RANK.")
-                                          VALUES (?, ?, ?, ?, ".RANK_UNREGISTERED.")");
-      $stmt->bind_param("isss", $ID, $username, $password, $email);
+                                          ".DB_USER_TABLE."(".COL_USER_ID.", ".COL_USER_USERNAME.", ".COL_USER_PASSWORD.", ".COL_USER_EMAIL.", ".COL_USER_RANK.", ".COL_USER_HASH.")
+                                          VALUES (?, ?, ?, ?, ".RANK_NOT_ACTIVATED.",?)");
+      $stmt->bind_param("issss", $ID, $username, $password, $email, $hash);
+      return $stmt->execute();
+    }
+    /**
+     * returns User with given email and hash or null if user doesnt exist
+     */
+    public function getUserEmailAndHash($email, $hash) {
+      $sql = "SELECT * FROM ".DB_USER_TABLE." WHERE ".COL_USER_EMAIL." = ?  AND ".COL_USER_HASH." = ?;";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("ss", $email, $hash);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_row();
+      return $result;
+    }
+  /**
+     * activate User with given email
+     */
+    function activateUser($email) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET
+                                          ".COL_USER_RANK." = 1
+                                          WHERE ".COL_USER_EMAIL." = ?");
+      $stmt->bind_param("s", $email);
       return $stmt->execute();
     }
 
