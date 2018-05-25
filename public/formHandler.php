@@ -13,7 +13,6 @@
 
 	switch($_POST["formType"]) {
 		case "biography":
-			// CHANGING PROFILE INFO GOES HERE
 			if (!$user) {
 				$result["errors"][]="Morate biti ulogovani.";
 			}
@@ -36,6 +35,10 @@
 			if ($_POST["new-password"] != $_POST["new-password-repeated"]) {
 				$result["errors"][] = "Unete lozinke nisu jednake.";
 			}
+
+			if (strlen($_POST["new-password"]) < 6){
+				$result["errors"][] = "Dužina lozinke mora biti najmanje 6 karaktera.";
+			} 
 			
 			if (count($result["errors"]) == 0) {
 				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password"]);
@@ -63,6 +66,9 @@
 				if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
 					$result["errors"][] = "Neispravna mejl adresa";
 				}
+				if (strlen($_POST["password"]) < 6){
+					$result["errors"][] = "Dužina lozinke mora biti najmanje 6 karaktera.";
+				} 
 				if (!isset($_POST["password2"]) || ($_POST["password"] != $_POST["password2"])) {
 					$result["errors"][] = "Unete šifre se ne slažu";
 				}
