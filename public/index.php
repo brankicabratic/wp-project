@@ -8,8 +8,9 @@
       <a href=\"question.php?id={$question[COL_QUESTION_ID]}\"><span class=\"heading\">{$question[COL_QUESTION_HEADER]}</span></a>";
     if(!empty($question["TAGS"])) {
       echo "<span class=\"tags\">";
-      foreach($question["TAGS"] as &$tag)
+      foreach($question["TAGS"] as &$tag){
         echo "<a href=\"tag.php?name={$tag[COL_TAG_NAME]}\"><span class=\"tag\">{$tag[COL_TAG_NAME]}</span></a>";
+      }
       echo "</span>";
     }
     echo "<span class=\"author\">Pitao <a href=\"profile.php?user={$question[COL_USER_USERNAME]}\">{$question[COL_USER_USERNAME]}</a> {$dateFormat} | odgovora {$question["NUMBEROFASNWERS"]} | ocena {$question["SCORE"]}</span>
@@ -353,7 +354,7 @@
           output = "<div class=\"alert alert-danger\" role=\"alert\">Postoje problemi sa serverom, molimo pokušajte kasnije!</div>";
         },
         complete: function() {
-          //messageBox.html(output);
+          messageBox.html(output);
           //$('html, body').animate({scrollTop:0}, 500);
         }
       });

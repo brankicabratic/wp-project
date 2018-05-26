@@ -108,5 +108,11 @@
     $db = new Database;
     return $success = $db->activateUser($email);
   }
+
+  function getUserRank($id) {
+    $db = new Database;
+    $success = $db->getUserRank($id);
+    return $success;
+  }
   
 ?>

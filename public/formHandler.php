@@ -20,7 +20,6 @@
 			if($success==USER_HANDLER_INVALID_PASSWORD){
 				$result["errors"][] = "Neispravna lozinka.";
 			}
-
 			if(count($result["errors"])==0) {
 				$success = updateProfile($user[COL_USER_ID], $_POST["firstName"], $_POST["lastName"], $_POST["major"], $_POST["enrollmentYear"], $_POST["email"], $_POST["sex"], $_POST["dateOfBirth"], $_POST["biography"]);
 				if(!$success){
@@ -35,11 +34,9 @@
 			if ($_POST["new-password"] != $_POST["new-password-repeated"]) {
 				$result["errors"][] = "Unete lozinke nisu jednake.";
 			}
-
 			if (strlen($_POST["new-password"]) < 6){
 				$result["errors"][] = "Dužina lozinke mora biti najmanje 6 karaktera.";
 			} 
-			
 			if (count($result["errors"]) == 0) {
 				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password"]);
 				if ($success==USER_HANDLER_INVALID_PASSWORD){
@@ -83,18 +80,25 @@
 		case "askQuestion":
 			if (!$user) {
 				$result["errors"][] = "Morate biti prijavljeni.";
-			}	
-			if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
-				$result["errors"][] = "Morate uneti naslov.";
 			}
-			if (!isset($_POST["sadrzaj"]) || empty($_POST["sadrzaj"])) {
-				$result["errors"][] = "Morate uneti sadržaj.";
+			if (count($result["errors"]) == 0) {
+				$succes = getUserRank($user[COL_USER_ID]);
+				if ($succes == 0) {
+					$result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali pitanja.";		
+				}
 			}
-			$tags = array_merge(explode(",", $_POST["tags"]), preg_split("/[\s,]+/", $_POST["tag"]));
-			if (count($tags) > 5) {
-				$result["errors"][] = "Imate više od 5 tagova.";
+			if (count($result["errors"]) == 0) {	
+				if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
+					$result["errors"][] = "Morate uneti naslov.";
+				}
+				if (!isset($_POST["sadrzaj"]) || empty($_POST["sadrzaj"])) {
+					$result["errors"][] = "Morate uneti sadržaj.";
+				}
+				$tags = array_merge(explode(",", $_POST["tags"]), preg_split("/[\s,]+/", $_POST["tag"]));
+				if (count($tags) > 5) {
+					$result["errors"][] = "Imate više od 5 tagova.";
+				}
 			}
-
 			if (count($result["errors"]) == 0) {
 				$success = insertQuestion($user[COL_USER_USERNAME], $_POST["naslov"], $_POST["sadrzaj"], $_POST["category"], $tags);
 				
@@ -128,31 +132,35 @@
         case "answerQuestionForm":
             if (isset($_POST["answer-content"])) {
                 if ($user) {
-                    $author = $user[COL_USER_ID];
-                    $answerContent = htmlspecialchars($_POST["answer-content"]);
-                    $questionId = $_POST["questionId"];
-                    $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
-                    if ($successfullyInserted) {
-                        $result["succ"][] = "Uspesno unet odgovor";
-                        // Send email notification
-                        $question = $db->getQuestion($questionId);
-                        $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
-                        $questionAuthor = $db->getUserByID($questionAuthorId[0]);
-                        $to = $questionAuthor[COL_USER_EMAIL];
-                        $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
-                        $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
+					$succesVerification = getUserRank($user[COL_USER_ID]);
+					if ($succesVerification != 0) {
+	                    $author = $user[COL_USER_ID];
+	                    $answerContent = htmlspecialchars($_POST["answer-content"]);
+	                    $questionId = $_POST["questionId"];
+	                    $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
+	                    if ($successfullyInserted) {
+	                        $result["succ"][] = "Uspesno unet odgovor";
+	                        // Send email notification
+	                        $question = $db->getQuestion($questionId);
+	                        $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
+	                        $questionAuthor = $db->getUserByID($questionAuthorId[0]);
+	                        $to = $questionAuthor[COL_USER_EMAIL];
+	                        $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
+	                        $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
 
-                        $mailSuccessfullySent = mail($to,$subject,$txt);
-                        if (!$mailSuccessfullySent) {
-                            $result["errors"][] = "Došlo je do greške prilikom slanja mail-a";
-                        }
-                    } else {
-                        $result["errors"][] = "Došlo je do greške prilikom postavljanja odgovora";
-                    }
+	                        $mailSuccessfullySent = mail($to,$subject,$txt);
+	                        if (!$mailSuccessfullySent) {
+	                            $result["errors"][] = "Došlo je do greške prilikom slanja mail-a";
+	                        }
+	                    } else {
+	                        $result["errors"][] = "Došlo je do greške prilikom postavljanja odgovora";
+	                    }
+	                }else{
+	                	$result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali odgovore.";
+	                }
                 } else {
                     $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";
                 }
-
             }
             break;
 		case "avatar":

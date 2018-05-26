@@ -37,6 +37,7 @@
      * doesReactionExist($userID, $postID) DONE
      * saveReaction($userID, $postID, $type) DONE
      * insertRank($rankID, $rankName) DONE
+     * getUserRank($userID) DONE
      * promoteUser($username, $rankID) DONE
      * insertPermissionOrRestriction($permRestID, $permRestName, $type) DONE
      * grantRankAPermissionOrRestriction($rankID, $permRestID) DONE
@@ -686,6 +687,16 @@
       $stmt = $this->connection->prepare("INSERT INTO ".DB_RANK_TABLE."(".COL_RANK_ID.", ".COL_RANK_NAME.") VALUES (?, ?)");
       $stmt->bind_param("is", $rankID, $rankName);
       return $stmt->execute();
+    }
+
+    /**
+    * Get user rank
+    */
+    public function getUserRank($userID) {
+      $stmt = $this->connection->prepare("SELECT ".COL_USER_RANK." FROM ".DB_USER_TABLE." WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
     }
 
     /**

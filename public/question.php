@@ -24,6 +24,7 @@
                   $questionId = $_GET["id"];
                   $question = $db->getQuestion($questionId);
                   $answers = $db->getAnswersRelatedToQuestion($questionId);
+                  $tags = $db->getTagsRelatedToQuestion($questionId);
                   if (is_null($question)) {
                     header("Location: questionNotFound.php");
                     exit();
@@ -40,9 +41,11 @@
                 }
               ?>
               <div class="tags">
-                <div class="tag">Matematika</div>
-                <div class="tag">Informatika</div>
-                <div class="tag">Databases</div>
+                <?php
+                  foreach($tags as $tag) {
+                    echo "<a href=\"tag.php?name={$tag[COL_TAG_NAME]}\"><div class=\"tag\">{$tag[COL_TAG_NAME]}</div></a>";
+                  }
+                ?>
               </div>
             </div>
             <?php 
