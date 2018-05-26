@@ -130,37 +130,39 @@
       		}
 			break;
         case "answerQuestionForm":
-            if (isset($_POST["answer-content"])) {
-                if ($user) {
-					$succesVerification = getUserRank($user[COL_USER_ID]);
-					if ($succesVerification != 0) {
-	                    $author = $user[COL_USER_ID];
-	                    $answerContent = htmlspecialchars($_POST["answer-content"]);
-	                    $questionId = $_POST["questionId"];
-	                    $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
-	                    if ($successfullyInserted) {
-	                        $result["succ"][] = "Uspesno unet odgovor";
-	                        // Send email notification
-	                        $question = $db->getQuestion($questionId);
-	                        $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
-	                        $questionAuthor = $db->getUserByID($questionAuthorId[0]);
-	                        $to = $questionAuthor[COL_USER_EMAIL];
-	                        $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
-	                        $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
+            if ($user) {
+				$succesVerification = getUserRank($user[COL_USER_ID]);
+				if ($succesVerification != 0) {
+	                $author = $user[COL_USER_ID];
+	                $answerContent = htmlspecialchars($_POST["answer-content"]);
+	                if (isset($answerContent) && !empty($answerContent)) {
+						$questionId = $_POST["questionId"];
+		                $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
+		                if ($successfullyInserted) {
+		                    $result["succ"][] = "Uspesno unet odgovor";
+		                    // Send email notification
+		                    $question = $db->getQuestion($questionId);
+		                    $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
+		                    $questionAuthor = $db->getUserByID($questionAuthorId[0]);
+		                    $to = $questionAuthor[COL_USER_EMAIL];
+		                    $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
+		                    $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
 
-	                        $mailSuccessfullySent = mail($to,$subject,$txt);
-	                        if (!$mailSuccessfullySent) {
-	                            $result["errors"][] = "Došlo je do greške prilikom slanja mail-a";
-	                        }
-	                    } else {
-	                        $result["errors"][] = "Došlo je do greške prilikom postavljanja odgovora";
-	                    }
-	                }else{
-	                	$result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali odgovore.";
-	                }
-                } else {
-                    $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";
-                }
+		                    $mailSuccessfullySent = mail($to,$subject,$txt);
+		                    if (!$mailSuccessfullySent) {
+		                        $result["errors"][] = "Došlo je do greške prilikom slanja mail-a";
+		                    }
+		                } else {
+		                    $result["errors"][] = "Došlo je do greške prilikom postavljanja odgovora";
+		                }
+		            }else{
+		            	$result["errors"][] = "Morate uneti sadržaj.";
+		            }
+	            }else{
+	                $result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali odgovore.";
+	            }
+            } else {
+                $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";
             }
             break;
 		case "avatar":
