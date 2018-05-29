@@ -28,28 +28,28 @@
     $userSuccessfullyCreated = $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email, $hash);
     if ($userSuccessfullyCreated) {
       login($username, $password);
-      // $to = $email;
-      // $subject = 'Signup | Verification';
-      // $message = '
+      $to = $email;
+      $subject = 'Signup | Verification';
+      $message = '
         
-      //   Thanks for signing up!
-      //   Your account has been created, you can login with the following credentials after you have activated your account by pressing the url below.
+        Thanks for signing up!
+        Your account has been created, you can login with the following credentials after you have activated your account by pressing the url below.
         
-      //   ------------------------
-      //   Username: '.$username.'
-      //   Password: '.$password.'
-      //   ------------------------
+        ------------------------
+        Username: '.$username.'
+        Password: '.$password.'
+        ------------------------
         
-      //   Please click this link to activate your account:
-      //   http://localhost/wp-project/public/verify.php?email='.$email.'&hash='.$hash.'
+        Please click this link to activate your account:
+        http://localhost/wp-project/public/verify.php?email='.$email.'&hash='.$hash.'
         
-      // ';
+      ';
 
-      // $headers = 'From:noreply@yourwebsite.com'. "\r\n";
-      // $mailSuccessfullySent = mail($to, $subject, $message, $headers);
-      // if (!$mailSuccessfullySent) {
-      //     return USER_HANDLER_INVALID_ACTIVATION;
-      // }
+      $headers = 'From:noreply@yourwebsite.com'. "\r\n";
+      $mailSuccessfullySent = mail($to, $subject, $message, $headers);
+      if (!$mailSuccessfullySent) {
+          return USER_HANDLER_INVALID_ACTIVATION;
+      }
     } else {
       return USER_HANDLER_INVALID;
     }
