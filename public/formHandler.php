@@ -218,7 +218,7 @@
 			}
 			break;
 		case "banUser":
-			if (banUser($_POST["id"])) {
+			if (banUser($_POST["user"])) {
 				$result["data"][] = "Korisnik je uspešno banovan.";
 			}
 			else {
@@ -226,7 +226,7 @@
 			}
 			break;
 		case "unbanUser":
-			if (unbanUser($_POST["id"])) {
+			if (unbanUser($_POST["user"])) {
 				$result["data"][] = "Korisnik je uspešno odbanovan.";
 			}
 			else {
