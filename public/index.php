@@ -297,7 +297,7 @@
         this.target.html("");
       },
       add: function(tag) {
-        this.target.append("<option value=\"" + tag.name + "\">" + tag.name + "</tag>")
+        this.target.append("<option value=\"" + tag.Name + "\">" + tag.Name + "</tag>")
       },
       update: function() {
         this.reset();
