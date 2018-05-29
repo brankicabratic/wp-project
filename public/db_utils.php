@@ -798,12 +798,12 @@
     }
 
     function getTopActiveUsers() {
-      $sql_post = "SELECT ".COL_POST_AUTHOR.", COUNT(".COL_POST_AUTHOR.") AS authors FROM "
-                  .DB_POST_TABLE." GROUP BY ".COL_POST_AUTHOR." ORDER BY authors DESC LIMIT 2";
+      $sql_post = "SELECT ".COL_POST_AUTHOR.", COUNT(".COL_POST_AUTHOR.") AS count_msg FROM "
+                  .DB_POST_TABLE." GROUP BY ".COL_POST_AUTHOR." ORDER BY count_msg DESC LIMIT 2";
 
       $stmt = $this->connection->prepare($sql_post);
       $stmt->execute();
-      $result = $stmt->get_result()->fetch_all(MYSQLI_NUM);
+      $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
       return $result;
     }
 
@@ -813,7 +813,7 @@
       $stmt = $this->connection->prepare("SELECT ".COL_USER_USERNAME." FROM ".DB_USER_TABLE." WHERE ".COL_USER_ID." = ?");
       $stmt->bind_param("i", $id);
       $stmt->execute();
-      return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
   }
 ?>

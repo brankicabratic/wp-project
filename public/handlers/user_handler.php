@@ -126,11 +126,12 @@
   function getTopActiveUsers() {
     $db = new Database;
     $success = $db->getTopActiveUsers();
-    $res = array();
-    $res[] = array($db->getUsernameById($success[0]));
-    $res[] = $db->getUsernameById($success[2]);
-
-    return $success;
+    $result = array();
+    foreach($success as $user) {
+      $name = $db->getUsernameById($user["Author"])[0]["Username"];
+      $result[] = array("username" => $name, "count_msg" => $user["count_msg"]);
+    }
+    return $result;
   }
   
 ?>

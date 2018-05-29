@@ -238,7 +238,7 @@
             <?php
               $users = getTopActiveUsers();
               foreach($users as $user) {
-                echo "<li>".$user[0]."(".$user[1].")</li>";
+                echo "<li><a href='profile.php?user=".$user["username"]."' >".$user["username"]."</a>(".$user["count_msg"].")</li>";
               }
             ?>
           </ul>
