@@ -31,6 +31,8 @@
      * givePostATag($postID, $tagID) DONE
      * getTagsRelatedToQuestion($questionID) DONE
      * updateUser(&$user) DONE
+     * updateProfile($ID, $firstName, $lastName, $major, $enrollmentYear, $email, $sex, $dateOfBirth, $biography) DONE
+     * updateAvatar($ID, $newAvatar) DONE
      * updatePost($postID, $content) DONE
      * updateQuestion($postID, $header, $content) DONE
      * updateAnswer($postID, $content) DONE
@@ -198,7 +200,19 @@
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
     }
 
+    public function getPosts($userID){
+      $stmt = $this->connection->prepare("SELECT * FROM ".DB_POST_TABLE." WHERE ".COL_POST_AUTHOR." = ?");
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 
+    public function getRelationFromPost($postID){
+      $stmt = $this->connection->prepare("SELECT * FROM ".DB_ANSWER_TABLE." WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $postID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
 
     /**
      * @param questionID has to be integer

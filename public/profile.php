@@ -27,6 +27,36 @@
     echo date("d. m. Y.", strtotime($date));
   }
 
+  function printPost(&$activity,$current_user) {
+    $dateFormat = date("d. m. Y. \u H:i", strtotime($activity[COL_POST_POSTED]));
+    $db = new Database;
+    $userAvatar = $current_user[COL_USER_AVATAR] !== null ? $current_user[COL_USER_AVATAR] : "img/avatar.png";
+    if ($current_user[COL_USER_FIRSTNAME]!=null && $current_user[COL_USER_LASTNAME]!=null) {
+      $displayName = $current_user[COL_USER_FIRSTNAME] . $current_user[COL_USER_LASTNAME];
+    }else{
+      $displayName = $current_user[COL_USER_USERNAME];
+    }
+    echo "<li class=\"media\">";
+    echo "<img class=\"mr-3\" src=\"$userAvatar\" alt=\"Pera Peric\">";
+    echo "<div class=\"media-body\">";
+    if($activity[COL_POST_TYPE]==1){
+      $question = $db->getQuestion($activity[COL_POST_ID]);
+      echo "<div class=\"question\"><span class=\"author\"><h5><a href=\"profile.php?user={$current_user[COL_USER_USERNAME]}\">{$displayName}</a> je postavio pitanje </span>
+        </a>";
+      echo "<a href=\"question.php?id={$question[COL_QUESTION_ID]}\"><span class=\"heading\">{$question[COL_QUESTION_HEADER]} </span></a></h5>";
+      echo "<div class=\"question-content\"><small>".htmlspecialchars($question[COL_POST_CONTENT])."</small></div>";
+    }else if($activity[COL_POST_TYPE]==2){
+      $qID=$db->getRelationFromPost($activity[COL_POST_ID]);
+      $question = $db->getQuestion($qID[0][COL_ANSWER_PARENT]);
+      echo "<div class=\"question\"><span class=\"author\"><h5><a href=\"profile.php?user={$current_user[COL_USER_USERNAME]}\">{$displayName}</a> je ostavio odgovor na pitanje </span>
+        </a>";
+      echo "<a href=\"question.php?id={$question[COL_POST_ID]}\"><span class=\"heading\">{$question[COL_QUESTION_HEADER]} </span></a></h5>";
+      echo "<div class=\"question-content\"><small>".htmlspecialchars($activity[COL_POST_CONTENT])."</small></div>";
+    }
+    echo "<span class=\"profile-activity-datespan\">Postavljeno {$dateFormat}</span></div>";
+    echo "</div></li><hr>";
+  }
+
   $db = new Database;
   $opened_user = $db->getUser($_GET["user"]);
 
@@ -37,6 +67,7 @@
   $user_name_identifier = !empty($opened_user[COL_USER_FIRSTNAME]) && !empty($opened_user[COL_USER_LASTNAME]) ? "{$opened_user[COL_USER_FIRSTNAME]} {$opened_user[COL_USER_LASTNAME]}" : $opened_user[COL_USER_USERNAME];
 
   $is_opened_users_profile = $user !== null && $user[COL_USER_USERNAME] === $opened_user[COL_USER_USERNAME];
+  $activities = $db->getPosts($user[COL_USER_ID]);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -123,41 +154,11 @@
               <!-- USER'S ACTIVITIES TAB -->
               <div class="tab-pane fade" id="nav-activities" role="tabpanel" aria-labelledby="nav-activities-tab">
                  <ul class="list-unstyled user-activity-list">
-                    <li class="media">
-                       <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
-                       <div class="media-body">
-                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je postavio pitanje <a href="#">Customize Android app based on server values</a></h5>
-                          <small>I want to developer an Android app such that a particular function should be executed in the app only when a value in the server is true. If the value in the server is false another function should be executed...</small>
-                          <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
-                       </div>
-                    </li>
-                    <hr>
-                    <li class="media">
-                       <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
-                       <div class="media-body">
-                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je ostavio odgovor na pitanje <a href="#">Passing anonymous parameters to functions in C</a></h5>
-                          <small>Spanner is Google's globally distributed relational database management system (RDBMS), the successor to BigTable. Google claims it is not a pure relational system because each table must have a primary key. Here is the link of the paper. Spanner is Google's scalable, multi-version, globally-distributed, and synchronously-replicated database. It is the first system to distribute data at global scale and support externally-consistent distributed transactions. This paper describes how Spanner is structured, its feature set, the rationale underlying various design decisions, and a novel time API that exposes clock uncertainty. This API and its implementation are critical to supporting external consistency and a variety of powerful features: non-blocking reads in the past, lock-free read-only transactions, and atomic schema changes, across all of Spanner.</small>
-                          <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
-                       </div>
-                    </li>
-                    <hr>
-                    <li class="media">
-                       <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
-                       <div class="media-body">
-                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je postavio pitanje <a href="#">symfony heroku fos_user.registration failure</a></h5>
-                          <small>I've recently deployed a symfony 3.4.1 application on Heroku. There are two tables in the database : Post(filled with dataFixtures --no problem) and User (using the FosUserBundle). When trying to register a user i've got this in the log:...</small>
-                          <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
-                       </div>
-                    </li>
-                    <hr>
-                    <li class="media">
-                       <img class="mr-3" src="img/profile-pic.jpg" alt="Pera Peric">
-                       <div class="media-body">
-                          <h5><a href="#"><?php echo $user_name_identifier ?></a> je postavio pitanje <a href="#">symfony heroku fos_user.registration failure</a></h5>
-                          <small>It should work.</small>
-                          <span class="profile-activity-datespan">Postavljeno 03. 01. 2018. u 16:67</span>
-                       </div>
-                    </li>
+                          <?php
+                           foreach ((array)$activities as $activity) {
+                                printPost($activity, $opened_user);
+                           }   
+                          ?>
                  </ul>
               </div>
               <?php if($is_opened_users_profile) { ?>
