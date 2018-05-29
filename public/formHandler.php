@@ -3,6 +3,7 @@
 	require_once 'handlers/user_handler.php';
 	require_once 'handlers/question_handler.php';
 	require_once 'handlers/admin_handler.php';
+	require_once 'col_config.php';
 
 	$result = array(
 		"errors" => array(),
@@ -87,6 +88,9 @@
 				if ($succes == 0) {
 					$result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali pitanja.";		
 				}
+				if ($succes == RANK_BANNED) {
+					$result["errors"][] = "Banovani ste. Zabranjeno vam je postavljanje pitanja.";
+				}
 			}
 			if (count($result["errors"]) == 0) {	
 				if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
@@ -133,7 +137,7 @@
         case "answerQuestionForm":
             if ($user) {
 				$succesVerification = getUserRank($user[COL_USER_ID]);
-				if ($succesVerification != 0) {
+				if ($succesVerification != 0 && $succesVerification != RANK_BANNED) {
 	                $author = $user[COL_USER_ID];
 	                $answerContent = htmlspecialchars($_POST["answer-content"]);
 	                if (isset($answerContent) && !empty($answerContent)) {
@@ -160,7 +164,12 @@
 		            	$result["errors"][] = "Morate uneti sadržaj.";
 		            }
 	            }else{
+	            	if ($succesVerification == RANK_BANNED) {
+									$result["errors"][] = "Banovani ste. Zabranjeno vam je postavljanje odgovora.";
+								}
+								else {
 	                $result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali odgovore.";
+								}
 	            }
             } else {
                 $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";
