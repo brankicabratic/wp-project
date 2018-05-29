@@ -10,6 +10,8 @@
      * getUserByID($id, $getter=USER_GETTER_ALL) DONE
      * updateOnlineTime($username) DONE
      * createUser($username, $password, $email) DONE
+     * getUserEmailAndHash($email, $hash) DONE
+     * getAllEmail($email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
      * getAllCategories() DONE
@@ -145,6 +147,16 @@
       $result = $stmt->get_result()->fetch_row();
       return $result;
     }
+
+    public function getAllEmail($email) {
+      $sql = "SELECT ".COL_USER_EMAIL." FROM ".DB_USER_TABLE." WHERE ".COL_USER_EMAIL." = ?;";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("s", $email);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_array(MYSQLI_NUM);
+      return $result;
+    }
+
   /**
      * activate User with given email
      */
@@ -783,6 +795,25 @@
     	$stmt->execute();
     	$result = $stmt->get_result()->fetch_row();
       return $result[0];
+    }
+
+    function getTopActiveUsers() {
+      $sql_post = "SELECT ".COL_POST_AUTHOR.", COUNT(".COL_POST_AUTHOR.") AS authors FROM "
+                  .DB_POST_TABLE." GROUP BY ".COL_POST_AUTHOR." ORDER BY authors DESC LIMIT 2";
+
+      $stmt = $this->connection->prepare($sql_post);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_all(MYSQLI_NUM);
+      return $result;
+    }
+
+    function getUsernameById($id) {
+      if(!$id)
+        return null;
+      $stmt = $this->connection->prepare("SELECT ".COL_USER_USERNAME." FROM ".DB_USER_TABLE." WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("i", $id);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     }
   }
 ?>

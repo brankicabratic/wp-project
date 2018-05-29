@@ -1,5 +1,11 @@
 <?php
   require_once 'parts.php';
+
+  if($user) {
+    header("Location: index.php");
+    exit();
+  }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -67,7 +73,7 @@
           console.log(result);
           try {
             if(result.errors.length === 0) {
-              output = "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste se registrovali!<br>Na unetu email adresu Vam je poslat link za verifikaciju naloga. Ako ne verifikujete Vaš nalog nećete moći postavljati pitanja i odgovore.</div>";
+              window.open("index.php", "_self");
               $("input:not([type=\"hidden\"], [type=\"submit\"])").each(function() {
                 $(this).val("");
               });

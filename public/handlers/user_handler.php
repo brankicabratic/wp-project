@@ -27,6 +27,9 @@
     $hash;
     $userSuccessfullyCreated = $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email, $hash);
     if ($userSuccessfullyCreated) {
+      login($username, $password);
+      $_SESSION["message"] = "<div class=\"col-8 offset-md-2 alert alert-success\" role=\"alert\"><center>Uspešno ste se registrovali!<br>Na unetu email adresu Vam je poslat link za verifikaciju naloga. <br>Ako ne verifikujete Vaš nalog nećete moći postavljati pitanja i odgovore.</center></div>";
+              
       $to = $email;
       $subject = 'Signup | Verification';
       $message = '
@@ -112,6 +115,21 @@
   function getUserRank($id) {
     $db = new Database;
     $success = $db->getUserRank($id);
+    return $success;
+  }
+
+  function getAllEmail($email){
+    $db = new Database;
+    return  $success = $db->getAllEmail($email);
+  }
+
+  function getTopActiveUsers() {
+    $db = new Database;
+    $success = $db->getTopActiveUsers();
+    $res = array();
+    $res[] = array($db->getUsernameById($success[0]));
+    $res[] = $db->getUsernameById($success[2]);
+
     return $success;
   }
   

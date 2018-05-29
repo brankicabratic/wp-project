@@ -1,7 +1,10 @@
 <?php
   require_once 'db_utils.php';
+  require_once 'handlers/user_handler.php';
   require_once 'parts.php';
 
+
+  
   function printQuestion(&$question) {
     $dateFormat = date("d. m. Y. \u H:i", strtotime($question[COL_POST_POSTED]));
     echo "<div class=\"question\">
@@ -9,7 +12,7 @@
     if(!empty($question["TAGS"])) {
       echo "<span class=\"tags\">";
       foreach($question["TAGS"] as &$tag){
-        echo "<a href=\"tag.php?name={$tag[COL_TAG_NAME]}\"><span class=\"tag\">{$tag[COL_TAG_NAME]}</span></a>";
+        echo "<a href=\"index.php?tagName={$tag[COL_TAG_NAME]}\"><span class=\"tag\">{$tag[COL_TAG_NAME]}</span></a>";
       }
       echo "</span>";
     }
@@ -56,10 +59,12 @@
   $numAllPages = ceil($numQuestions / $step); 
   $page = isset($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $numAllPages ? $_GET["page"] : 1;
 
+
   if (isset($_GET["filterQuestions"])) {
     $questions = $db->getNthPageQuestions($page, $step, $_GET["filterType"], $_GET["order"], $_GET["nameSearch"], $_GET["tagSearch"], $_GET["category"]);
-  }
-  else {
+  } else if (isset($_GET["tagName"])) {
+    $questions = $db->getNthPageQuestions($page, $step, "dateOfCreation", 0, "", $_GET["tagName"], 0);
+  } else {
     $questions = $db->getNthPageQuestions($page, $step);
   }
   foreach($questions as &$question) {
@@ -91,6 +96,12 @@
     <?php includeQuoteHeader() ?>
 
     <div class="row">
+      <?php 
+      if (isset($_SESSION["message"])) {
+        echo $_SESSION["message"];
+        unset($_SESSION["message"]);
+      }
+      ?>
       <div class="col-md-8">
         <div id="ask-filter-container">
           <ul class="nav nav-tabs" role="tablist">
@@ -224,8 +235,12 @@
         <div class="side-block">
           Najaktivniji korisnici:
           <ul>
-            <li>PeraPeric</li>
-            <li>NemanjaMarkovic</li>
+            <?php
+              $users = getTopActiveUsers();
+              foreach($users as $user) {
+                echo "<li>".$user[0]."(".$user[1].")</li>";
+              }
+            ?>
           </ul>
         </div>
       </div>
