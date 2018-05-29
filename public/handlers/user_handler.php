@@ -27,6 +27,7 @@
     $hash;
     $userSuccessfullyCreated = $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email, $hash);
     if ($userSuccessfullyCreated) {
+      login($username, $password);
       $to = $email;
       $subject = 'Signup | Verification';
       $message = '
@@ -113,6 +114,11 @@
     $db = new Database;
     $success = $db->getUserRank($id);
     return $success;
+  }
+
+  function getAllEmail($email){
+    $db = new Database;
+    return  $success = $db->getAllEmail($email);
   }
   
 ?>
