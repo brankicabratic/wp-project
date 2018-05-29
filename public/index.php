@@ -243,6 +243,17 @@
             ?>
           </ul>
         </div>
+        <div class="side-block">
+          Najpopularnije kategorije:
+          <ul>
+            <?php
+              $category = getPopularCategory();
+              foreach($category as $cat) {
+                echo "<li>".$cat["name"]."(".$cat["count_cat"].")</li>";
+              }
+            ?>
+          </ul>
+        </div>
       </div>
     </div>
 

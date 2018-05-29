@@ -133,5 +133,17 @@
     }
     return $result;
   }
+
+
+  function getPopularCategory() {
+    $db = new Database;
+    $success = $db->getPopularCategory();
+    $result = array();
+    foreach($success as $category) {
+      $name = $db->getCategoryNameById($category["CategoryID"])[0]["Name"];
+      $result[] = array("name" => $name, "count_cat" => $category["count_cat"]);
+    }
+    return $result;
+  }
   
 ?>

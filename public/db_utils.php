@@ -815,5 +815,24 @@
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
+
+    function getPopularCategory() {
+      $sql_post = "SELECT ".COL_QUESTION_CATEGORY.", COUNT(".COL_QUESTION_CATEGORY.") AS count_cat FROM "
+                  .DB_QUESTION_TABLE." GROUP BY ".COL_QUESTION_CATEGORY." ORDER BY count_cat DESC LIMIT 2";
+
+      $stmt = $this->connection->prepare($sql_post);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+      return $result;
+    }
+
+    function getCategoryNameById($id) {
+      if(!$id)
+        return null;
+      $stmt = $this->connection->prepare("SELECT ".COL_CATEGORY_NAME." FROM ".DB_CATEGORY_TABLE." WHERE ".COL_CATEGORY_ID." = ?");
+      $stmt->bind_param("i", $id);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
   }
 ?>
