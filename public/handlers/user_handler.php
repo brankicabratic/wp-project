@@ -115,5 +115,10 @@
     $success = $db->getUserRank($id);
     return $success;
   }
+
+  function getAllEmail($email){
+    $db = new Database;
+    return  $success = $db->getAllEmail($email);
+  }
   
 ?>
