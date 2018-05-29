@@ -65,6 +65,10 @@
 				if (!filter_var($_POST["email"], FILTER_VALIDATE_EMAIL)) {
 					$result["errors"][] = "Neispravna mejl adresa";
 				}
+				$successEmail = getAllEmail($_POST["email"]);
+				if($successEmail >= 1){
+					$result["errors"][] = "Uneta email adresa već postoji.";
+				}
 				if (strlen($_POST["password"]) < 6){
 					$result["errors"][] = "Dužina lozinke mora biti najmanje 6 karaktera.";
 				} 
