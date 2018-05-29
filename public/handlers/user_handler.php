@@ -122,5 +122,15 @@
     $db = new Database;
     return  $success = $db->getAllEmail($email);
   }
+
+  function getTopActiveUsers() {
+    $db = new Database;
+    $success = $db->getTopActiveUsers();
+    $res = array();
+    $res[] = array($db->getUsernameById($success[0]));
+    $res[] = $db->getUsernameById($success[2]);
+
+    return $success;
+  }
   
 ?>

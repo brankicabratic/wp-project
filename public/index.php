@@ -1,5 +1,6 @@
 <?php
   require_once 'db_utils.php';
+  require_once 'handlers/user_handler.php';
   require_once 'parts.php';
 
 
@@ -234,8 +235,12 @@
         <div class="side-block">
           Najaktivniji korisnici:
           <ul>
-            <li>PeraPeric</li>
-            <li>NemanjaMarkovic</li>
+            <?php
+              $users = getTopActiveUsers();
+              foreach($users as $user) {
+                echo "<li>".$user[0]."(".$user[1].")</li>";
+              }
+            ?>
           </ul>
         </div>
       </div>
