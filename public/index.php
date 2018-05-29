@@ -91,6 +91,12 @@
     <?php includeQuoteHeader() ?>
 
     <div class="row">
+      <?php 
+      if (isset($_SESSION["message"])) {
+        echo $_SESSION["message"];
+        unset($_SESSION["message"]);
+      }
+      ?>
       <div class="col-md-8">
         <div id="ask-filter-container">
           <ul class="nav nav-tabs" role="tablist">

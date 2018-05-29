@@ -28,6 +28,8 @@
     $userSuccessfullyCreated = $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email, $hash);
     if ($userSuccessfullyCreated) {
       login($username, $password);
+      $_SESSION["message"] = "<div class=\"col-8 offset-md-2 alert alert-success\" role=\"alert\"><center>Uspešno ste se registrovali!<br>Na unetu email adresu Vam je poslat link za verifikaciju naloga. <br>Ako ne verifikujete Vaš nalog nećete moći postavljati pitanja i odgovore.</center></div>";
+              
       $to = $email;
       $subject = 'Signup | Verification';
       $message = '

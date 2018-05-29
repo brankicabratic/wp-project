@@ -74,7 +74,6 @@
           try {
             if(result.errors.length === 0) {
               window.open("index.php", "_self");
-              output = "<div class=\"alert alert-success\" role=\"alert\">Uspešno ste se registrovali!<br>Na unetu email adresu Vam je poslat link za verifikaciju naloga. Ako ne verifikujete Vaš nalog nećete moći postavljati pitanja i odgovore.</div>";
               $("input:not([type=\"hidden\"], [type=\"submit\"])").each(function() {
                 $(this).val("");
               });
