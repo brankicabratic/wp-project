@@ -819,7 +819,7 @@
         $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
                                           SET
                                           ".COL_USER_RANK." = ?
-                                          WHERE ".COL_POST_AUTHOR." = ?");
+                                          WHERE ".COL_USER_ID." = ?");
         $stmt->bind_param("ii", $rankID, $authorID);
         return $stmt->execute();
     }

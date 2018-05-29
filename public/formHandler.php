@@ -3,6 +3,7 @@
 	require_once 'handlers/user_handler.php';
 	require_once 'handlers/question_handler.php';
 	require_once 'handlers/admin_handler.php';
+	require_once 'handlers/answer_handler.php';
 	require_once 'col_config.php';
 
 	$result = array(
@@ -146,13 +147,13 @@
 	                $answerContent = htmlspecialchars($_POST["answer-content"]);
 	                if (isset($answerContent) && !empty($answerContent)) {
 						$questionId = $_POST["questionId"];
-		                $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
+		                $successfullyInserted = insertAnswer($author, $answerContent, $questionId);
 		                if ($successfullyInserted) {
 		                    $result["succ"][] = "Uspesno unet odgovor";
 		                    // Send email notification
-		                    $question = $db->getQuestion($questionId);
-		                    $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
-		                    $questionAuthor = $db->getUserByID($questionAuthorId[0]);
+		                    $question = getQuestion($questionId);
+		                    $questionAuthorId = getPostsAuthor($question[COL_QUESTION_ID]);
+		                    $questionAuthor = getUserByID($questionAuthorId[0]);
 		                    $to = $questionAuthor[COL_USER_EMAIL];
 		                    $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
 		                    $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";

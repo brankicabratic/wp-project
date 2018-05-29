@@ -130,10 +130,10 @@
                     if ($user[COL_USER_RANK] == RANK_ADMIN) {
                   ?>
                   <div class="aligned-right">
-                    <form id="banUser" method="post">
+                    <form method="post" id="banUser">
                       <input type="hidden" name="formType" value="<?php echo $opened_user[COL_USER_RANK] == RANK_BANNED ? "unbanUser" : "banUser";?>">
-                      <input type="hidden" name="id" value="<?php echo $_GET["user"]?>">
-                      <input type="submit" value="<?php echo $opened_user[COL_USER_RANK] == RANK_BANNED ? "Odbanuj korisnika" : "Banuj korisnika" ;?>" class="btn btn-primary">
+                      <input type="hidden" name="user" value="<?php echo htmlspecialchars($_GET["user"])?>">
+                      <input type="submit" value="<?php echo $opened_user[COL_USER_RANK] == RANK_BANNED ? "Odbanuj korisnika" : "Banuj korisnika" ;?>" name="banUser" class="btn btn-primary">
                     </form>
                   </div>
                   <?php
