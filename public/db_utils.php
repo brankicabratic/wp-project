@@ -799,7 +799,7 @@
 
     function getTopActiveUsers() {
       $sql_post = "SELECT ".COL_POST_AUTHOR.", COUNT(".COL_POST_AUTHOR.") AS count_msg FROM "
-                  .DB_POST_TABLE." GROUP BY ".COL_POST_AUTHOR." ORDER BY count_msg DESC LIMIT 2";
+                  .DB_POST_TABLE." WHERE PostingTime > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) GROUP BY ".COL_POST_AUTHOR." ORDER BY count_msg DESC LIMIT 2";
 
       $stmt = $this->connection->prepare($sql_post);
       $stmt->execute();
