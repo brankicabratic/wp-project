@@ -2,6 +2,7 @@
 	require_once 'session.php';
 	require_once 'handlers/user_handler.php';
 	require_once 'handlers/question_handler.php';
+	require_once 'handlers/admin_handler.php';
 
 	$result = array(
 		"errors" => array(),
@@ -196,6 +197,38 @@
         }
       }
 			break;
+		case "deleteAnswer":
+			if (deleteAnswer($_POST["id"])) {
+				$result["data"][] = "Odgovor je uspešno izbrisan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške pri brisanju odgovora.";
+			}
+			break;
+		case "deleteQuestion":
+			if (deleteQuestion($_POST["id"])) {
+				$result["data"][] = "Pitanje je uspešno izbrisan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške pri brisanju pitanja.";
+			}
+			break;
+		case "banUser":
+			if (banUser($_POST["id"])) {
+				$result["data"][] = "Korisnik je uspešno banovan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške pri banovanju korinika.";
+			}
+			break;
+		case "unbanUser":
+			if (unbanUser($_POST["id"])) {
+				$result["data"][] = "Korisnik je uspešno odbanovan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške kod odbanovanja korinika.";
+			}
+			break;	
 		default:
 			exit(json_encode(null));
 	}

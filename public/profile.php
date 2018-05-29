@@ -77,6 +77,13 @@
            <!-- USER'S BIO TAB -->
            <div class="tab-content" id="nav-tabContent">
               <div class="tab-pane fade show active" id="nav-about" role="tabpanel" aria-labelledby="nav-about-tab">
+                  <?php
+                    if ($user[COL_USER_RANK] == RANK_ADMIN) {
+                  ?>
+                  <div class="form-result-box" id="msg-banUser"></div>
+                  <?php
+                    }
+                  ?>
                  <h3>Podaci o korisniku</h3>
                  <div class="table-view">
                     <?php if(!empty($opened_user[COL_USER_FIRSTNAME]) && !empty($opened_user[COL_USER_LASTNAME])) { ?>
@@ -119,6 +126,19 @@
                     <?php } ?>
                  </div>
                  <?php if($is_opened_users_profile) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
+                  <?php
+                    if ($user[COL_USER_RANK] == RANK_ADMIN) {
+                  ?>
+                  <div class="aligned-right">
+                    <form id="banUser" method="post">
+                      <input type="hidden" name="formType" value="<?php echo $opened_user[COL_USER_RANK] == RANK_BANNED ? "unbanUser" : "banUser";?>">
+                      <input type="hidden" name="id" value="<?php echo $_GET["user"]?>">
+                      <input type="submit" value="<?php echo $opened_user[COL_USER_RANK] == RANK_BANNED ? "Odbanuj korisnika" : "Banuj korisnika" ;?>" class="btn btn-primary">
+                    </form>
+                  </div>
+                  <?php
+                    }
+                  ?>
               </div>
               <!-- USER'S ACTIVITIES TAB -->
               <div class="tab-pane fade" id="nav-activities" role="tabpanel" aria-labelledby="nav-activities-tab">
@@ -354,6 +374,9 @@
         event.preventDefault();
         var form = $(this);
         var messageBox = form.find(".form-result-box");
+        if (form.attr("id") === "banUser") {
+           messageBox = $("#msg-banUser");
+        }
         var data = new FormData(this);
         var output;
         $.ajax({
@@ -380,6 +403,12 @@
                     location.reload();
                     break;
                   case "avatar":
+                    location.reload();
+                    break;
+                  case "banUser":
+                    location.reload();
+                    break;
+                  case "unbanUser":
                     location.reload();
                     break;
                 }
