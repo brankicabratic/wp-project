@@ -10,6 +10,8 @@
      * getUserByID($id, $getter=USER_GETTER_ALL) DONE
      * updateOnlineTime($username) DONE
      * createUser($username, $password, $email) DONE
+     * getUserEmailAndHash($email, $hash) DONE
+     * getAllEmail($email) DONE
      * getUserID($username) DONE
      * getNthPageQuestions($page, $step) DONE
      * getAllCategories() DONE
@@ -143,6 +145,16 @@
       $result = $stmt->get_result()->fetch_row();
       return $result;
     }
+
+    public function getAllEmail($email) {
+      $sql = "SELECT ".COL_USER_EMAIL." FROM ".DB_USER_TABLE." WHERE ".COL_USER_EMAIL." = ?;";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("s", $email);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_array(MYSQLI_NUM);
+      return $result;
+    }
+
   /**
      * activate User with given email
      */
