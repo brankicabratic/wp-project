@@ -300,6 +300,90 @@
           array_unshift($sqlData, $sqlType);
           call_user_func_array(array($stmt, "bind_param"), $sqlData);
           break;
+
+        //Filtering by question's score
+        case "questionScore":
+          $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+                        AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  GROUP BY Q.".COL_QUESTION_ID."
+                  ORDER BY COALESCE((SELECT SUM(R.".COL_REACTION_TYPE.")
+                                      FROM ".DB_REACTION_TABLE." R
+                                      WHERE P.".COL_POST_ID." = R.".COL_REACTION_POST."
+                                      GROUP BY P.".COL_POST_ID."), 0) $order
+                  LIMIT ?, ?";
+          $stmt = $this->connection->prepare($sql);
+          $sqlType = $sqlType."sii";
+          $sqlData[] = &$name;
+          $sqlData[] = &$start;
+          $sqlData[] = &$step;
+          array_unshift($sqlData, $sqlType);
+          call_user_func_array(array($stmt, "bind_param"), $sqlData);
+          break;
+
+        //Filtering by average question's score. Calculated with Laplace smoothing.
+        case "averageQuestionScore":
+          $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME.", 
+                          (((SELECT SUM(R.".COL_REACTION_TYPE.")
+                                      FROM ".DB_REACTION_TABLE." R
+                                      WHERE P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = 1
+                                      GROUP BY P.".COL_POST_ID.") + 1) / ( (SELECT COUNT(*)
+                                                                            FROM ".DB_REACTION_TABLE." R
+                                                                            WHERE P.".COL_POST_ID." = R.".COL_REACTION_POST."
+                                                                            GROUP BY P.".COL_POST_ID.") + 2)) AS orderCondition
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+                        AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  GROUP BY Q.".COL_QUESTION_ID."
+                  ORDER BY COALESCE(orderCondition, 0) $order
+                  LIMIT ?, ?";
+          $stmt = $this->connection->prepare($sql);
+          $sqlType = $sqlType."sii";
+          $sqlData[] = &$name;
+          $sqlData[] = &$start;
+          $sqlData[] = &$step;
+          array_unshift($sqlData, $sqlType);
+          call_user_func_array(array($stmt, "bind_param"), $sqlData);
+          break;
+
+        //Filtering by number of answers
+        case "noOfAnswers":
+          $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+                        AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  GROUP BY Q.".COL_QUESTION_ID."
+                  ORDER BY COALESCE((SELECT COUNT(*)
+                                      FROM ".DB_ANSWER_TABLE." AN
+                                      WHERE P.".COL_POST_ID." = AN.".COL_ANSWER_PARENT."
+                                      GROUP BY P.".COL_POST_ID."), 0) $order
+                  LIMIT ?, ?";
+          $stmt = $this->connection->prepare($sql);
+          $sqlType = $sqlType."sii";
+          $sqlData[] = &$name;
+          $sqlData[] = &$start;
+          $sqlData[] = &$step;
+          array_unshift($sqlData, $sqlType);
+          call_user_func_array(array($stmt, "bind_param"), $sqlData);
+          break;
+
+        //Filtering by date od question's modification
+        case "modificationDate":
+          $sql = "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+                        AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
+                  ORDER BY P.".COL_POST_MODIFIED." $order 
+                  LIMIT ?, ?";
+          $stmt = $this->connection->prepare($sql);
+          $sqlType = $sqlType."sii";
+          $sqlData[] = &$name;
+          $sqlData[] = &$start;
+          $sqlData[] = &$step;
+          array_unshift($sqlData, $sqlType);
+          call_user_func_array(array($stmt, "bind_param"), $sqlData);
+          break;
         
         //Filtering by the date of question's posting
         default:
