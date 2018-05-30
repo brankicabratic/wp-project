@@ -20,6 +20,7 @@
      * insertPost($ID, $author, $content, $type) DONE
      * insertQuestion($author, $header, $content) DONE
      * insertAnswer($author, $content, $questionID) DONE
+     * deleteAnswer($answerID) DONE
      * insertTag($name) DONE
      * deletePost($postID) DONE (used for deleting questions and answers too)
      * getQuestion($questionID) DONE
@@ -48,6 +49,7 @@
      * deleteRanksPermissionOrRestriction($rankID, $permRestID) DONE
      * getUsersPermissionsOrRestrictions($userID)
      * getNumberOfQuestions() DONE
+     * updateRank($name, $rankID) DONE
      */
     private $connection, $idTable;
     public function __construct($configFile = "../local/config.ini") {
@@ -412,6 +414,25 @@
       return $result;
     }
 
+      /**
+       * Deletes answer in both post and answer table
+       * @param $id
+       * @return boolean weather it succeeded
+       */
+    public function deleteAnswer($id) {
+        $stmt1 = $this->connection->prepare("DELETE FROM ".DB_ANSWER_TABLE."
+                                          WHERE ".COL_ANSWER_ID." = ? ");
+        $stmt1->bind_param("i", $id);
+        $deletedInAnswer =  $stmt1->execute();
+
+        $stmt2 = $this->connection->prepare("DELETE FROM ".DB_POST_TABLE."
+                                          WHERE ".COL_POST_ID." = ? ");
+        $stmt2->bind_param("i", $id);
+        $deletedInPost = $stmt2->execute();
+
+        return $deletedInAnswer && $deletedInPost;
+    }
+
     /**
      * @param $name name of taag you want to insert(unique)
      * @return whether insertion was successful or not
@@ -436,8 +457,14 @@
       $stmt->execute();
       $answers = $stmt->get_result()->fetch_all(MYSQLI_NUM);
       $result = true;
-      foreach($answers as $ans)
-        $result = $this->connection->query("DELETE FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = $ans");
+      foreach($answers as $ans) {
+          $deletedInPost = $this->connection->query("DELETE FROM " . DB_POST_TABLE . " WHERE " . COL_POST_ID . " = ".$ans[0]);
+          $deletedInAnswer = $this->connection->query("DELETE FROM ". DB_ANSWER_TABLE . " WHERE " . COL_ANSWER_ID . " = ".$ans[0]);
+          $result = $deletedInPost && $deletedInPost;
+          if (!$result) {
+            return false;
+          }
+      }
 
       $stmt = $this->connection->prepare("DELETE FROM ".DB_POSTTAG_TABLE." 
       																		WHERE ".COL_POSTTAG_POST." = ?");
@@ -470,7 +497,7 @@
      * @return array of answers associated with given question
      */
     public function getAnswersRelatedToQuestion($questionID, $page = 0, $step = 100) {
-      $stmt = $this->connection->prepare("SELECT A.".COL_ANSWER_ID.", A.".COL_ANSWER_ACCEPTED.", P.".COL_POST_POSTED.", P.".COL_POST_CONTENT.", U.".COL_USER_USERNAME.", U.".COL_USER_FIRSTNAME.", U.".COL_USER_LASTNAME.", U.".COL_USER_MAJOR.", U.".COL_USER_ENROLLED."
+      $stmt = $this->connection->prepare("SELECT A.".COL_ANSWER_ID.", A.".COL_ANSWER_ACCEPTED.", P.".COL_POST_ID.", P.".COL_POST_POSTED.", P.".COL_POST_CONTENT.", U.".COL_USER_USERNAME.", U.".COL_USER_FIRSTNAME.", U.".COL_USER_LASTNAME.", U.".COL_USER_MAJOR.", U.".COL_USER_ENROLLED."
                                           FROM ".DB_ANSWER_TABLE." A, ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." U
                                           WHERE Q.".COL_QUESTION_ID." = ? AND A.".COL_ANSWER_PARENT." = Q.".COL_QUESTION_ID." AND A.".COL_ANSWER_ID." = P.".COL_ANSWER_ID." AND P.".COL_POST_AUTHOR." = U.".COL_USER_ID."
                                           ORDER BY A.".COL_ANSWER_ID." DESC
@@ -797,6 +824,20 @@
       return $result[0];
     }
 
+      /**
+       * @param $authorID
+       * @param $rankID
+       * @return bool
+       */
+    public function updateRank($authorID, $rankID) {
+        $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET
+                                          ".COL_USER_RANK." = ?
+                                          WHERE ".COL_USER_ID." = ?");
+        $stmt->bind_param("ii", $rankID, $authorID);
+        return $stmt->execute();
+    }
+    
     function getTopActiveUsers() {
       $sql_post = "SELECT ".COL_POST_AUTHOR.", COUNT(".COL_POST_AUTHOR.") AS count_msg FROM "
                   .DB_POST_TABLE." WHERE PostingTime > DATE_SUB(CURDATE(), INTERVAL 1 WEEK) GROUP BY ".COL_POST_AUTHOR." ORDER BY count_msg DESC LIMIT 2";

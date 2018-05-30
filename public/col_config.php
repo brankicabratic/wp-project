@@ -88,4 +88,6 @@
   // RANKS
   define('RANK_NOT_ACTIVATED', 0);
   define('RANK_ACTIVATED', 1);
+  define('RANK_BANNED', 2);
+  define('RANK_ADMIN', 3);
 ?>

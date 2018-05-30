@@ -16,6 +16,13 @@
         <div class="col-lg-1"><!-- Sometime in the future something may even be here! It only exists for filling up the space at the moment. --></div>
         <div class="col-lg-8">
           <div id="the-question">
+            <?php
+              if ($user[COL_USER_RANK] == RANK_ADMIN) {
+            ?>
+            <div class="form-result-box" id="msg-deleteQuestion"></div>
+            <?php
+              }
+            ?>
             <div class="question-header">
               <?php
                 $db = new Database;
@@ -61,6 +68,19 @@
                 <span id="demo">0</span>
                 <span class="reaction like active"><button class="fas fa-caret-right" onclick="decrement()"></button></span>
               </span>
+              <div class="aligned-right">
+                <?php
+                  if ($user[COL_USER_RANK] == RANK_ADMIN) {
+                ?>
+                <form id="deleteQuestion" method="post">
+                  <input type="hidden" name="formType" value="deleteQuestion">
+                  <input type="hidden" name="id" value="<?php echo $_GET["id"]?>">
+                  <input type="submit" value="Izbriši pitanje" class="btn btn-primary">
+                </form>
+                <?php
+                  }
+                ?>
+              </div>
             </div>
           </div>
           <div class="row">
@@ -70,7 +90,7 @@
             <div class="col-lg-11">
               <h4>Ostavi odgovor:</h4>
               <div class="write-answer">
-                <div class="form-result-box"></div>
+                <div class="form-result-box" id="msg-postAnswer"></div>
                 <form method="post" id="answer-form">
                     <input type="hidden" name="formType" value="answerQuestionForm">
                     <div class="text-formating-tools">
@@ -94,6 +114,11 @@
                         if (!empty($firstName) && !empty($lastName)) {
                             $nameToShow = "$firstName $lastName";
                         }
+                        if ($user[COL_USER_RANK] == RANK_ADMIN) {
+                ?>
+                <div class="form-result-box" id="<?php echo "msg-deleteAnswer-".$answers[$i][COL_POST_ID]?>"></div>
+                <?php
+                        }
                 ?>
                 <div class="answer">
                   <div class="content">
@@ -107,6 +132,17 @@
                         <span class="reaction like"><i class="fas fa-caret-right"></i></span>
                       </span>
                       <?php echo "Odgovorio <a href=\"profile.php?user=".$answers[$i][COL_USER_USERNAME]."\">$nameToShow</a> ".$answers[$i][COL_POST_POSTED]; ?>
+                      <?php
+                        if ($user[COL_USER_RANK] == RANK_ADMIN) {
+                      ?>
+                      <form id="<?php echo "deleteAnswer-".$answers[$i][COL_POST_ID]?>" method="post">
+                       <input type="hidden" name="formType" value="deleteAnswer">
+                        <input type="hidden" name="id" value="<?php echo $answers[$i][COL_POST_ID]?>">
+                        <input type="submit" value="Izbriši odgovor" class="btn btn-primary">
+                      </form>
+                      <?php
+                        }
+                       ?>
                     </div>
                   </div>
                 </div>
@@ -239,7 +275,17 @@
           event.preventDefault();
           var form = $(this);
           var data = form.serialize();
-          var messageBox = $(".form-result-box");
+          var formId = form.attr("id");
+          var messageBox;
+          if (formId.startsWith("deleteAnswer")) {
+            messageBox = $("#msg-"+formId);
+          }
+          else if (formId.startsWith("deleteQuestion")) {
+            messageBox = $("#msg-deleteQuestion");
+          }
+          else {
+            messageBox = $("#msg-postAnswer");
+          }
           var output = "";
           $.ajax({
               url: 'formHandler.php',
@@ -249,7 +295,13 @@
               success: function(result) {
                   try {
                       if(result.errors.length === 0) {
+                        if (formId.startsWith("deleteQuestion")) {
+                          var loc = location.href.replace("question.php", "index.php");
+                          location.replace(loc.slice(0,loc.indexOf("?")));
+                        }
+                        else {
                           location.reload();
+                        }
                       }
                       else
                           output = "<div class=\"alert alert-danger\" role=\"alert\">" + result.errors.join("<br>") + "</div>";

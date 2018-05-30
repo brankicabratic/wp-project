@@ -2,6 +2,9 @@
 	require_once 'session.php';
 	require_once 'handlers/user_handler.php';
 	require_once 'handlers/question_handler.php';
+	require_once 'handlers/admin_handler.php';
+	require_once 'handlers/answer_handler.php';
+	require_once 'col_config.php';
 
 	$result = array(
 		"errors" => array(),
@@ -90,6 +93,9 @@
 				if ($succes == 0) {
 					$result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali pitanja.";		
 				}
+				if ($succes == RANK_BANNED) {
+					$result["errors"][] = "Banovani ste. Zabranjeno vam je postavljanje pitanja.";
+				}
 			}
 			if (count($result["errors"]) == 0) {	
 				if (!isset($_POST["naslov"]) || empty($_POST["naslov"])) {
@@ -136,18 +142,18 @@
         case "answerQuestionForm":
             if ($user) {
 				$succesVerification = getUserRank($user[COL_USER_ID]);
-				if ($succesVerification != 0) {
+				if ($succesVerification != 0 && $succesVerification != RANK_BANNED) {
 	                $author = $user[COL_USER_ID];
 	                $answerContent = htmlspecialchars($_POST["answer-content"]);
 	                if (isset($answerContent) && !empty($answerContent)) {
 						$questionId = $_POST["questionId"];
-		                $successfullyInserted = $db->insertAnswer($author, $answerContent, $questionId);
+		                $successfullyInserted = insertAnswer($author, $answerContent, $questionId);
 		                if ($successfullyInserted) {
 		                    $result["succ"][] = "Uspesno unet odgovor";
 		                    // Send email notification
-		                    $question = $db->getQuestion($questionId);
-		                    $questionAuthorId = $db->getPostsAuthor($question[COL_QUESTION_ID]);
-		                    $questionAuthor = $db->getUserByID($questionAuthorId[0]);
+		                    $question = getQuestion($questionId);
+		                    $questionAuthorId = getPostsAuthor($question[COL_QUESTION_ID]);
+		                    $questionAuthor = getUserByID($questionAuthorId[0]);
 		                    $to = $questionAuthor[COL_USER_EMAIL];
 		                    $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
 		                    $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
@@ -163,7 +169,12 @@
 		            	$result["errors"][] = "Morate uneti sadržaj.";
 		            }
 	            }else{
+	            	if ($succesVerification == RANK_BANNED) {
+									$result["errors"][] = "Banovani ste. Zabranjeno vam je postavljanje odgovora.";
+								}
+								else {
 	                $result["errors"][] = "Morate verifikovati Vaš nalog da biste postavljali odgovore.";
+								}
 	            }
             } else {
                 $result["errors"][] = "Morate biti ulogovani da biste postavljali odgovore";
@@ -200,6 +211,38 @@
         }
       }
 			break;
+		case "deleteAnswer":
+			if (deleteAnswer($_POST["id"])) {
+				$result["data"][] = "Odgovor je uspešno izbrisan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške pri brisanju odgovora.";
+			}
+			break;
+		case "deleteQuestion":
+			if (deleteQuestion($_POST["id"])) {
+				$result["data"][] = "Pitanje je uspešno izbrisan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške pri brisanju pitanja.";
+			}
+			break;
+		case "banUser":
+			if (banUser($_POST["user"])) {
+				$result["data"][] = "Korisnik je uspešno banovan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške pri banovanju korinika.";
+			}
+			break;
+		case "unbanUser":
+			if (unbanUser($_POST["user"])) {
+				$result["data"][] = "Korisnik je uspešno odbanovan.";
+			}
+			else {
+				$result["errors"][] = "Došlo je do greške kod odbanovanja korinika.";
+			}
+			break;	
 		default:
 			exit(json_encode(null));
 	}
