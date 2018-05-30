@@ -153,7 +153,11 @@
                     </div>
                     <select class="form-control" name="filterType">
                       <option value="dateOfCreation">Datumu objave</option>
-                      <option value="authorScore">Oceni korisnika</option>
+                      <option value="authorScore">Oceni autora</option>
+                      <option value="questionScore">Oceni pitanja</option>
+                      <option value="noOfAnswers">Broju odgovora</option>
+                      <option value="averageQuestionScore">Prosečnoj oceni pitanja</option>
+                      <option value="modificationDate">Datumu promene</option>
                     </select>
                   </div>
                   <div class="col-lg-4">
