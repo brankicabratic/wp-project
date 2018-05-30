@@ -32,12 +32,12 @@
     $db = new Database;
     $userAvatar = $current_user[COL_USER_AVATAR] !== null ? $current_user[COL_USER_AVATAR] : "img/avatar.png";
     if ($current_user[COL_USER_FIRSTNAME]!=null && $current_user[COL_USER_LASTNAME]!=null) {
-      $displayName = $current_user[COL_USER_FIRSTNAME] . $current_user[COL_USER_LASTNAME];
+      $displayName = $current_user[COL_USER_FIRSTNAME] ." ". $current_user[COL_USER_LASTNAME];
     }else{
       $displayName = $current_user[COL_USER_USERNAME];
     }
     echo "<li class=\"media\">";
-    echo "<img class=\"mr-3\" src=\"$userAvatar\" alt=\"Pera Peric\">";
+    echo "<img class=\"mr-3\" src=\"$userAvatar\" alt=\"$displayName\">";
     echo "<div class=\"media-body\">";
     if($activity[COL_POST_TYPE]==1){
       $question = $db->getQuestion($activity[COL_POST_ID]);
@@ -47,7 +47,7 @@
       echo "<div class=\"question-content\"><small>".htmlspecialchars($question[COL_POST_CONTENT])."</small></div>";
     }else if($activity[COL_POST_TYPE]==2){
       $qID=$db->getRelationFromPost($activity[COL_POST_ID]);
-      $question = $db->getQuestion($qID[0][COL_ANSWER_PARENT]);
+      $question = $db->getQuestion($qID[COL_ANSWER_PARENT]);
       echo "<div class=\"question\"><span class=\"author\"><h5><a href=\"profile.php?user={$current_user[COL_USER_USERNAME]}\">{$displayName}</a> je ostavio odgovor na pitanje </span>
         </a>";
       echo "<a href=\"question.php?id={$question[COL_POST_ID]}\"><span class=\"heading\">{$question[COL_QUESTION_HEADER]} </span></a></h5>";

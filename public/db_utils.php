@@ -8,6 +8,8 @@
      *
      * getUser($username, $getter=USER_GETTER_ALL) DONE
      * getUserByID($id, $getter=USER_GETTER_ALL) DONE
+     * getPosts($userID) DONE
+     * getRelationFromPost($postID) DONE
      * updateOnlineTime($username) DONE
      * createUser($username, $password, $email) DONE
      * getUserEmailAndHash($email, $hash) DONE
@@ -202,18 +204,26 @@
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
     }
 
+    /**
+     * @param userID has to be integer
+     * @return every post from userID starting from the newest post as associative array or null if such doesn't exist
+     */
     public function getPosts($userID){
-      $stmt = $this->connection->prepare("SELECT * FROM ".DB_POST_TABLE." WHERE ".COL_POST_AUTHOR." = ?");
+      $stmt = $this->connection->prepare("SELECT * FROM ".DB_POST_TABLE." WHERE ".COL_POST_AUTHOR." = ? ORDER BY ".COL_POST_POSTED." DESC");
       $stmt->bind_param("i", $userID);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+    /**
+     * @param postID has to be integer
+     * @return relation between an answer and a question as an associative array or null if such doesn't exist
+     */
     public function getRelationFromPost($postID){
       $stmt = $this->connection->prepare("SELECT * FROM ".DB_ANSWER_TABLE." WHERE ".COL_POST_ID." = ?");
       $stmt->bind_param("i", $postID);
       $stmt->execute();
-      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+      return $stmt->get_result()->fetch_array(MYSQLI_ASSOC);
     }
 
     /**
