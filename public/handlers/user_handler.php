@@ -28,6 +28,8 @@
     $userSuccessfullyCreated = $db->createUser($username, password_hash($password, PASSWORD_DEFAULT), $email, $hash);
     if ($userSuccessfullyCreated) {
       login($username, $password);
+      $_SESSION["message"] = "<div class=\"col-8 offset-md-2 alert alert-success\" role=\"alert\"><center>Uspešno ste se registrovali!<br>Na unetu email adresu Vam je poslat link za verifikaciju naloga. <br>Ako ne verifikujete Vaš nalog nećete moći postavljati pitanja i odgovore.</center></div>";
+              
       $to = $email;
       $subject = 'Signup | Verification';
       $message = '
@@ -119,6 +121,29 @@
   function getAllEmail($email){
     $db = new Database;
     return  $success = $db->getAllEmail($email);
+  }
+
+  function getTopActiveUsers() {
+    $db = new Database;
+    $success = $db->getTopActiveUsers();
+    $result = array();
+    foreach($success as $user) {
+      $name = $db->getUsernameById($user["Author"])[0]["Username"];
+      $result[] = array("username" => $name, "count_msg" => $user["count_msg"]);
+    }
+    return $result;
+  }
+
+
+  function getPopularCategory() {
+    $db = new Database;
+    $success = $db->getPopularCategory();
+    $result = array();
+    foreach($success as $category) {
+      $name = $db->getCategoryNameById($category["CategoryID"])[0]["Name"];
+      $result[] = array("name" => $name, "count_cat" => $category["count_cat"]);
+    }
+    return $result;
   }
   
 ?>

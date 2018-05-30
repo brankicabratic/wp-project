@@ -50,7 +50,7 @@
               <div class="tags">
                 <?php
                   foreach($tags as $tag) {
-                    echo "<a href=\"tag.php?name={$tag[COL_TAG_NAME]}\"><div class=\"tag\">{$tag[COL_TAG_NAME]}</div></a>";
+                    echo "<a href=\"index.php?tagName={$tag[COL_TAG_NAME]}\"><div class=\"tag\">{$tag[COL_TAG_NAME]}</div></a>";
                   }
                 ?>
               </div>
