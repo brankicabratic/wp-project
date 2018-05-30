@@ -369,7 +369,7 @@
       $("#change-profile-button").click(function() {
         $('#nav-tab a[href="#nav-change-profile"]').tab('show');
       });
-
+    <?php }?>
       $("form[method=\"post\"]").submit(function(event) {
         event.preventDefault();
         var form = $(this);
@@ -428,7 +428,6 @@
           }
         });
       });
-  <?php } ?>
   </script>
 </body>
 </html>
