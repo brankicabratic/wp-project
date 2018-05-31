@@ -61,13 +61,37 @@
                 echo "<div class=\"question-content\">".htmlspecialchars($question[COL_POST_CONTENT])."</div>";
               }
             ?>
+            <?php
+			    if($user){
+					$user_id = $db->getUserID($user[COL_USER_USERNAME]);
+					if(isset($_POST["decrement"])) {      
+            $deleteReact=$db->deleteReaction($user_id, $_GET["id"]);     
+            $reaction=$db->getPostsReaction($_GET["id"], $user_id );
+							if($reaction==0 || $reaction==+1){
+  							$insertReact=$db->insertReaction($_GET["id"], $user_id, -1);
+							}
+          }
+
+          if(isset($_POST["increment"])) {      
+            $deleteReact=$db->deleteReaction($user_id, $_GET["id"]);      
+            $reaction=$db->getPostsReaction($_GET["id"], $user_id );            
+            	if($reaction==0 || $reaction==-1){
+                $insertReact=$db->insertReaction($_GET["id"], $user_id, +1);
+               }
+            }
+          }
+        ?>
+       
+          <form method="post">
             <div class="question-footer">
               <span class="score">
-				
-                <span class="reaction dislike"><button class="fas fa-caret-left" onclick="increment()"></button></span>
-                <span id="demo">0</span>
-                <span class="reaction like active"><button class="fas fa-caret-right" onclick="decrement()"></button></span>
-              </span>
+              <input type="submit" name="decrement" value="-"/>
+                <span id="demo"><?php $score=$db->getPostsScore($_GET["id"]); echo "$score"; ?></span>
+                <input type="submit" name="increment" value="+"/>
+                </span>
+            </div>
+          </div>
+          </form>
               <div class="aligned-right">
                 <?php
                   if ($user[COL_USER_RANK] == RANK_ADMIN) {

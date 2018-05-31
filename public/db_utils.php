@@ -613,6 +613,62 @@
       $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
       return $res !== null ? (int)$res : 0;
     }
+	
+	public function getUserLike($userID) {
+      $sql =  "SELECT COUNT(R.".COL_REACTION_TYPE.")
+                FROM ".DB_REACTION_TABLE." R, ".DB_POST_TABLE." P
+                WHERE P.".COL_POST_AUTHOR." = ? AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE."=+1";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+      return $res !== null ? (int)$res : 0;
+    }
+
+    public function getUserDislike($userID) {
+      $sql =  "SELECT COUNT(R.".COL_REACTION_TYPE.")
+                FROM ".DB_REACTION_TABLE." R, ".DB_POST_TABLE." P
+                WHERE P.".COL_POST_AUTHOR." = ? AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE."=-1 ";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+      return $res !== null ? (int)$res : 0;
+    }
+
+    public function deleteReaction($userID, $postID) {
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_REACTION_TABLE." WHERE ".COL_REACTION_USER." = ? AND ".COL_REACTION_POST." = ?");
+      $stmt->bind_param("ii", $userID, $postID);  
+      $stmt->execute();
+    }
+
+    public function getCountQuestion($userID) {
+      $sql =  "SELECT COUNT(".COL_POST_ID.")
+                FROM ".DB_POST_TABLE."
+                WHERE ".COL_POST_AUTHOR." = ? ";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+      return $res !== null ? (int)$res : 0;
+    }
+
+    
+	  public function getPostsReaction($postID, $userID) {
+      $stmt = $this->connection->prepare("SELECT R.".COL_REACTION_TYPE."
+                                          FROM ".DB_REACTION_TABLE." R
+                                          WHERE R.".COL_REACTION_POST." = ? AND R.".COL_REACTION_USER." = ?");
+      $stmt->bind_param("ii", $postID, $userID);
+      $stmt->execute();
+      $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+      return $res !== null ? (int)$res : 0;
+    }
+
+    public function insertReaction($postID, $userID, $type) {
+      $stmt = $this->connection->prepare("INSERT INTO ".DB_REACTION_TABLE."(".COL_REACTION_POST.", ".COL_REACTION_USER.", ".COL_REACTION_TYPE.") VALUES (?, ?, ?)");
+      $stmt->bind_param("iii", $postID, $userID, $type);
+      return $stmt->execute();
+    }
 
       /**
        * @param $postID
