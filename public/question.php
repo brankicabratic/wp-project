@@ -301,11 +301,13 @@
           var data = form.serialize();
           var formId = form.attr("id");
           var messageBox;
-          if (formId.startsWith("deleteAnswer")) {
-            messageBox = $("#msg-"+formId);
-          }
-          else if (formId.startsWith("deleteQuestion")) {
-            messageBox = $("#msg-deleteQuestion");
+          if (typeof formId !== typeof undefined && formId !== false) {
+            if (formId.startsWith("deleteAnswer")) {
+              messageBox = $("#msg-"+formId);
+            }
+            else if (formId.startsWith("deleteQuestion")) {
+              messageBox = $("#msg-deleteQuestion");
+            }
           }
           else {
             messageBox = $("#msg-postAnswer");
