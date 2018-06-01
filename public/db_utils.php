@@ -8,6 +8,7 @@
      *
      * getUser($username, $getter=USER_GETTER_ALL) DONE
      * getUserByID($id, $getter=USER_GETTER_ALL) DONE
+     * getListOfUsers() DONE
      * getPosts($userID) DONE
      * getRelationFromPost($postID) DONE
      * updateOnlineTime($username) DONE
@@ -202,6 +203,15 @@
       $stmt->bind_param("i", $userID);
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+    }
+
+    /**
+     * @return every user as associative array or null if such doesn't exist
+     */
+    public function getListOfUsers(){
+      $stmt = $this->connection->prepare("SELECT ".COL_USER_FIRSTNAME.", ".COL_USER_LASTNAME.", ".COL_USER_USERNAME.", ".COL_USER_LASTSEEN." FROM ".DB_USER_TABLE);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
     /**
