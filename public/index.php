@@ -160,7 +160,7 @@
                       <option value="modificationDate">Datumu promene</option>
                     </select>
                     <script type="text/javascript">
-                      document.getElementById('filterType').value = "<?php echo $_GET['filterType'];?>";
+                      document.getElementById('filterType').value = "<?php echo htmlspecialchars($_GET['filterType']);?>";
                     </script>
                   </div>
                   <div class="col-lg-4">
@@ -172,7 +172,7 @@
                       <option value="1">Rastuće</option>
                     </select>
                     <script type="text/javascript">
-                      document.getElementById('order').value = "<?php echo $_GET['order'];?>";
+                      document.getElementById('order').value = "<?php echo htmlspecialchars($_GET['order']);?>";
                     </script>
                   </div>
                   <div class="col-lg-4">
@@ -186,7 +186,7 @@
                       <option value="50">50</option>
                     </select>
                     <script type="text/javascript">
-                      document.getElementById('step').value = "<?php echo $_GET['step'];?>";
+                      document.getElementById('step').value = "<?php echo htmlspecialchars($_GET['step']);?>";
                     </script>
                   </div>
                 </div>
@@ -195,13 +195,13 @@
                     <div class="select-header">
                       <p>Pretraga po naslovu pitanja:</p>
                     </div>
-                    <input type="text" name="nameSearch" value="<?php if(isset($_GET["nameSearch"])) echo $_GET["nameSearch"] ?>" class="form-control">
+                    <input type="text" name="nameSearch" value="<?php if(isset($_GET["nameSearch"])) echo htmlspecialchars($_GET["nameSearch"]) ?>" class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Pretraga po tagovima:</p>
                     </div>
-                    <input type="text" name="tagSearch" value="<?php if(isset($_GET["tagSearch"])) echo $_GET["tagSearch"]; elseif(isset($_GET["tagName"])) echo $_GET["tagName"]; ?>"class="form-control">
+                    <input type="text" name="tagSearch" value="<?php if(isset($_GET["tagSearch"])) echo htmlspecialchars($_GET["tagSearch"]); elseif(isset($_GET["tagName"])) echo htmlspecialchars($_GET["tagName"]); ?>"class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
@@ -211,7 +211,7 @@
                       <?php insertCategories(false);?>
                     </select>
                     <script type="text/javascript">
-                      document.getElementById('category').value = "<?php echo $_GET['category'];?>";
+                      document.getElementById('category').value = "<?php echo htmlspecialchars($_GET['category']);?>";
                     </script>
                   </div>
                 </div>

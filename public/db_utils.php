@@ -43,6 +43,7 @@
      * updateQuestion($postID, $header, $content) DONE
      * updateAnswer($postID, $content) DONE
      * updatePassword($ID, $password) DONE
+     * resetPassword($email, $password) DONE
      * getPasswordByID($ID) DONE
      * doesReactionExist($userID, $postID) DONE
      * saveReaction($userID, $postID, $type) DONE
@@ -831,6 +832,15 @@
                                           ".COL_USER_PASSWORD." = ?
                                           WHERE ".COL_USER_ID." = ?");
       $stmt->bind_param("si", $password, $ID);
+      return $stmt->execute();
+    }
+
+    public function resetPassword($email, $password) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."
+                                          SET
+                                          ".COL_USER_PASSWORD." = ?
+                                          WHERE ".COL_USER_EMAIL." = ?");
+      $stmt->bind_param("ss", $password, $email);
       return $stmt->execute();
     }
 

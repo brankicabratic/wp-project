@@ -35,8 +35,8 @@
             <label for="login-form-password">Lozinka</label>
             <input type="password" id="login-form-password" name="password">
           </div>
-
         </div>
+        <div align="right"><a href="forgottenPassword.php">Zaboravili ste lozinku?</a></div>
         <div class="checkbox">
           <label for="loginRemember"><input type="checkbox" id="loginRemember" name="remember-me"<?php if($remembered_username) echo " checked" ?>> Sačuvaj korisničko ime</label>
         </div>

@@ -40,7 +40,6 @@
         
         ------------------------
         Username: '.$username.'
-        Password: '.$password.'
         ------------------------
         
         Please click this link to activate your account:
@@ -135,7 +134,6 @@
     return $result;
   }
 
-
   function getPopularCategory() {
     $db = new Database;
     $success = $db->getPopularCategory();
@@ -145,6 +143,37 @@
       $result[] = array("name" => $name, "count_cat" => $category["count_cat"]);
     }
     return $result;
+  }
+
+  function resetPassword($email, $password) {
+    $db = new Database;
+    $success = $db->resetPassword($email, password_hash($password, PASSWORD_DEFAULT));
+    if($success) {
+      return USER_HANDLER_OK;
+    }
+    return USER_HANDLER_INVALID_PASSWORD;
+  }
+
+  function emailResetPassword($email) { 
+    $to = $email;
+    $subject = 'PMFOverflow promena lozinke';
+    $message = '
+      
+      Poštovani,
+       
+      Primili smo zahtev za promenu Vaše PMFOverflow lozinke.
+      
+      ------------------------
+      
+      Kliknite na link ispod za promenu lozinke.
+      http://localhost/wp-project/public/resetPassword.php?email='.$email.' ';
+
+    $headers = 'From:noreply@PMFOverflow.com'. "\r\n";
+    $mailSuccessfullySent = mail($to, $subject, $message, $headers);
+    if ($mailSuccessfullySent) {
+        return USER_HANDLER_OK;
+    }
+    return USER_HANDLER_INVALID;
   }
   
 ?>
