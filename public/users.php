@@ -36,6 +36,37 @@
     echo "</div>";
   }
 
+  function printUsersTable($users){
+    $db = new Database;
+    echo "<table id=\"users\"> 
+            <tr>
+              <th>Prezime</th>
+              <th>Ime</th>
+              <th>Korisničko ime</th>
+              <th>Poslednji put viđen</th>
+              <th>Rang korisnika</th>
+              <th>Score</th>
+            </tr>";
+    foreach ($users as $userTable) {
+      $user_id = $db->getUserID($userTable[COL_USER_USERNAME]);
+      $like=$db->getUserLike($user_id);
+      $dislike=$db->getUserDislike($user_id);
+      echo "<tr>"; 
+      echo "<td>{$userTable[COL_USER_FIRSTNAME]}</td>";
+      echo "<td>{$userTable[COL_USER_LASTNAME]}</td>";
+      echo "<td><a href=\"profile.php?user={$userTable[COL_USER_USERNAME]}\">{$userTable[COL_USER_USERNAME]}</a></td>";
+      echo "<td>{$userTable[COL_USER_LASTSEEN]}</td>";
+      if ($userTable[COL_USER_RANK]==0) {
+      echo "<td>Nije aktiviran</td>";
+      }else{
+      echo "<td>{$userTable[COL_RANK_NAME]}";
+      }
+      echo "<td>Likes:$like Dislikes:$dislike</td>";
+      echo "</tr>";
+    } 
+      echo "</table>";
+  }
+
   $db = new Database;
 
   $numUsers = $db->getNumberOfUsers();
@@ -72,8 +103,6 @@
         background-color: #007BFF;
         color: white;
       }
-
-
     </style>
   </head>
   <body>
@@ -84,30 +113,8 @@
          <div class="col-lg-8">
           <?php includeNavigation() ?>
           <div style="width: 100%; margin:50px 0px 45%; text-align: center; font-size: 25px; width: 100%;">
-            <table id="users">
-              <tr>
-                <th>Prezime</th>
-                <th>Ime</th>
-                <th>Korisničko ime</th>
-                <th>Poslednji put viđen</th>
-                <th>Rang korisnika</th>
-              </tr>
-             <?php
-              $db=new Database;
-              $list = $db->getNthPageUsers($page, $step);
-              foreach ((array)$list as $dat) {
-                echo "<tr>";
-                echo "<td>{$dat[COL_USER_FIRSTNAME]}</td>";
-                echo "<td>{$dat[COL_USER_LASTNAME]}</td>";
-                echo "<td><a href=\"profile.php?user={$dat[COL_USER_USERNAME]}\">{$dat[COL_USER_USERNAME]}</a></td>";
-                echo "<td>{$dat[COL_USER_LASTSEEN]}</td>";
-                if ($dat[COL_USER_RANK]==0) {
-                  echo "<td>Nije aktiviran</td>";
-                }else{
-                  echo "<td>{$dat[COL_RANK_NAME]}";
-                }
-                echo "</tr>";
-              }
+            <?php
+              printUsersTable($users);
             ?> 
             </table>
             <?php printPageLinks($numAllPages, $page);?>
