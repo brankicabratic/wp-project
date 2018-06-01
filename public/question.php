@@ -295,7 +295,7 @@
 			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
 	  }
 
-      $("form :not(#questionScore)").submit(function(event) {
+      $("form:not(#questionScore)").submit(function(event) {
           event.preventDefault();
           var form = $(this);
           var data = form.serialize();
