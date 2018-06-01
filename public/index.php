@@ -151,7 +151,7 @@
                     <div class="select-header">
                       <p>Sortiraj prema:</p>
                     </div>
-                    <select class="form-control" name="filterType">
+                    <select class="form-control" id="filterType" name="filterType">
                       <option value="dateOfCreation">Datumu objave</option>
                       <option value="authorScore">Oceni autora</option>
                       <option value="questionScore">Oceni pitanja</option>
@@ -159,26 +159,35 @@
                       <option value="averageQuestionScore">Prosečnoj oceni pitanja</option>
                       <option value="modificationDate">Datumu promene</option>
                     </select>
+                    <script type="text/javascript">
+                      document.getElementById('filterType').value = "<?php echo $_GET['filterType'];?>";
+                    </script>
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>U redosledu:</p>
                     </div>
-                    <select class="form-control" name="order">
+                    <select class="form-control" id="order" name="order">
                       <option value="0">Opadajuće</option>
                       <option value="1">Rastuće</option>
                     </select>
+                    <script type="text/javascript">
+                      document.getElementById('order').value = "<?php echo $_GET['order'];?>";
+                    </script>
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Prikaži po:</p>
                     </div>
-                    <select class="form-control" name="step">
+                    <select class="form-control" id="step" name="step">
                       <option value="5">5</option>
                       <option value="10" selected="true">10</option>
                       <option value="25">25</option>
                       <option value="50">50</option>
                     </select>
+                    <script type="text/javascript">
+                      document.getElementById('step').value = "<?php echo $_GET['step'];?>";
+                    </script>
                   </div>
                 </div>
                 <div class="row">
@@ -186,21 +195,24 @@
                     <div class="select-header">
                       <p>Pretraga po naslovu pitanja:</p>
                     </div>
-                    <input type="text" name="nameSearch" class="form-control">
+                    <input type="text" name="nameSearch" value="<?php if(isset($_GET["nameSearch"])) echo $_GET["nameSearch"] ?>" class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Pretraga po tagovima:</p>
                     </div>
-                    <input type="text" name="tagSearch" class="form-control">
+                    <input type="text" name="tagSearch" value="<?php if(isset($_GET["tagSearch"])) echo $_GET["tagSearch"]; elseif(isset($_GET["tagName"])) echo $_GET["tagName"]; ?>"class="form-control">
                   </div>
                   <div class="col-lg-4">
                     <div class="select-header">
                       <p>Kategorija:</p>
                     </div>
-                    <select class="form-control" name="category">
+                    <select class="form-control" id="category" name="category">
                       <?php insertCategories(false);?>
                     </select>
+                    <script type="text/javascript">
+                      document.getElementById('category').value = "<?php echo $_GET['category'];?>";
+                    </script>
                   </div>
                 </div>
                 <div class="row">

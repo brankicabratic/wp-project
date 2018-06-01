@@ -154,6 +154,31 @@
                             <?php echo $opened_user[COL_USER_ABOUT] ?>
                          </div>
                       </div>
+					 <?php }
+                    if(empty($opened_user[COL_REACTION_TYPE])) {?>
+                      <div class="row">
+                        <div class="col-sm-4">Score</div>
+                        <div class="col-sm-8">
+                         <?php
+                            $user_id = $db->getUserID($user[COL_USER_USERNAME]);
+                            $like=$db->getUserLike($user_id);
+                            $dislike=$db->getUserDislike($user_id);
+                            echo "like $like dislike $dislike"; 
+                            ?>
+                        </div>
+                      </div>
+                    <?php }
+                      if(empty($opened_user[COL_POST_ID])) {?>
+                      <div class="row">
+                        <div class="col-sm-4">Broj postavljeniih pitanja  </div>
+                        <div class="col-sm-8">
+                         <?php
+                            $user_id = $db->getUserID($user[COL_USER_USERNAME]);
+                            $count=$db->getCountQuestion($user_id);
+                            echo $count;
+                            ?>
+                        </div>
+                      </div> 
                     <?php } ?>
                  </div>
                  <?php if($is_opened_users_profile) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
