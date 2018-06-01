@@ -82,7 +82,7 @@
           }
         ?>
        
-          <form method="post">
+          <form id="questionScore" method="post">
             <div class="question-footer">
               <span class="score">
               <input type="submit" name="decrement" value="-"/>
@@ -295,7 +295,7 @@
 			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
 	  }
 
-      $("form").submit(function(event) {
+      $("form :not(#questionScore)").submit(function(event) {
           event.preventDefault();
           var form = $(this);
           var data = form.serialize();
