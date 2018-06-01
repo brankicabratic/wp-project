@@ -9,6 +9,7 @@
      * getUser($username, $getter=USER_GETTER_ALL) DONE
      * getUserByID($id, $getter=USER_GETTER_ALL) DONE
      * getListOfUsers() DONE
+     * getNthPageUsers($page, $step) DONE
      * getPosts($userID) DONE
      * getRelationFromPost($postID) DONE
      * updateOnlineTime($username) DONE
@@ -212,6 +213,28 @@
       $stmt = $this->connection->prepare("SELECT ".COL_USER_FIRSTNAME.", ".COL_USER_LASTNAME.", ".COL_USER_USERNAME.", ".COL_USER_LASTSEEN." FROM ".DB_USER_TABLE);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+    * @return users with paging
+    */
+    public function getNthPageUsers($page, $step){
+      if($step < 1 || $page < 1){
+        return null;
+      }
+      $start = ($page - 1) * $step;
+      $stmt = $this->connection->prepare("SELECT U.".COL_USER_FIRSTNAME.", U.".COL_USER_LASTNAME.", U.".COL_USER_USERNAME.", U.".COL_USER_LASTSEEN.", U.".COL_USER_RANK.", R.".COL_RANK_ID.", R.".COL_RANK_NAME." FROM ".DB_USER_TABLE." U, ".DB_RANK_TABLE." R WHERE U.".COL_USER_RANK."=R.".COL_RANK_ID." LIMIT ? , ?");
+      $stmt->bind_param("ii", $start, $step);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    public function getNumberOfUsers() {
+      $stmt = $this->connection->prepare("SELECT COUNT(".COL_USER_ID.")
+                                          FROM ".DB_USER_TABLE);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_row();
+      return $result[0];
     }
 
     /**
