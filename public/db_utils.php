@@ -681,9 +681,20 @@
     }
 
     public function getCountQuestion($userID) {
-      $sql =  "SELECT COUNT(".COL_POST_ID.")
-                FROM ".DB_POST_TABLE."
-                WHERE ".COL_POST_AUTHOR." = ? ";
+      $sql =  "SELECT COUNT(Q.".COL_QUESTION_ID.")
+                FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P
+                WHERE P.".COL_POST_AUTHOR." = ? AND P.".COL_POST_ID." = Q.".COL_QUESTION_ID." ";
+      $stmt = $this->connection->prepare($sql);
+      $stmt->bind_param("i", $userID);
+      $stmt->execute();
+      $res = $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+      return $res !== null ? (int)$res : 0;
+    }
+
+    public function getCountAnswer($userID) {
+      $sql =  "SELECT COUNT(A.".COL_ANSWER_ID.")
+                FROM ".DB_ANSWER_TABLE." A, ".DB_POST_TABLE." P
+                WHERE P.".COL_POST_AUTHOR." = ? AND P.".COL_POST_ID." = A.".COL_ANSWER_PARENT." ";
       $stmt = $this->connection->prepare($sql);
       $stmt->bind_param("i", $userID);
       $stmt->execute();

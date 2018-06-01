@@ -178,7 +178,19 @@
                             echo $count;
                             ?>
                         </div>
-                      </div> 
+                      </div>
+					<?php }
+                      if(empty($opened_user[COL_ANSWER_ID])) {?>
+                      <div class="row">
+                        <div class="col-sm-4">Broj odgovora  </div>
+                        <div class="col-sm-8">
+                         <?php
+                            $user_id = $db->getUserID($user[COL_USER_USERNAME]);
+                            $count=$db->getCountAnswer($user_id);
+                            echo $count;
+                            ?>
+                        </div>
+                      </div>  					  
                     <?php } ?>
                  </div>
                  <?php if($is_opened_users_profile) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
