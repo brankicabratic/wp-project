@@ -17,6 +17,7 @@
     $success = password_verify($password, $user[COL_USER_PASSWORD]);
     if ($success) {
       $_SESSION[SESSION_USER_ID] = $user[COL_USER_ID];
+      $db->updateOnlineTime($username);
       return USER_HANDLER_OK;
     }
     return USER_HANDLER_INVALID_PASSWORD;

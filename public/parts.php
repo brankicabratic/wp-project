@@ -16,6 +16,9 @@
           <li class="nav-item">
             <a class="nav-link" href="index.php">Pitanja</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" href="users.php">Korisnici</a>
+          </li>
         </ul>
 <?php
 		if ($user) {
