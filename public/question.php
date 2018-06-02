@@ -148,13 +148,42 @@
                   <div class="content">
                     <?php echo htmlspecialchars($answers[$i][COL_POST_CONTENT]) ?>
                   </div>
+                  <?php
+                      if($user){
+                        
+                        if(isset($_POST["decrementAnswerScore"])) {   
+                          if(isset($_POST["answerID"])){
+                          $deleteReact=$db->deleteReaction($user_id, $_POST["answerID"]);						
+                          $reaction=$db->getPostsReaction($_POST["answerID"], $user_id );
+                          if($reaction==0 || $reaction==+1){
+                              $insertReact=$db->insertReaction($_POST["answerID"], $user_id, -1); 
+                          }
+                        }
+                       }
+            
+                        if(isset($_POST["incrementAnswerScore"])) {
+                            if(isset($_POST["answerID"])){
+                            $deleteReact=$db->deleteReaction($user_id, $_POST["answerID"]);    
+						                $reaction=$db->getPostsReaction($_POST["answerID"],  $user_id);
+                            if($reaction==0 || $reaction==-1){
+                              $insertReact=$db->insertReaction($_POST["answerID"], $user_id, +1);
+                            }
+                          }
+                        }
+                      }
+                      ?> 
+                      
+
                   <div class="footer">
                     <div class="aligned-right">
                       <span class="score">
-                        <span class="reaction dislike active"><i class="fas fa-caret-left"></i></span>
-                        <span class="actual-score">0</span>
-                        <span class="reaction like"><i class="fas fa-caret-right"></i></span>
-                      </span>
+                       <form id="answerScore" method="post">
+                        <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
+                        <input type="submit" name="decrementAnswerScore" value="-"/>
+                        <span class="actual-score"> <?php $score=$db->getPostsScore( $answers[$i][COL_POST_ID]); echo $score; ?> </span>
+                		    <input type="submit" name="incrementAnswerScore" value="+"/>
+                       </form>
+					  </span>
                       <?php echo "Odgovorio <a href=\"profile.php?user=".$answers[$i][COL_USER_USERNAME]."\">$nameToShow</a> ".$answers[$i][COL_POST_POSTED]; ?>
                       <?php
                         if ($user[COL_USER_RANK] == RANK_ADMIN) {
