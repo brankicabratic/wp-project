@@ -8,6 +8,8 @@
      *
      * getUser($username, $getter=USER_GETTER_ALL) DONE
      * getUserByID($id, $getter=USER_GETTER_ALL) DONE
+     * deleteUser($userID) DONE
+     * movePost($userID) DONE
      * getListOfUsers() DONE
      * getNthPageUsers($page, $step) DONE
      * getNumberOfUsers() DONE
@@ -206,6 +208,24 @@
       $stmt->bind_param("i", $userID);
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
+    }
+    /**
+     * @return deletes a user with given ID
+     */ 
+    public function deleteUser($userID){
+      $stmt = $this->connection->prepare("DELETE FROM ".DB_USER_TABLE." WHERE ".COL_USER_ID." = ?");
+      $stmt->bind_param("i", $userID);
+      $deletedUser = $stmt->execute();
+      return $deletedUser;
+    }
+
+    /**
+     * @return moves every post from $userID to user with the ID of 0
+     */ 
+    public function movePost($userID){
+      $stmt = $this->connection->prepare("UPDATE ".DB_POST_TABLE." SET ".COL_POST_AUTHOR."= 0 WHERE ".COL_POST_AUTHOR." = ?");
+      $stmt->bind_param("i", $userID);
+      return $stmt->execute();
     }
 
     /**

@@ -304,11 +304,43 @@
                           </div>
                        </div>
                     </div>
+                    <button style="margin-top:20px;font-size:13px" id="delete-user-opener" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#delete-user-dialog">Izbriši nalog</button>
                     <button id="change-password-opener" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#change-password-dialog">Promeni lozinku</button>
                     <!--CSS move --> 
                     <button style="margin-top:20px;font-size:13px" id="change-avatar-opener" type="button" class="btn btn-secondary" data-toggle="modal" data-target="#change-avatar-dialog">Promeni avatar</button>
                     <input type="submit" name="saveProfileChanges" value="Sačuvaj izmene" class="btn btn-primary">
                  </form>
+                 <!-- DELETE USER DIALOG -->
+                 <div id="delete-user-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                       <div class="modal-content">
+                          <div class="modal-header">
+                             <h5 class="modal-title">Brisanje naloga</h5>
+                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                             <span aria-hidden="true">&times;</span>
+                             </button>
+                          </div>
+                          <form method="post">
+                             <input type="hidden" name="formType" value="deleteUser">
+                             <div class="modal-body">
+                                <div class="form-result-box"></div>
+                                <p>Za brisanje naloga morate dva puta unesiti vašu lozinku.</p>
+                                <div class="form-group">
+                                   <label for="current-password">Lozinka:</label>
+                                   <input type="password" name="current-password" class="form-control" id="current-password">
+                                </div>
+                                <div class="form-group">
+                                   <label for="current-password-repeated">Lozinka ponovo:</label>
+                                   <input type="password" name="current-password-repeated" class="form-control" id="current-password-repeated">
+                                </div>
+                             </div>
+                             <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Izađi</button>
+                                <input type="submit" name="delete-user" class="btn btn-primary" value="Sačuvaj izmene">
+                             </div>
+                          </form>
+                       </div>
+                    </div>
                  <!-- CHANGE PASSWORD DIALOG -->
                  <div id="change-password-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">

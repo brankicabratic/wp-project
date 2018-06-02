@@ -30,6 +30,29 @@
 				}
 			}
 			break;
+		case "deleteUser":
+			if (!isset($_POST["current-password"]) || !isset($_POST["current-password-repeated"]) || empty($_POST["current-password"]) ||empty($_POST["current-password-repeated"])){
+				$result["errors"][] = "Morate popuniti sva polja.";
+			}
+			if ($_POST["current-password"] != $_POST["current-password-repeated"]) {
+				$result["errors"][] = "Unete lozinke nisu jednake.";
+			}
+			if (count($result["errors"]) == 0) {
+				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password"]);
+				if ($success==USER_HANDLER_INVALID_PASSWORD){
+					$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
+				}
+				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password-repeated"]);
+				if ($success==USER_HANDLER_INVALID_PASSWORD){
+					$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
+				} else {
+					$success = deleteUser($user[COL_USER_ID]);
+					if ($success==USER_HANDLER_INVALID_PASSWORD) {
+						$result["errors"][] = "Došlo je do greške pri brisanje naloga. Pokušajte ponovo. Ukoliko to ne uspe, kontaktirajte administratore.";
+					}
+				}
+			}
+			break;
 		case "password":
 			if (!isset($_POST["current-password"]) || !isset($_POST["new-password"]) || !isset($_POST["new-password-repeated"]) || empty($_POST["current-password"]) || empty($_POST["new-password"]) || empty($_POST["new-password-repeated"])){
 				$result["errors"][] = "Morate popuniti sva polja.";

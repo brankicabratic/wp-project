@@ -175,5 +175,17 @@
     }
     return USER_HANDLER_INVALID;
   }
+
+  function deleteUser($userID){
+    $db = new Database;
+    $moveSuccess = $db->movePost($userID);
+    if ($moveSuccess) {
+      $success = $db->deleteUser($userID);
+      if ($success){
+        return USER_HANDLER_OK;
+      }
+    }
+    return USER_HANDLER_INVALID;
+  }
   
 ?>
