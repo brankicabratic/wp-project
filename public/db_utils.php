@@ -541,6 +541,14 @@
       $stmt = $this->connection->prepare("INSERT INTO ".DB_ANSWER_TABLE."(".COL_ANSWER_ID.", ".COL_ANSWER_PARENT.") VALUES (?, ?)");
       $stmt->bind_param("ii", $ID, $questionID);
       $result = $stmt->execute();
+      if ($result) {
+        $stmt = $this->connection->prepare("UPDATE ".DB_POST_TABLE."
+                                            SET ".COL_POST_MODIFIED." = ? 
+                                            WHERE ".COL_POST_ID." = ?");
+        $modDate = date("Y-m-d H:i:s", time()+(2*60*60));
+        $stmt->bind_param("si", $modDate, $questionID);
+        $result = $stmt->execute();
+      }
       if(!$result)
         $this->deletePost($ID);
       return $result;
