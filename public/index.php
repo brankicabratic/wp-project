@@ -45,7 +45,7 @@
         $url = $_SERVER['REQUEST_URI']."?page={$i}";
       }
       else {
-        $url = isset($_GET["page"]) ? preg_replace("%page=[\d+]%", "page=$i", $url) : $_SERVER['REQUEST_URI']."&page={$i}" ;
+        $url = isset($_GET["page"]) ? preg_replace("%page=[/^[1-9][0-9]*|0$/]%", "page=$i", $url) : $_SERVER['REQUEST_URI']."&page={$i}" ;
       }
       echo $i == $page ? "<span class=\"page-link-selected\"> $i </span>" : "<a href=\"{$url}\"><span class=\"page-link\"> $i </span></a>";
     }
