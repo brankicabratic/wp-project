@@ -229,7 +229,7 @@
                               <form id="answerScore" method="post">                    
                                 <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
                                 <label title="Check, ako Vam je ovaj odgovor najviše pomogao">
-                                  <input type="submit" id="check" name="check">
+                                  <input type="submit" hidden="" id="check" name="check">
                                 </label>
                               </form>  
 
