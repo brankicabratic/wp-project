@@ -801,6 +801,13 @@
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
     }
 
+     public function getQuestionAuthor($questionID) {
+      $stmt = $this->connection->prepare("SELECT P.".COL_POST_AUTHOR." FROM ".DB_POST_TABLE." P WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $questionID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_row()[0];
+    }
+
     /**
      * @param $user User object as associative array
      * @return bool which represents success of query
@@ -873,6 +880,17 @@
       $stmt->bind_param("si", $password, $ID);
       return $stmt->execute();
     }
+
+
+    public function updateChecked($answerID) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_ANSWER_TABLE."
+                                          SET
+                                          ".COL_ANSWER_CHECKED." = 1
+                                          WHERE ".COL_ANSWER_ID." = ?");
+      $stmt->bind_param("i", $answerID);
+      return $stmt->execute();
+    }
+
 
     public function resetPassword($email, $password) {
       $stmt = $this->connection->prepare("UPDATE ".DB_USER_TABLE."

@@ -44,4 +44,23 @@
     } 
     return $success;
   }
+
+  function getQuestionAuthor($questionID) {
+    $db = new Database;
+    $success = $db->getQuestionAuthor($questionID);
+    if (!$success) {
+      return QUESTION_HANDLER_INVALID;
+    } 
+    return $success;
+  }
+
+  function updateChecked($answerID) {
+    $db = new Database;
+    $success = $db->updateChecked($answerID);
+    if (!$success) {
+      return QUESTION_HANDLER_INVALID;
+    } 
+    return $success;
+  }
+
 ?>
