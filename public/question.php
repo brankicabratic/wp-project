@@ -198,34 +198,33 @@
                       <?php
                         }
                        ?>
+
                        <div align="center">
                         <?php
                           if (isset($_GET["id"])) {
-                          $questionId = $_GET["id"];
-                          $questionAuthor = $db->getQuestionAuthor($questionId);
-                          $answers = $db->getAnswersRelatedToQuestion($questionId);  
-                          $allChecked =$db->getAllChecked($questionId);
+                            $questionId = $_GET["id"];
+                            $questionAuthor = $db->getQuestionAuthor($questionId);
+                            $answers = $db->getAnswersRelatedToQuestion($questionId);  
+                            $allChecked =$db->getAllChecked($questionId);
                           
-                            if ($user[COL_USER_ID] == $questionAuthor) {  
-                        ?>      
-                              <?php
-                                if (isset($_POST['check'])) {
-                                  if(isset($_POST["answerID"])){
-                                    if ($allChecked == 0 || $allChecked == 1) {
-                                      $db->uncheckAll($questionId);
-                                      $db->updateChecked($_POST["answerID"]);
-                                    } 
+                            if ($user[COL_USER_ID] == $questionAuthor && $user[COL_USER_ID] != 0) {  
+                              if (isset($_POST['check'])) {
+                                if(isset($_POST["answerID"])){
+                                  if ($allChecked == 0 || $allChecked == 1) {
+                                    $db->uncheckAll($questionId);
+                                    $db->updateChecked($_POST["answerID"]);
                                   } 
                                 } 
-                                if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
-                                  echo "<label title=Označili&nbsp;ste&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
-                                  echo "<img src=img/check.png>"; 
-                                  } else{
-                                    echo "<label title=Check&nbsp;ako&nbsp;Vam&nbsp;je&nbsp;ovaj&nbsp;odgovor&nbsp;najviše&nbsp;pomogao>";
-                                    echo "<img src=img/uncheck.png>";
-                                  }
-                              ?>
-                            
+                              } 
+                              if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
+                                echo "<label title=Označili&nbsp;ste&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
+                                echo "<img src=img/check.png>"; 
+                              } else {
+                                echo "<label title=Check&nbsp;ako&nbsp;Vam&nbsp;je&nbsp;ovaj&nbsp;odgovor&nbsp;najviše&nbsp;pomogao>";
+                                echo "<img src=img/uncheck.png>";
+                              }
+                        ?>  
+                          
                               <form id="answerScore" method="post">                    
                                 <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
                                 <label title="Check, ako Vam je ovaj odgovor najviše pomogao">
@@ -235,15 +234,15 @@
 
                         <?php     
                             }else {
-                               if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
-                                  echo "<label title=Vlasnik&nbsp;pitanja&nbsp;je&nbsp;označio&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
-                                  echo "<img src=img/check.png>"; 
+                              if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
+                                echo "<label title=Vlasnik&nbsp;pitanja&nbsp;je&nbsp;označio&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
+                                echo "<img src=img/check.png>"; 
                               }
                             }
                           }
                         ?>
-
                       </div>
+
                     </div>
                   </div>
                 </div>
