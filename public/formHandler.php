@@ -31,18 +31,18 @@
 			}
 			break;
 		case "deleteUser":
-			if (!isset($_POST["current-password"]) || !isset($_POST["current-password-repeated"]) || empty($_POST["current-password"]) ||empty($_POST["current-password-repeated"])){
+			if (!isset($_POST["password"]) || !isset($_POST["password-repeated"]) || empty($_POST["password"]) ||empty($_POST["password-repeated"])){
 				$result["errors"][] = "Morate popuniti sva polja.";
 			}
-			if ($_POST["current-password"] != $_POST["current-password-repeated"]) {
+			if ($_POST["password"] != $_POST["password-repeated"]) {
 				$result["errors"][] = "Unete lozinke nisu jednake.";
 			}
 			if (count($result["errors"]) == 0) {
-				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password"]);
+				$success = checkPassword($user[COL_USER_USERNAME], $_POST["password"]);
 				if ($success==USER_HANDLER_INVALID_PASSWORD){
 					$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
 				}
-				$success = checkPassword($user[COL_USER_USERNAME], $_POST["current-password-repeated"]);
+				$success = checkPassword($user[COL_USER_USERNAME], $_POST["password-repeated"]);
 				if ($success==USER_HANDLER_INVALID_PASSWORD){
 					$result["errors"][] = "Trenutna lozinka nije odgovarajuća.";
 				} else {

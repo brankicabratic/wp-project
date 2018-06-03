@@ -65,7 +65,7 @@
     if($success){
       return USER_HANDLER_OK;
     }
-    return USER_HANDLER_ERROR;
+    return USER_HANDLER_INVALID;
   }
 
   function updateAvatar($user_id, $newAvatar){
@@ -74,7 +74,7 @@
     if($success){
       return USER_HANDLER_OK;
     }
-    return USER_HANDLER_ERROR;
+    return USER_HANDLER_INVALID;
   }
 
    function updatePassword($username, $password) {

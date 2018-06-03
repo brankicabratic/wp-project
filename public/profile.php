@@ -326,12 +326,12 @@
                                 <div class="form-result-box"></div>
                                 <p>Za brisanje naloga morate dva puta unesiti vašu lozinku.</p>
                                 <div class="form-group">
-                                   <label for="current-password">Lozinka:</label>
-                                   <input type="password" name="current-password" class="form-control" id="current-password">
+                                   <label for="password">Lozinka:</label>
+                                   <input type="password" name="password" class="form-control" id="password">
                                 </div>
                                 <div class="form-group">
-                                   <label for="current-password-repeated">Lozinka ponovo:</label>
-                                   <input type="password" name="current-password-repeated" class="form-control" id="current-password-repeated">
+                                   <label for="password-repeated">Lozinka ponovo:</label>
+                                   <input type="password" name="password-repeated" class="form-control" id="password-repeated">
                                 </div>
                              </div>
                              <div class="modal-footer">
@@ -341,6 +341,7 @@
                           </form>
                        </div>
                     </div>
+                  </div>
                  <!-- CHANGE PASSWORD DIALOG -->
                  <div id="change-password-dialog" class="modal fade" tabindex="-1" role="dialog" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered" role="document">
