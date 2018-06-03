@@ -175,8 +175,7 @@
                         }
                       }
                       ?> 
-                      
-
+     
                   <div class="footer">
                     <div class="aligned-right">
                       <span class="score">
@@ -209,27 +208,31 @@
                           $answers = $db->getAnswersRelatedToQuestion($questionId);  
                           echo $answers[$i][COL_POST_ID];
                             if ($user[COL_USER_ID] == $questionAuthor) {  
+                        ?>      
 
-                        ?>
+                                <?php
+                                    if (isset($_POST['foo'])) {
+                                      if(isset($_POST["answerID"])){
+                                        $a =$db->updateChecked($_POST["answerID"]);
+                                      } 
+                                    }
+                                ?>
+
+                                <form id="answerScore" method="post">                    
                               
-                             <div class="options">
-                                
-                                <label title="item1">
-
-                                  
-                                  <input type="radio" id="foo" name="foo"/>
-                                  
-                                  <img />
-                              
-                                </label>
-                              </div>
-                             
-                             
-
+                                  <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
+                                  <input type="submit" name="foo" value="Check" class="btn btn-primary">
+                               
+                                </form>
+                         
                         <?php
                             
                             }else {
-                              
+                               if ($db->getChecked($answers[$i][COL_POST_ID]) == 1) {
+                                  
+                                  echo "aaaaaaa";
+                                  
+                              }
                             }
                           }
                         ?>

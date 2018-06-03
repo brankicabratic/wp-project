@@ -209,6 +209,14 @@
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
     }
+
+    public function getChecked($answerID) {
+      $stmt = $this->connection->prepare("SELECT ".COL_ANSWER_CHECKED." FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_ID." = ?");
+      $stmt->bind_param("i", $answerID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_row()[0];
+    }
+
     /**
      * @return deletes a user with given ID
      */ 

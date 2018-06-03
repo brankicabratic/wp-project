@@ -63,4 +63,13 @@
     return $success;
   }
 
+  function getChecked($answerID) {
+    $db = new Database;
+    $success = $db->updateChecked($answerID);
+    if (!$success) {
+      return QUESTION_HANDLER_INVALID;
+    } 
+    return $success;
+  }
+
 ?>
