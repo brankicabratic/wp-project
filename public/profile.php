@@ -160,9 +160,8 @@
                         <div class="col-sm-4">Score</div>
                         <div class="col-sm-8">
                          <?php
-                            $user_id = $db->getUserID($user[COL_USER_USERNAME]);
-                            $like=$db->getUserLike($user_id);
-                            $dislike=$db->getUserDislike($user_id);
+                            $like=$db->getUserLike($opened_user[COL_USER_ID]);
+                            $dislike=$db->getUserDislike($opened_user[COL_USER_ID]);
                             echo "like $like dislike $dislike"; 
                             ?>
                         </div>
@@ -173,8 +172,7 @@
                         <div class="col-sm-4">Broj postavljeniih pitanja  </div>
                         <div class="col-sm-8">
                          <?php
-                            $user_id = $db->getUserID($user[COL_USER_USERNAME]);
-                            $count=$db->getCountQuestion($user_id);
+                            $count=$db->getCountQuestion($opened_user[COL_USER_ID]);
                             echo $count;
                             ?>
                         </div>
@@ -185,8 +183,7 @@
                         <div class="col-sm-4">Broj odgovora  </div>
                         <div class="col-sm-8">
                          <?php
-                            $user_id = $db->getUserID($user[COL_USER_USERNAME]);
-                            $count=$db->getCountAnswer($user_id);
+                            $count=$db->getCountAnswer($opened_user[COL_USER_ID]);
                             echo $count;
                             ?>
                         </div>
