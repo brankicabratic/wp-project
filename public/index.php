@@ -16,7 +16,8 @@
       }
       echo "</span>";
     }
-    echo "<span class=\"author\">Pitao <a href=\"profile.php?user={$question[COL_USER_USERNAME]}\">{$question[COL_USER_USERNAME]}</a> {$dateFormat} | odgovora {$question["NUMBEROFASNWERS"]} | ocena {$question["SCORE"]}</span>
+    $username = $question[COL_USER_USERNAME] == "Izbrisan" ? "[izbrisan]" : "<a href=\"profile.php?user={$question[COL_USER_USERNAME]}\">{$question[COL_USER_USERNAME]}</a>";
+    echo "<span class=\"author\">Pitao $username {$dateFormat} | odgovora {$question["NUMBEROFASNWERS"]} | ocena {$question["SCORE"]}</span>
       </div>";
   }
 
@@ -241,13 +242,6 @@
       </div>
 
       <div class="col-md-4 hidden-lg-down">
-        <div class="side-block">
-          Najcesce teme protekle nedelje:
-          <ul>
-            <li>Matematika</li>
-            <li>Informatika</li>
-          </ul>
-        </div>
         <div class="side-block">
           Najaktivniji korisnici:
           <ul>

@@ -42,7 +42,8 @@
                     if (!empty($firstName) && !empty($lastName)) {
                       $nameToShow = "$firstName $lastName";
                     }
-                    echo "<small>Pitao <a href=\"profile.php?user=".$question[COL_USER_USERNAME]."\">$nameToShow</a> ".$question[COL_POST_POSTED]."</small>";
+                    $link = $nameToShow == "Izbrisan" ? "[izbrisan]" : "<a href=\"profile.php?user=".$question[COL_USER_USERNAME]."\">$nameToShow</a>" ;
+                    echo "<small>Pitao $link ".$question[COL_POST_POSTED]."</small>";
                   }
                 }
               ?>
@@ -186,7 +187,9 @@
                         <input type="submit" name="incrementAnswerScore" value="+"/>
                        </form>
             </span>
-                      <?php echo "Odgovorio <a href=\"profile.php?user=".$answers[$i][COL_USER_USERNAME]."\">$nameToShow</a> ".$answers[$i][COL_POST_POSTED]; ?>
+                      <?php
+                        $link = $nameToShow == "Izbrisan" ? "[izbrisan]" : "<a href=\"profile.php?user=".$answers[$i][COL_USER_USERNAME]."\">$nameToShow</a>" ;
+                        echo "Odgovorio $link ".$answers[$i][COL_POST_POSTED]; ?>
                       <?php
                         if ($user[COL_USER_RANK] == RANK_ADMIN) {
                       ?>
