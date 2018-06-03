@@ -209,28 +209,35 @@
                             if ($user[COL_USER_ID] == $questionAuthor) {  
                         ?>      
                               <?php
-                                  if (isset($_POST['foo'])) {
-                                    if(isset($_POST["answerID"])){
-                                      if ($allChecked == 0 || $allChecked == 1) {
-                                        $db->uncheckAll($questionId);
-                                        $db->updateChecked($_POST["answerID"]);
-                                      }
+                                if (isset($_POST['check'])) {
+                                  if(isset($_POST["answerID"])){
+                                    if ($allChecked == 0 || $allChecked == 1) {
+                                      $db->uncheckAll($questionId);
+                                      $db->updateChecked($_POST["answerID"]);
                                     } 
+                                  } 
+                                } 
+                                if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
+                                  echo "<label title=Označili&nbsp;ste&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
+                                  echo "<img src=img/check.png>"; 
+                                  } else{
+                                    echo "<label title=Check&nbsp;ako&nbsp;Vam&nbsp;je&nbsp;ovaj&nbsp;odgovor&nbsp;najviše&nbsp;pomogao>";
+                                    echo "<img src=img/uncheck.png>";
                                   }
                               ?>
+                            
                               <form id="answerScore" method="post">                    
-                
                                 <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
                                 <label title="Check, ako Vam je ovaj odgovor najviše pomogao">
-                                  <input type="submit" name="foo" value="pra" class="btn-primary" >
+                                  <input type="submit" id="check" name="check">
                                 </label>
-                              </form>     
+                              </form>  
+
                         <?php     
                             }else {
                                if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
                                   echo "<label title=Vlasnik&nbsp;pitanja&nbsp;je&nbsp;označio&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
-                                  echo "<img src=img/check.png>";
-                                  
+                                  echo "<img src=img/check.png>"; 
                               }
                             }
                           }
