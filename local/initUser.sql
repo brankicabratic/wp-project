@@ -1,0 +1,1 @@
+INSERT INTO User(UserID, Username, Password, HashActivation, Email, BelongsTo) VALUES (0, "Izbrisan", "", "", "", 1);
