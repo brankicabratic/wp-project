@@ -1106,9 +1106,11 @@
     /**
     *	@return returns the number of question in the database
     */
-    public function getNumberOfQuestions() {
+    public function getNumberOfQuestions($category = "0") {
+      $cat = $category ? " WHERE ".COL_QUESTION_CATEGORY." = ?" : "";
     	$stmt = $this->connection->prepare("SELECT COUNT(".COL_QUESTION_ID.")
-                                          FROM ".DB_QUESTION_TABLE);
+                                          FROM ".DB_QUESTION_TABLE.$cat);
+      if ($category) $stmt->bind_param("s", $category);
     	$stmt->execute();
     	$result = $stmt->get_result()->fetch_row();
       return $result[0];
@@ -1149,7 +1151,7 @@
 
     function getPopularCategory() {
       $sql_post = "SELECT ".COL_QUESTION_CATEGORY.", COUNT(".COL_QUESTION_CATEGORY.") AS count_cat FROM "
-                  .DB_QUESTION_TABLE." GROUP BY ".COL_QUESTION_CATEGORY." ORDER BY count_cat DESC LIMIT 2";
+                  .DB_QUESTION_TABLE." GROUP BY ".COL_QUESTION_CATEGORY." ORDER BY count_cat DESC LIMIT 5";
 
       $stmt = $this->connection->prepare($sql_post);
       $stmt->execute();

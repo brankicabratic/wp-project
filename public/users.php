@@ -49,6 +49,7 @@
             </tr>";
     foreach ($users as $userTable) {
       $user_id = $db->getUserID($userTable[COL_USER_USERNAME]);
+      if (!$user_id) continue;
       $like=$db->getUserLike($user_id);
       $dislike=$db->getUserDislike($user_id);
       echo "<tr>"; 

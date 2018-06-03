@@ -54,7 +54,7 @@
 
   $db = new Database;
 
-  $numQuestions = $db->getNumberOfQuestions();
+  $numQuestions = $db->getNumberOfQuestions(isset($_GET["category"]) ? $_GET["category"] : "0");
   $step = isset($_GET["step"]) && $_GET["step"] > 0 ? $_GET["step"] : 10;
   $numAllPages = ceil($numQuestions / $step); 
   $page = isset($_GET["page"]) && $_GET["page"] > 0 && $_GET["page"] <= $numAllPages ? $_GET["page"] : 1;
@@ -265,7 +265,7 @@
             <?php
               $category = getPopularCategory();
               foreach($category as $cat) {
-                echo "<li>".$cat["name"]."(".$cat["count_cat"].")</li>";
+                echo "<li><a href=\"?filterType=dateOfCreation&order=0&step=10&nameSearch=&tagSearch=&category={$cat[COL_CATEGORY_ID]}&filterQuestions=Primeni\">".$cat["name"]."(".$cat["count_cat"].")</a></li>";
               }
             ?>
           </ul>
