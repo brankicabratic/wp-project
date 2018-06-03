@@ -49,8 +49,8 @@
               <div class="tags">
                 <?php
                 if (isset($_GET["id"])) {
-                	$question = $db->getQuestion($_GET["id"]);
-                	$tags = $db->getTagsRelatedToQuestion($questionId);
+                  $question = $db->getQuestion($_GET["id"]);
+                  $tags = $db->getTagsRelatedToQuestion($questionId);
                   foreach($tags as $tag) {
                     echo "<a href=\"index.php?tagName={$tag[COL_TAG_NAME]}\"><div class=\"tag\">{$tag[COL_TAG_NAME]}</div></a>";
                   }
@@ -65,20 +65,20 @@
               }
             ?>
             <?php
-			    if($user){
-					$user_id = $db->getUserID($user[COL_USER_USERNAME]);
-					if(isset($_POST["decrement"])) {      
+          if($user){
+          $user_id = $db->getUserID($user[COL_USER_USERNAME]);
+          if(isset($_POST["decrement"])) {      
             $deleteReact=$db->deleteReaction($user_id, $_GET["id"]);     
             $reaction=$db->getPostsReaction($_GET["id"], $user_id );
-							if($reaction==0 || $reaction==+1){
-  							$insertReact=$db->insertReaction($_GET["id"], $user_id, -1);
-							}
+              if($reaction==0 || $reaction==+1){
+                $insertReact=$db->insertReaction($_GET["id"], $user_id, -1);
+              }
           }
 
           if(isset($_POST["increment"])) {      
             $deleteReact=$db->deleteReaction($user_id, $_GET["id"]);      
             $reaction=$db->getPostsReaction($_GET["id"], $user_id );            
-            	if($reaction==0 || $reaction==-1){
+              if($reaction==0 || $reaction==-1){
                 $insertReact=$db->insertReaction($_GET["id"], $user_id, +1);
                }
             }
@@ -156,7 +156,7 @@
                         
                         if(isset($_POST["decrementAnswerScore"])) {   
                           if(isset($_POST["answerID"])){
-                          $deleteReact=$db->deleteReaction($user_id, $_POST["answerID"]);						
+                          $deleteReact=$db->deleteReaction($user_id, $_POST["answerID"]);           
                           $reaction=$db->getPostsReaction($_POST["answerID"], $user_id );
                           if($reaction==0 || $reaction==+1){
                               $insertReact=$db->insertReaction($_POST["answerID"], $user_id, -1); 
@@ -167,7 +167,7 @@
                         if(isset($_POST["incrementAnswerScore"])) {
                             if(isset($_POST["answerID"])){
                             $deleteReact=$db->deleteReaction($user_id, $_POST["answerID"]);    
-						                $reaction=$db->getPostsReaction($_POST["answerID"],  $user_id);
+                            $reaction=$db->getPostsReaction($_POST["answerID"],  $user_id);
                             if($reaction==0 || $reaction==-1){
                               $insertReact=$db->insertReaction($_POST["answerID"], $user_id, +1);
                             }
@@ -183,9 +183,9 @@
                         <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
                         <input type="submit" name="decrementAnswerScore" value="-"/>
                         <span class="actual-score"> <?php $score=$db->getPostsScore( $answers[$i][COL_POST_ID]); echo $score; ?> </span>
-                		    <input type="submit" name="incrementAnswerScore" value="+"/>
+                        <input type="submit" name="incrementAnswerScore" value="+"/>
                        </form>
-					  </span>
+            </span>
                       <?php echo "Odgovorio <a href=\"profile.php?user=".$answers[$i][COL_USER_USERNAME]."\">$nameToShow</a> ".$answers[$i][COL_POST_POSTED]; ?>
                       <?php
                         if ($user[COL_USER_RANK] == RANK_ADMIN) {
@@ -198,44 +198,44 @@
                       <?php
                         }
                        ?>
-
                        <div align="center">
-
                         <?php
                           if (isset($_GET["id"])) {
                           $questionId = $_GET["id"];
                           $questionAuthor = $db->getQuestionAuthor($questionId);
                           $answers = $db->getAnswersRelatedToQuestion($questionId);  
-                          echo $answers[$i][COL_POST_ID];
+                          $allChecked =$db->getAllChecked($questionId);
+                          
                             if ($user[COL_USER_ID] == $questionAuthor) {  
                         ?>      
-
-                                <?php
-                                    if (isset($_POST['foo'])) {
-                                      if(isset($_POST["answerID"])){
-                                        $a =$db->updateChecked($_POST["answerID"]);
-                                      } 
-                                    }
-                                ?>
-
-                                <form id="answerScore" method="post">                    
-                              
-                                  <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
-                                  <input type="submit" name="foo" value="Check" class="btn btn-primary">
-                               
-                                </form>
-                         
-                        <?php
-                            
+                              <?php
+                                  if (isset($_POST['foo'])) {
+                                    if(isset($_POST["answerID"])){
+                                      if ($allChecked == 0 || $allChecked == 1) {
+                                        $db->uncheckAll($questionId);
+                                        $db->updateChecked($_POST["answerID"]);
+                                      }
+                                    } 
+                                  }
+                              ?>
+                              <form id="answerScore" method="post">                    
+                
+                                <input type="hidden" name="answerID" value="<?php echo  $answers[$i][COL_POST_ID];?>">
+                                <label title="Check, ako Vam je ovaj odgovor najviše pomogao">
+                                  <input type="submit" name="foo" value="pra" class="btn-primary" >
+                                </label>
+                              </form>     
+                        <?php     
                             }else {
-                               if ($db->getChecked($answers[$i][COL_POST_ID]) == 1) {
-                                  
-                                  echo "aaaaaaa";
+                               if ($db->getCheckedAnswer($answers[$i][COL_POST_ID]) == 1) { 
+                                  echo "<label title=Vlasnik&nbsp;pitanja&nbsp;je&nbsp;označio&nbsp;ovaj&nbsp;odgovor&nbsp;kao&nbsp;najbolji>";
+                                  echo "<img src=img/check.png>";
                                   
                               }
                             }
                           }
                         ?>
+
                       </div>
                     </div>
                   </div>
@@ -343,27 +343,27 @@
       });
 
       $('a[href*="#"]').on('click', function (e) {
-      	e.preventDefault();
+        e.preventDefault();
 
         var scrollTo = $($(this).attr('href')).offset().top - 60;
 
-      	$('html, body').animate({
-      		scrollTop: scrollTo
-      	}, 500, 'linear', function() {
+        $('html, body').animate({
+          scrollTop: scrollTo
+        }, 500, 'linear', function() {
           waiting = false;
           calculateArrowToTopStyle();
         });
       });
-	  
-	  function increment(){
-		if(document.getElementById("demo").innerHTML > 0){
-			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) -1;
-		}
-	  }
-	  
-	   function decrement(){
-			document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
-	  }
+    
+    function increment(){
+    if(document.getElementById("demo").innerHTML > 0){
+      document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) -1;
+    }
+    }
+    
+     function decrement(){
+      document.getElementById("demo").innerHTML = parseInt(document.getElementById("demo").innerHTML) +1;
+    }
 
       $("form:not(#questionScore,#answerScore)").submit(function(event) {
           event.preventDefault();
@@ -411,6 +411,6 @@
               }
           });
       });
-	</script>
+  </script>
   </body>
 </html>
