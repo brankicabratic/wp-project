@@ -177,10 +177,9 @@
 		                    $question = getQuestion($questionId);
 		                    $questionAuthorId = getPostsAuthor($question[COL_QUESTION_ID]);
 		                    $questionAuthor = getUserByID($questionAuthorId[0]);
-		                    $to = $questionAuthor[COL_USER_EMAIL];
+		                    $to = $questionAuthorId[0] == 0 ? "izbrisan@izbrisan.com" : $questionAuthor[COL_USER_EMAIL];
 		                    $subject = "Postavljen odgovor na pitanje \"".$question[COL_QUESTION_HEADER]."\"";
 		                    $txt = "User ".$user[COL_USER_USERNAME]." je odgovorio na postavljeno pitanje.";
-
 		                    $mailSuccessfullySent = mail($to,$subject,$txt);
 		                    if (!$mailSuccessfullySent) {
 		                        $result["errors"][] = "Došlo je do greške prilikom slanja mail-a";
