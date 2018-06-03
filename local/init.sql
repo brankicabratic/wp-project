@@ -88,6 +88,7 @@ CREATE TABLE Answer(
 	PostID int NOT NULL,
 	RelatedTo int NOT NULL,
 	Accepted tinyint(1) DEFAULT NULL, -- TODO: LOOK FOR BETTER SOLUTION
+	Checked int DEFAULT NULL,
 	PRIMARY KEY(PostID),
 	FOREIGN KEY(PostID) REFERENCES Post(PostID),
 	FOREIGN KEY(RelatedTo) REFERENCES Question(PostID)

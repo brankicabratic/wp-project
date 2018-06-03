@@ -49,6 +49,7 @@
   define('COL_ANSWER_ID', 'PostID');
   define('COL_ANSWER_PARENT', 'RelatedTo');
   define('COL_ANSWER_ACCEPTED', 'Accepted');
+  define('COL_ANSWER_CHECKED', 'Checked');
 
   define('COL_TAG_ID', 'TagID');
   define('COL_TAG_NAME', 'Name');

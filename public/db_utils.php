@@ -20,6 +20,12 @@
      * getUserEmailAndHash($email, $hash) DONE
      * getAllEmail($email) DONE
      * getUserID($username) DONE
+     * getUserUsername($userID)
+     * getQuestionAuthor($questionID) DONE
+     * getCheckedAnswer($answerID) DONE
+     * getAllChecked($questionID) DONE
+     * uncheckAll($questionID) DONE
+     * updateChecked($answerID) DONE
      * getNthPageQuestions($page, $step) DONE
      * getAllCategories() DONE
      * getTagIDByName($name) DONE
@@ -209,6 +215,54 @@
       $stmt->execute();
       return $stmt->get_result()->fetch_array(MYSQLI_NUM)[0];
     }
+
+    public function getQuestionAuthor($questionID) {
+      $stmt = $this->connection->prepare(" SELECT  ".COL_POST_AUTHOR." FROM ".DB_POST_TABLE." WHERE ".COL_POST_ID." = ?");
+      $stmt->bind_param("i", $questionID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_row()[0];
+    }
+
+    /**
+    * @param answerID
+    * @return checked answer
+    */
+    public function getCheckedAnswer($answerID) {
+      $stmt = $this->connection->prepare("SELECT ".COL_ANSWER_CHECKED." FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_ID." = ?");
+      $stmt->bind_param("i", $answerID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_row()[0];
+    }
+
+    /**
+    * @param questionID
+    * @return count of checked answers
+    */
+    public function getAllChecked($questionID) {
+      $stmt = $this->connection->prepare("SELECT COUNT(".COL_ANSWER_CHECKED.") FROM ".DB_ANSWER_TABLE." WHERE ".COL_ANSWER_PARENT." = ?");
+      $stmt->bind_param("i", $questionID);
+      $stmt->execute();
+      return $stmt->get_result()->fetch_row()[0];
+    }
+
+    function uncheckAll($questionID) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_ANSWER_TABLE."
+                                          SET
+                                          ".COL_ANSWER_CHECKED." = NULL
+                                          WHERE ".COL_ANSWER_PARENT." = ?");
+      $stmt->bind_param("i", $questionID);
+      return $stmt->execute();
+    }
+
+    public function updateChecked($answerID) {
+      $stmt = $this->connection->prepare("UPDATE ".DB_ANSWER_TABLE."
+                                          SET
+                                          ".COL_ANSWER_CHECKED." = 1
+                                          WHERE ".COL_ANSWER_ID." = ?");
+      $stmt->bind_param("i", $answerID);
+      return $stmt->execute();
+    }
+
     /**
      * @return deletes a user with given ID
      */ 
