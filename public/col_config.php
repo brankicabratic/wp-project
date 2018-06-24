@@ -91,4 +91,14 @@
   define('RANK_ACTIVATED', 1);
   define('RANK_BANNED', 2);
   define('RANK_ADMIN', 3);
+
+  //USER SCORE MODIFIERS (negative values for dislikes are defined as positive here)
+  define('SCORE_USER_QUESTIONS_COUNT', 5);
+  define('SCORE_USER_QUESTIONS_LIKE', 5);
+  define('SCORE_USER_QUESTIONS_DISLIKE', 2);
+  define('SCORE_USER_ANSWER_COUNT', 10);
+  define('SCORE_USER_ANSWER_LIKE', 10);
+  define('SCORE_USER_ANSWER_ACCEPTED', 15);
+  define('SCORE_USER_ANSWER_DISLIKE', 2);
+  define('SCORE_USER_DISLIKED', 1);
 ?>

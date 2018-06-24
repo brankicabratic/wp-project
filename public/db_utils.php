@@ -404,15 +404,37 @@
 
         //Filtering by author's score
         case "authorScore":
-          $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", A.".COL_USER_USERNAME."
-                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." A
-                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND A.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
+          $nQuestionsScore = "(COALESCE(( SELECT COUNT(*)
+                                      FROM ".DB_POST_TABLE." P
+                                      WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 1), 0) * ".SCORE_USER_QUESTIONS_COUNT.")";
+          $nAnswersScore = " (COALESCE(( SELECT COUNT(*)
+                                     FROM ".DB_POST_TABLE." P
+                                     WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 2), 0) * ".SCORE_USER_ANSWER_COUNT.")";
+          $likeQuestionScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                        FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                        WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 1 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = 1), 0) * ".SCORE_USER_QUESTIONS_LIKE.")";
+          $likeAnswerScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                        FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                        WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 2 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = 1), 0) * ".SCORE_USER_ANSWER_LIKE.")";
+          $nAcceptedScore = "(COALESCE(( SELECT COUNT(*)
+                                      FROM ".DB_POST_TABLE." P, ".DB_ANSWER_TABLE." A
+                                      WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_ID." = A.".COL_ANSWER_ID." AND A.".COL_ANSWER_CHECKED." = 1), 0) * ".SCORE_USER_ANSWER_ACCEPTED.")";
+          $dislikeQuestionScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                            FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                            WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 1 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = -1), 0) * ".SCORE_USER_QUESTIONS_DISLIKE.")";
+          $dislikeAnswerScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                            FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                            WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 2 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = -1), 0) * ".SCORE_USER_ANSWER_DISLIKE.")";
+          $nDislikesScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                            FROM ".DB_REACTION_TABLE." R
+                                            WHERE  U.".COL_USER_ID." = R.".COL_REACTION_USER." AND R.".COL_REACTION_TYPE." = -1), 0) * ".SCORE_USER_DISLIKED.")";
+
+          $sql =  "SELECT Q.".COL_QUESTION_ID.", Q.".COL_QUESTION_HEADER.", P.".COL_POST_POSTED.", U.".COL_USER_USERNAME.", ( $nQuestionsScore + $nAnswersScore + $likeQuestionScore              +  $likeAnswerScore + $nAcceptedScore + $dislikeAnswerScore + $dislikeQuestionScore + $nDislikesScore ) AS score
+                  FROM ".DB_QUESTION_TABLE." Q, ".DB_POST_TABLE." P, ".DB_USER_TABLE." U
+                  WHERE Q.".COL_QUESTION_ID." = P.".COL_POST_ID." AND U.".COL_USER_ID." = P.".COL_POST_AUTHOR." $tagsSQL $categorySQL 
                         AND LOWER(Q.".COL_QUESTION_HEADER.") LIKE LOWER(?)
                   GROUP BY Q.".COL_QUESTION_ID."
-                  ORDER BY COALESCE((SELECT SUM(R.".COL_REACTION_TYPE.")
-                                      FROM ".DB_POST_TABLE." P2, ".DB_REACTION_TABLE." R
-                                      WHERE A.".COL_USER_ID." = P2.".COL_POST_AUTHOR." AND P2.".COL_POST_ID." = R.".COL_REACTION_POST."
-                                      GROUP BY A.".COL_USER_ID."), 0) $order 
+                  ORDER BY score
                   LIMIT ?, ?";
           $stmt = $this->connection->prepare($sql);
           $sqlType = $sqlType."sii";
@@ -1166,6 +1188,41 @@
       $stmt->bind_param("i", $id);
       $stmt->execute();
       return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    function getUserScore($id) {
+      $nQuestionsScore = "(COALESCE(( SELECT COUNT(*)
+                                      FROM ".DB_POST_TABLE." P
+                                      WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 1), 0) * ".SCORE_USER_QUESTIONS_COUNT.")";
+      $nAnswersScore = " (COALESCE(( SELECT COUNT(*)
+                                     FROM ".DB_POST_TABLE." P
+                                     WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 2), 0) * ".SCORE_USER_ANSWER_COUNT.")";
+      $likeQuestionScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                        FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                        WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 1 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = 1), 0) * ".SCORE_USER_QUESTIONS_LIKE.")";
+      $likeAnswerScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                        FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                        WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 2 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = 1), 0) * ".SCORE_USER_ANSWER_LIKE.")";
+      $nAcceptedScore = "(COALESCE(( SELECT COUNT(*)
+                                      FROM ".DB_POST_TABLE." P, ".DB_ANSWER_TABLE." A
+                                      WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_ID." = A.".COL_ANSWER_ID." AND A.".COL_ANSWER_CHECKED." = 1), 0) * ".SCORE_USER_ANSWER_ACCEPTED.")";
+      $dislikeQuestionScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                            FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                            WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 1 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = -1), 0) * ".SCORE_USER_QUESTIONS_DISLIKE.")";
+      $dislikeAnswerScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                            FROM ".DB_POST_TABLE." P, ".DB_REACTION_TABLE." R
+                                            WHERE  P.".COL_POST_AUTHOR." = U.".COL_USER_ID." AND P.".COL_POST_TYPE." = 2 AND P.".COL_POST_ID." = R.".COL_REACTION_POST." AND R.".COL_REACTION_TYPE." = -1), 0) * ".SCORE_USER_ANSWER_DISLIKE.")";
+      $nDislikesScore = "(COALESCE(( SELECT SUM(R.".COL_REACTION_TYPE.")
+                                            FROM ".DB_REACTION_TABLE." R
+                                            WHERE  U.".COL_USER_ID." = R.".COL_REACTION_USER." AND R.".COL_REACTION_TYPE." = -1), 0) * ".SCORE_USER_DISLIKED.")";
+      $stmt = $this->connection->prepare("SELECT ( $nQuestionsScore + $nAnswersScore + $likeQuestionScore + $likeAnswerScore + $nAcceptedScore + $dislikeAnswerScore +
+                                                    $dislikeQuestionScore + $nDislikesScore ) AS score 
+                                          FROM ".DB_USER_TABLE." u 
+                                          WHERE u.".COL_USER_ID." = ?");
+      $stmt->bind_param("s", $id);
+      $stmt->execute();
+      $result = $stmt->get_result()->fetch_row();
+      return $result[0];
     }
   }
 ?>

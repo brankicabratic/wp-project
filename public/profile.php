@@ -188,7 +188,18 @@
                             ?>
                         </div>
                       </div>  					  
-                    <?php } ?>
+                    <?php }
+                      if ($opened_user) {?>
+                      <div class="row">
+                        <div class="col-sm-4">Ukupno bodova  </div>
+                        <div class="col-sm-8">
+                         <?php
+                            $count=$db->getUserScore($opened_user[COL_USER_ID]);
+                            echo $count;
+                            ?>
+                        </div>
+                      </div>
+                    <?php }?>
                  </div>
                  <?php if($is_opened_users_profile) { ?><button type="button" class="btn btn-primary" id="change-profile-button">Uredi profil</button><?php } ?>
                   <?php

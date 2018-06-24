@@ -50,8 +50,7 @@
     foreach ($users as $userTable) {
       $user_id = $db->getUserID($userTable[COL_USER_USERNAME]);
       if (!$user_id) continue;
-      $like=$db->getUserLike($user_id);
-      $dislike=$db->getUserDislike($user_id);
+      $score=$db->getUserScore($user_id);
       echo "<tr>"; 
       echo "<td>{$userTable[COL_USER_FIRSTNAME]}</td>";
       echo "<td>{$userTable[COL_USER_LASTNAME]}</td>";
@@ -62,7 +61,7 @@
       }else{
       echo "<td>{$userTable[COL_RANK_NAME]}";
       }
-      echo "<td>Likes:$like Dislikes:$dislike</td>";
+      echo "<td> $score </td>";
       echo "</tr>";
     } 
       echo "</table>";
